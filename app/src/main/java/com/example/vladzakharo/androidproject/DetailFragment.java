@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -27,10 +28,7 @@ public class DetailFragment extends Fragment {
     private static final String ARG_CAR = "car";
 
     private Car mCar;
-
-    private CollapsingToolbarLayout mCollapsingToolbar;
-    private ImageView mImageView;
-    private Bitmap bitmap;
+    private TextView mTextView;
 
     public static DetailFragment newInstance(Car car){
         Bundle arg = new Bundle();
@@ -45,31 +43,14 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mCar = (Car)getArguments().get(ARG_CAR);
-
-        Toast.makeText(getActivity(), mCar.getTitle(), Toast.LENGTH_SHORT).show();
-
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
-
-        mCollapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
-        mCollapsingToolbar.setTitle(mCar.getTitle());
-
-        mImageView = (ImageView) view.findViewById(R.id.toolbar_image);
-
-        AssetManager assetManager = getActivity().getAssets();
-        try{
-            InputStream istr = assetManager.open(mCar.getNamePicture());
-            bitmap = BitmapFactory.decodeStream(istr);
-
-        }catch (IOException ie){
-            ie.printStackTrace();
-        }
-
-        mImageView.setImageBitmap(bitmap);
+        mTextView = (TextView) view.findViewById(R.id.detail_text_view);
+        mTextView.setText(mCar.getDescription());
         return view;
     }
 }

@@ -2,18 +2,11 @@ package com.example.vladzakharo.androidproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -26,7 +19,6 @@ public class CarAdapter extends RecyclerView.Adapter<CarHolder> {
 
     private List<Car> mCars;
     private Context mContext;
-    private Bitmap bitmap;
 
     public CarAdapter(List<Car> cars, Context context){
         mCars = cars;
@@ -46,16 +38,7 @@ public class CarAdapter extends RecyclerView.Adapter<CarHolder> {
         holder.mTitleTextView.setText(car.getTitle());
         holder.mDescriptionTextView.setText(car.getDescription());
 
-        AssetManager assetManager = mContext.getAssets();
-        try{
-            InputStream istr = assetManager.open(car.getNamePicture());
-            bitmap = BitmapFactory.decodeStream(istr);
-
-        }catch (IOException ie){
-            ie.printStackTrace();
-        }
-
-        holder.mImageView.setImageBitmap(bitmap);
+        holder.mImageView.setImageBitmap(ImageCatcher.getBitmapFromAssets(mContext, car.getNamePicture()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
