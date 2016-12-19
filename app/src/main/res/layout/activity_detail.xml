@@ -23,8 +23,8 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             android:fitsSystemWindows="false"
             app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="@dimen/expandedTitleMarginStart"
+            app:expandedTitleMarginEnd="@dimen/expandedTitleMarginEnd"
             >
 
             <ImageView
