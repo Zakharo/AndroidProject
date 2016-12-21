@@ -1,6 +1,5 @@
 package com.example.vladzakharo.androidproject;
 
-import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,10 +12,9 @@ import java.io.InputStream;
  */
 
 public class ImageCatcher {
-    private static Bitmap bitmap;
 
-    public static Bitmap getBitmapFromAssets(Context context, String nameOfPicture){
-        AssetManager assetManager = context.getAssets();
+    public static Bitmap getBitmapFromAssets(AssetManager assetManager, String nameOfPicture){
+        Bitmap bitmap = null;
         try{
             InputStream inputStream = assetManager.open(nameOfPicture);
             bitmap = BitmapFactory.decodeStream(inputStream);

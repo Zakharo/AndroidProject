@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 
@@ -22,7 +24,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         if (getIntent() != null){
-            mCar = (Car)getIntent().getSerializableExtra(CarAdapter.CAR_SERIALIZABLE);
+            mCar = getIntent().getParcelableExtra(CarAdapter.CAR_PARCELABLE);
         }
 
         fm = getSupportFragmentManager();
@@ -32,10 +34,20 @@ public class DetailActivity extends AppCompatActivity {
 
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         mCollapsingToolbar.setTitle(mCar.getTitle());
 
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
-        mImageView.setImageBitmap(ImageCatcher.getBitmapFromAssets(getApplicationContext(), mCar.getNamePicture()));
+        mImageView.setImageBitmap(ImageCatcher.getBitmapFromAssets(getAssets(), mCar.getNamePicture()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return true;
     }
 }

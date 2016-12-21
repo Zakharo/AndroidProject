@@ -4,6 +4,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -32,7 +33,7 @@ public class DetailFragment extends Fragment {
 
     public static DetailFragment newInstance(Car car){
         Bundle arg = new Bundle();
-        arg.putSerializable(ARG_CAR, car);
+        arg.putParcelable(ARG_CAR, new Car(car.getTitle(), car.getDescription(), car.getNamePicture()));
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(arg);
         return fragment;
@@ -42,7 +43,9 @@ public class DetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCar = (Car)getArguments().get(ARG_CAR);
+        if (getArguments() != null){
+            mCar = (Car)getArguments().get(ARG_CAR);
+        }
     }
 
     @Nullable

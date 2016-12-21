@@ -2,6 +2,7 @@ package com.example.vladzakharo.androidproject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +16,14 @@ import java.util.List;
 
 public class CarAdapter extends RecyclerView.Adapter<CarHolder> {
 
-    public static final String CAR_SERIALIZABLE = "car_title";
+    public static final String CAR_PARCELABLE = "car_title";
 
     private List<Car> mCars;
-    private Context mContext;
+    private AssetManager mAssetManager;
 
-    public CarAdapter(List<Car> cars, Context context){
+    public CarAdapter(List<Car> cars, AssetManager assetManager){
         mCars = cars;
-        mContext = context;
+        mAssetManager = assetManager;
     }
 
     @Override
@@ -38,13 +39,13 @@ public class CarAdapter extends RecyclerView.Adapter<CarHolder> {
         holder.mTitleTextView.setText(car.getTitle());
         holder.mDescriptionTextView.setText(car.getDescription());
 
-        holder.mImageView.setImageBitmap(ImageCatcher.getBitmapFromAssets(mContext, car.getNamePicture()));
+        holder.mImageView.setImageBitmap(ImageCatcher.getBitmapFromAssets(mAssetManager, car.getNamePicture()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                intent.putExtra(CAR_SERIALIZABLE, car);
+                intent.putExtra(CAR_PARCELABLE, new Car(car.getTitle(), car.getDescription(), car.getNamePicture()));
                 v.getContext().startActivity(intent);
             }
         });

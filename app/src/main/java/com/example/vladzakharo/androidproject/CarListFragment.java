@@ -8,8 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import org.json.JSONException;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,13 +28,7 @@ public class CarListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try{
-            mCars = ItemsCatcher.parseItems(getActivity());
-        }catch (IOException ioe){
-            ioe.printStackTrace();
-        }catch (JSONException je){
-            je.printStackTrace();
-        }
+        mCars = ItemsCatcher.parseItems(getActivity());
     }
 
     @Nullable
@@ -51,7 +43,7 @@ public class CarListFragment extends Fragment {
     }
 
     private void updateUi(){
-        mCarAdapter = new CarAdapter(mCars, getActivity());
+        mCarAdapter = new CarAdapter(mCars, getActivity().getAssets());
         mCarRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         mCarRecyclerView.setAdapter(mCarAdapter);
     }
