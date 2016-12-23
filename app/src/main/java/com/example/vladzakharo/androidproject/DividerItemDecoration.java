@@ -3,91 +3,74 @@ package com.example.vladzakharo.androidproject;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.FloatRange;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
  * Created by Vlad Zakharo on 15.12.2016.
  */
 
-public class DividerItemDecoration extends RecyclerView.ItemDecoration {
+class SeparatorDecoration extends RecyclerView.ItemDecoration {
 
-    private static final int[] ATTRS = new int[]{
-            android.R.attr.listDivider
-    };
+    private final Paint mPaint;
 
-    public static final int HORIZONTAL_LIST = LinearLayoutManager.HORIZONTAL;
-
-    public static final int VERTICAL_LIST = LinearLayoutManager.VERTICAL;
-
-    private Drawable mDivider;
-
-    private int mOrientation;
-
-    public DividerItemDecoration(Context context, int orientation) {
-        final TypedArray a = context.obtainStyledAttributes(ATTRS);
-        mDivider = a.getDrawable(0);
-        a.recycle();
-        setOrientation(orientation);
-    }
-
-    public void setOrientation(int orientation) {
-        if (orientation != HORIZONTAL_LIST && orientation != VERTICAL_LIST) {
-            throw new IllegalArgumentException("invalid orientation");
-        }
-        mOrientation = orientation;
-    }
-
-    @Override
-    public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        if (mOrientation == VERTICAL_LIST) {
-            drawVertical(c, parent);
-        } else {
-            drawHorizontal(c, parent);
-        }
-    }
-
-    public void drawVertical(Canvas c, RecyclerView parent) {
-        final int left = parent.getPaddingLeft();
-        final int right = parent.getWidth() - parent.getPaddingRight();
-
-        final int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = parent.getChildAt(i);
-            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child
-                    .getLayoutParams();
-            final int top = child.getBottom() + params.bottomMargin;
-            final int bottom = top + mDivider.getIntrinsicHeight();
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
-        }
-    }
-
-    public void drawHorizontal(Canvas c, RecyclerView parent) {
-        final int top = parent.getPaddingTop();
-        final int bottom = parent.getHeight() - parent.getPaddingBottom();
-
-        final int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = parent.getChildAt(i);
-            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child
-                    .getLayoutParams();
-            final int left = child.getRight() + params.rightMargin;
-            final int right = left + mDivider.getIntrinsicHeight();
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
-        }
+    /**
+     * Create a decoration that draws a line in the given color and width between the items in the view.
+     *
+     * @param context  a context to access the resources.
+     * @param color    the color of the separator to draw.
+     * @param heightDp the height of the separator in dp.
+     */
+    public SeparatorDecoration(@NonNull Context context, @ColorInt int color,
+                               @FloatRange(from = 0, fromInclusive = false) float heightDp) {
+        mPaint = new Paint();
+        mPaint.setColor(color);
+        final float thickness = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                heightDp, context.getResources().getDisplayMetrics());
+        mPaint.setStrokeWidth(thickness);
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        if (mOrientation == VERTICAL_LIST) {
-            outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
+        final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
+
+        // we want to retrieve the position in the list
+        final int position = params.getViewAdapterPosition();
+
+        // and add a separator to any view but the last one
+        if (position < state.getItemCount()) {
+            outRect.set(0, 0, 0, (int) mPaint.getStrokeWidth()); // left, top, right, bottom
         } else {
-            outRect.set(0, 0, mDivider.getIntrinsicWidth(), 0);
+            outRect.setEmpty(); // 0, 0, 0, 0
+        }
+    }
+
+    @Override
+    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+        // we set the stroke width before, so as to correctly draw the line we have to offset by width / 2
+        final int offset = (int) (mPaint.getStrokeWidth() / 2);
+
+        // this will iterate over every visible view
+        for (int i = 1; i < parent.getChildCount(); i++) {
+            // get the view
+            final View view = parent.getChildAt(i);
+            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
+
+            // get the position
+            final int position = params.getViewAdapterPosition();
+
+            // and finally draw the separator
+            if (position < state.getItemCount()) {
+                c.drawLine(view.getLeft(), view.getBottom() + offset, view.getRight(), view.getBottom() + offset, mPaint);
+            }
         }
     }
 }

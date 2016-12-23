@@ -2,4 +2,5 @@
     <string name="app_name">AndroidProject</string>
     <string name="title">title</string>
     <string name="description">description</string>
+    <string name="title_cars">Cars</string>
 </resources>
