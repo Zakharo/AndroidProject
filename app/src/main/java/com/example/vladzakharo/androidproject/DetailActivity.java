@@ -40,7 +40,7 @@ public class DetailActivity extends AppCompatActivity {
         mCollapsingToolbar.setTitle(mCar.getTitle());
 
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
-        mImageView.setImageBitmap(ImageCatcher.getBitmapFromAssets(getAssets(), mCar.getNamePicture()));
+        new DownloadImageTask(mImageView).execute(mCar.getNamePicture());
     }
 
     @Override

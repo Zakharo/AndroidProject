@@ -3,13 +3,22 @@ package com.example.vladzakharo.androidproject;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -23,11 +32,11 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_HEADER = 2;
 
     private List<Car> mCars;
-    private AssetManager mAssetManager;
+    public Context mContext;
 
-    public CarAdapter(List<Car> cars, AssetManager assetManager){
+    public CarAdapter(List<Car> cars, Context context){
         mCars = cars;
-        mAssetManager = assetManager;
+        mContext = context;
     }
 
     public Car getCar(int pos) {
@@ -52,7 +61,9 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             mTitleTextView.setText(car.getTitle());
             mDescriptionTextView.setText(car.getDescription());
-            mImageView.setImageBitmap(ImageCatcher.getBitmapFromAssets(mAssetManager, car.getNamePicture()));
+            Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
+            mImageView.setImageDrawable(placeholder);
+            new DownloadImageTask(mImageView).execute(car.getNamePicture());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

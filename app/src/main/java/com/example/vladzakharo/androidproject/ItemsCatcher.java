@@ -1,6 +1,8 @@
 package com.example.vladzakharo.androidproject;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +11,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +21,7 @@ import java.util.List;
  */
 
 public class ItemsCatcher {
-    private static JSONObject jObject;
+    private static final String TAG = "Items Catcher";
 
     private static final String CATEGORIES = "categories";
     private static final String DATA = "data";
@@ -25,36 +29,55 @@ public class ItemsCatcher {
     private static final String DESCRIPTION = "description";
     private static final String IMAGE_NAME = "image_name";
 
-    private static JSONObject getJsonObject(Context context) {
-        InputStream inputStream = context.getResources().openRawResource(R.raw.file);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-        int ctr;
+    public static byte[] getUrlBytes(String urlSpec) throws IOException {
+        URL url = new URL(urlSpec);
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         try {
-            ctr = inputStream.read();
-            while (ctr != -1) {
-                byteArrayOutputStream.write(ctr);
-                ctr = inputStream.read();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            InputStream in = connection.getInputStream();
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new IOException(connection.getResponseMessage() +
+                        ": with " +
+                        urlSpec);
             }
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            int bytesRead = 0;
+            byte[] buffer = new byte[1024];
+            while ((bytesRead = in.read(buffer)) > 0) {
+                out.write(buffer, 0, bytesRead);
+            }
+            out.close();
+            return out.toByteArray();
+        } finally {
+            connection.disconnect();
         }
-        try{
-            jObject = new JSONObject(byteArrayOutputStream.toString());
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return jObject;
+    }
+    public String getUrlString(String urlSpec) throws IOException {
+        return new String(getUrlBytes(urlSpec));
     }
 
-    public static List<Car> parseItems(Context context) {
-        List<Car> mCars = new ArrayList<>();
-        try{
-            jObject = getJsonObject(context);
+    public List<Car> fetchItems() {
+        List<Car> cars = new ArrayList<>();
+        try {
+            String url = Uri.parse("http://www.mocky.io/v2/5860f1ec1000007a04f3945d")
+                    .buildUpon()
+                    .build()
+                    .toString();
+            String jsonString = getUrlString(url);
+            JSONObject jsonBody = new JSONObject(jsonString);
+            parseItems(cars, jsonBody);
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to fetch items", ioe);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
+        }
 
-            JSONObject categoriesJsonObject = jObject.getJSONObject(CATEGORIES);
+        return cars;
+    }
+
+    private void parseItems(List<Car> mCars, JSONObject jsonBody) {
+        try{
+
+            JSONObject categoriesJsonObject = jsonBody.getJSONObject(CATEGORIES);
             JSONArray dataJsonArray = categoriesJsonObject.getJSONArray(DATA);
 
             for (int i = 0; i < dataJsonArray.length(); i++) {
@@ -68,9 +91,8 @@ public class ItemsCatcher {
 
                 mCars.add(car);
             }
-        }catch (JSONException je){
-            je.printStackTrace();
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
         }
-        return mCars;
     }
 }

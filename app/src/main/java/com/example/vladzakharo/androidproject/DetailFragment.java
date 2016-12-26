@@ -33,7 +33,7 @@ public class DetailFragment extends Fragment {
 
     public static DetailFragment newInstance(Car car){
         Bundle arg = new Bundle();
-        arg.putParcelable(ARG_CAR, new Car(car.getTitle(), car.getDescription(), car.getNamePicture()));
+        arg.putParcelable(ARG_CAR, car);
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(arg);
         return fragment;
