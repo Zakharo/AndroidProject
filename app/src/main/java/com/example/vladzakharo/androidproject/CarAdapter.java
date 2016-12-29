@@ -7,13 +7,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.LruCache;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,10 +38,15 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Car> mCars;
     public Context mContext;
+    private ImageCache mCache;
 
-    public CarAdapter(List<Car> cars, Context context){
+    private CustomTabsIntent mCustomTabsIntent;
+    private CustomTabsIntent.Builder intentBuilder;
+
+    public CarAdapter(List<Car> cars, Context context, ImageCache cache){
         mCars = cars;
         mContext = context;
+        mCache = cache;
     }
 
     public Car getCar(int pos) {
@@ -63,13 +73,29 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mDescriptionTextView.setText(car.getDescription());
             Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
             mImageView.setImageDrawable(placeholder);
-            new DownloadImageTask(mImageView).execute(car.getNamePicture());
+
+            Bitmap bitmap = mCache.getBitmapFromMemoryCache(car.getNamePicture());
+            if (bitmap != null) {
+                mImageView.setImageBitmap(bitmap);
+            } else {
+                new DownloadImageTask(mImageView, mCache).execute(car.getNamePicture());
+            }
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                    intent.putExtra(CAR_PARCELABLE, new Car(car.getTitle(), car.getDescription(), car.getNamePicture()));
-                    v.getContext().startActivity(intent);
+                    if (URLUtil.isValidUrl(car.getDescription())) {
+                        intentBuilder = new CustomTabsIntent.Builder();
+                        intentBuilder.setToolbarColor(mContext.getResources().getColor(R.color.colorPrimary));
+                        intentBuilder.setShowTitle(true);
+                        mCustomTabsIntent = intentBuilder.build();
+                        mCustomTabsIntent.launchUrl(DetailActivity.activity, Uri.parse(car.getDescription()));
+
+                    } else {
+                        Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                        intent.putExtra(CAR_PARCELABLE, car);
+                        v.getContext().startActivity(intent);
+                    }
                 }
             });
         }

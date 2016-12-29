@@ -1,5 +1,7 @@
 package com.example.vladzakharo.androidproject;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,15 +19,21 @@ public class DetailActivity extends AppCompatActivity {
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mImageView;
     private Toolbar mToolbar;
+    private static ImageCache mCache;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        activity = this;
+
         if (getIntent() != null){
             mCar = getIntent().getParcelableExtra(CarAdapter.CAR_PARCELABLE);
         }
+
+        mCache = ImageCache.getInstance();
 
         fm = getSupportFragmentManager();
         fm.beginTransaction()
@@ -40,7 +48,12 @@ public class DetailActivity extends AppCompatActivity {
         mCollapsingToolbar.setTitle(mCar.getTitle());
 
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
-        new DownloadImageTask(mImageView).execute(mCar.getNamePicture());
+        Bitmap bitmap = mCache.getBitmapFromMemoryCache(mCar.getNamePicture());
+        if (bitmap != null) {
+            mImageView.setImageBitmap(bitmap);
+        } else {
+            new DownloadImageTask(mImageView, mCache).execute(mCar.getNamePicture());
+        }
     }
 
     @Override

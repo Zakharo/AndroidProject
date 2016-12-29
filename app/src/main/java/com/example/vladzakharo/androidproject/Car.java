@@ -16,12 +16,6 @@ public class Car implements Parcelable{
 
     }
 
-    public Car (String title, String description, String namePicture){
-        mTitle = title;
-        mDescription = description;
-        mNamePicture = namePicture;
-    }
-
     public Car (Parcel parcel){
         String[] data = new String[3];
         parcel.readStringArray(data);

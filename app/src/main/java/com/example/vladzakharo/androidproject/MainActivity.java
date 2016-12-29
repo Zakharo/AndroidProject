@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mCarRecyclerView;
     private CarAdapter mCarAdapter;
     private List<Car> mCars = new ArrayList<>();
+    private static ImageCache mCache;
 
     private static final String TAG = "Main Activity";
 
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mCache = ImageCache.getInstance();
+        mCache.initializeCache();
+
         new CatchItemsTask().execute();
 
         mCarRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -34,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUi(){
-        mCarAdapter = new CarAdapter(mCars, getApplicationContext());
+        mCarAdapter = new CarAdapter(mCars, getApplicationContext(), mCache);
         SeparatorDecoration decoration = new SeparatorDecoration(this, getResources().getColor(R.color.colorPrimary), 0.5f);
         mCarRecyclerView.addItemDecoration(decoration);
         mCarRecyclerView.setAdapter(mCarAdapter);

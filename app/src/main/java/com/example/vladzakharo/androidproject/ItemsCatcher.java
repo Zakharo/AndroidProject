@@ -58,7 +58,7 @@ public class ItemsCatcher {
     public List<Car> fetchItems() {
         List<Car> cars = new ArrayList<>();
         try {
-            String url = Uri.parse("http://www.mocky.io/v2/5860f1ec1000007a04f3945d")
+            String url = Uri.parse("http://www.mocky.io/v2/5864d42f1100003b07cf8d26")
                     .buildUpon()
                     .build()
                     .toString();
