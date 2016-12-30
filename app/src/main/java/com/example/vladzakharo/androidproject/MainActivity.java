@@ -1,16 +1,10 @@
 package com.example.vladzakharo.androidproject;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
         mCache = ImageCache.getInstance();
         mCache.initializeCache();
+
+        //File cacheDir = DiskCache.getDiskCacheDir(this, DiskCache.DISK_CACHE_SUBDIR);
+
 
         new CatchItemsTask().execute();
 
