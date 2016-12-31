@@ -29,6 +29,8 @@ public class ItemsCatcher {
     private static final String DESCRIPTION = "description";
     private static final String IMAGE_NAME = "image_name";
 
+    private final String mUrl = "http://www.mocky.io/v2/5864d42f1100003b07cf8d26";
+
     public static byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
@@ -58,11 +60,7 @@ public class ItemsCatcher {
     public List<Car> fetchItems() {
         List<Car> cars = new ArrayList<>();
         try {
-            String url = Uri.parse("http://www.mocky.io/v2/5864d42f1100003b07cf8d26")
-                    .buildUpon()
-                    .build()
-                    .toString();
-            String jsonString = getUrlString(url);
+            String jsonString = getUrlString(mUrl);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(cars, jsonBody);
         } catch (IOException ioe) {

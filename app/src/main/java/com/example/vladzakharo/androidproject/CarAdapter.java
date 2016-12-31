@@ -38,15 +38,14 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Car> mCars;
     public Context mContext;
-    private ImageCache mCache;
+    private ImageCache mCache = ImageCache.getInstance();
 
     private CustomTabsIntent mCustomTabsIntent;
     private CustomTabsIntent.Builder intentBuilder;
 
-    public CarAdapter(List<Car> cars, Context context, ImageCache cache){
+    public CarAdapter(List<Car> cars, Context context){
         mCars = cars;
         mContext = context;
-        mCache = cache;
     }
 
     public Car getCar(int pos) {
@@ -78,7 +77,10 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (bitmap != null) {
                 mImageView.setImageBitmap(bitmap);
             } else {
-                new DownloadImageTask(mImageView, mCache).execute(car.getNamePicture());
+                Loader.getImageLoader()
+                        .from(car.getNamePicture())
+                        .to(mImageView)
+                        .load();
             }
 
             itemView.setOnClickListener(new View.OnClickListener() {

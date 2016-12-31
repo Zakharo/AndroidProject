@@ -1,19 +1,29 @@
 package com.example.vladzakharo.androidproject;
 
 import android.os.AsyncTask;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.*;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Car>> {
 
     private RecyclerView mCarRecyclerView;
     private CarAdapter mCarAdapter;
     private List<Car> mCars = new ArrayList<>();
     private static ImageCache mCache;
+    public static final String URL = "http://www.mocky.io/v2/5864d42f1100003b07cf8d26";
+    public static final String BUNDLE_URL = "bundle_url";
+    private static final int LOADER_ID = 0;
+    private Loader<List<Car>> mLoader;
 
     private static final String TAG = "Main Activity";
 
@@ -25,31 +35,41 @@ public class MainActivity extends AppCompatActivity {
         mCache = ImageCache.getInstance();
         mCache.initializeCache();
 
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_URL, URL);
+        getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
+        mLoader = getSupportLoaderManager().getLoader(LOADER_ID);
+        mLoader.forceLoad();
         //File cacheDir = DiskCache.getDiskCacheDir(this, DiskCache.DISK_CACHE_SUBDIR);
-
-
-        new CatchItemsTask().execute();
 
         mCarRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
 
     private void updateUi(){
-        mCarAdapter = new CarAdapter(mCars, getApplicationContext(), mCache);
+        mCarAdapter = new CarAdapter(mCars, getApplicationContext());
         SeparatorDecoration decoration = new SeparatorDecoration(this, getResources().getColor(R.color.colorPrimary), 0.5f);
         mCarRecyclerView.addItemDecoration(decoration);
         mCarRecyclerView.setAdapter(mCarAdapter);
     }
 
-    private class CatchItemsTask extends AsyncTask<Void, Void, List<Car>> {
-        @Override
-        protected List<Car> doInBackground(Void... params) {
-            return new ItemsCatcher().fetchItems();
+    @Override
+    public Loader<List<Car>> onCreateLoader(int id, Bundle args) {
+        Loader<List<Car>> loader = null;
+        if (id == LOADER_ID) {
+            loader = new JsonLoader(getApplicationContext());
         }
-        @Override
-        protected void onPostExecute(List<Car> cars) {
-            mCars = cars;
-            updateUi();
-        }
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Car>> loader, List<Car> data) {
+        mCars = data;
+        updateUi();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Car>> loader) {
+
     }
 }

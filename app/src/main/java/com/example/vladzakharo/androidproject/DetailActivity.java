@@ -52,7 +52,10 @@ public class DetailActivity extends AppCompatActivity {
         if (bitmap != null) {
             mImageView.setImageBitmap(bitmap);
         } else {
-            new DownloadImageTask(mImageView, mCache).execute(mCar.getNamePicture());
+            Loader.getImageLoader()
+                    .from(mCar.getNamePicture())
+                    .to(mImageView)
+                    .load();
         }
     }
 
