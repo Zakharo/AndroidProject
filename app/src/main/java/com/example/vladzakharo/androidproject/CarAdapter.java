@@ -2,28 +2,14 @@ package com.example.vladzakharo.androidproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.LruCache;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -39,9 +25,6 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Car> mCars;
     public Context mContext;
     private ImageCache mCache = ImageCache.getInstance();
-
-    private CustomTabsIntent mCustomTabsIntent;
-    private CustomTabsIntent.Builder intentBuilder;
 
     public CarAdapter(List<Car> cars, Context context){
         mCars = cars;
@@ -86,18 +69,9 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (URLUtil.isValidUrl(car.getDescription())) {
-                        intentBuilder = new CustomTabsIntent.Builder();
-                        intentBuilder.setToolbarColor(mContext.getResources().getColor(R.color.colorPrimary));
-                        intentBuilder.setShowTitle(true);
-                        mCustomTabsIntent = intentBuilder.build();
-                        mCustomTabsIntent.launchUrl(DetailActivity.activity, Uri.parse(car.getDescription()));
-
-                    } else {
-                        Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                        intent.putExtra(CAR_PARCELABLE, car);
-                        v.getContext().startActivity(intent);
-                    }
+                    Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                    intent.putExtra(CAR_PARCELABLE, car);
+                    v.getContext().startActivity(intent);
                 }
             });
         }

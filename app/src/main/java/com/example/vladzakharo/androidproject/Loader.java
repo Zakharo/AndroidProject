@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by Vlad Zakharo on 31.12.2016.
@@ -20,6 +21,7 @@ public class Loader {
 
     private static final String TAG = "Loader";
     private static ImageCache mImageCache;
+    private static final ExecutorService EXECUTOR_SERVICE = ImageExecutor.threadPoolExecutor;
 
     private Loader() {
     }
@@ -47,7 +49,7 @@ public class Loader {
 
         public void load() {
             if (mUrl != null && mImageView != null) {
-                new DownloadImageTask(this).execute();
+                new DownloadImageTask(this).executeOnExecutor(EXECUTOR_SERVICE);
             }
         }
     }

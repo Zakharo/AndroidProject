@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private CarAdapter mCarAdapter;
     private List<Car> mCars = new ArrayList<>();
     private static ImageCache mCache;
-    public static final String URL = "http://www.mocky.io/v2/5864d42f1100003b07cf8d26";
+    public static final String URL = "http://www.mocky.io/v2/586a58e3110000550e261e66";
     public static final String BUNDLE_URL = "bundle_url";
     private static final int LOADER_ID = 0;
     private Loader<List<Car>> mLoader;

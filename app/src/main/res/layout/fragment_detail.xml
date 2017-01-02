@@ -17,5 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/detail_text_view"
-        android:text="Hello World!"/>
+        android:text="Hello World!"
+        android:autoLink="web"/>
 </LinearLayout>
