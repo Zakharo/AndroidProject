@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 
@@ -73,6 +72,7 @@ public class Loader {
                 Log.e(TAG, "Something wrong with url", ioe);
             }
             mImageCache.addBitmapToMemoryCache(mImageLoader.mUrl, downloadBitmap);
+            DiskCache.addBitmapToDiskCache(mImageLoader.mUrl, downloadBitmap);
             return downloadBitmap;
         }
 

@@ -3,7 +3,9 @@ package com.example.vladzakharo.androidproject;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +25,9 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_HEADER = 2;
 
     private List<Car> mCars;
-    public Context mContext;
+    private Context mContext;
     private ImageCache mCache = ImageCache.getInstance();
+    private DiskCache mDiskCache;
 
     public CarAdapter(List<Car> cars, Context context){
         mCars = cars;

@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final String BUNDLE_URL = "bundle_url";
     private static final int LOADER_ID = 0;
     private Loader<List<Car>> mLoader;
+    private static final String DISK_CACHE_SUBDIR = "thumbnails";
 
     private static final String TAG = "Main Activity";
 
@@ -40,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
         mLoader = getSupportLoaderManager().getLoader(LOADER_ID);
         mLoader.forceLoad();
-        //File cacheDir = DiskCache.getDiskCacheDir(this, DiskCache.DISK_CACHE_SUBDIR);
+
+        File cacheDir = DiskCache.getDiskCacheDir(this, DISK_CACHE_SUBDIR);
+        new DiskCache.InitDiskCacheTask().execute(cacheDir);
 
         mCarRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));

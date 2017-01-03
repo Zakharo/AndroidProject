@@ -2,6 +2,9 @@ package com.example.vladzakharo.androidproject;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +23,7 @@ public class DetailActivity extends AppCompatActivity {
     private ImageView mImageView;
     private Toolbar mToolbar;
     private static ImageCache mCache;
+    private DiskCache mDiskCache;
     public static Activity activity;
 
     @Override
@@ -46,12 +50,14 @@ public class DetailActivity extends AppCompatActivity {
 
         mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         mCollapsingToolbar.setTitle(mCar.getTitle());
-
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
+
         Bitmap bitmap = mCache.getBitmapFromMemoryCache(mCar.getNamePicture());
         if (bitmap != null) {
             mImageView.setImageBitmap(bitmap);
-        } else {
+        }
+        new DiskCache.GetBitmapFromDiskCacheTask(mImageView).execute(mCar.getNamePicture());
+        if (!(hasImage(mImageView))) {
             Loader.getImageLoader()
                     .from(mCar.getNamePicture())
                     .to(mImageView)
@@ -65,5 +71,16 @@ public class DetailActivity extends AppCompatActivity {
             finish();
         }
         return true;
+    }
+
+    private boolean hasImage(@NonNull ImageView view) {
+        Drawable drawable = view.getDrawable();
+        boolean hasImage = (drawable != null);
+
+        if (hasImage && (drawable instanceof BitmapDrawable)) {
+            hasImage = ((BitmapDrawable)drawable).getBitmap() != null;
+        }
+
+        return hasImage;
     }
 }
