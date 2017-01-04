@@ -18,10 +18,6 @@ public class NewCustomChromeTab extends URLSpan {
         super(url);
     }
 
-    public NewCustomChromeTab(Parcel src) {
-        super(src);
-    }
-
     @Override
     public void onClick(View view) {
         String url = getURL();

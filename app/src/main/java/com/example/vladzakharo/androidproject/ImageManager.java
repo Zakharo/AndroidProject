@@ -16,13 +16,13 @@ import java.util.concurrent.ExecutorService;
  * Created by Vlad Zakharo on 31.12.2016.
  */
 
-public class Loader {
+public class ImageManager {
 
-    private static final String TAG = "Loader";
+    private static final String TAG = "ImageManager";
     private static ImageCache mImageCache;
     private static final ExecutorService EXECUTOR_SERVICE = ImageExecutor.threadPoolExecutor;
 
-    private Loader() {
+    private ImageManager() {
     }
 
     public static ImageLoader getImageLoader() {

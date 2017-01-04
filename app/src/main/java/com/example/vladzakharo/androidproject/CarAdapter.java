@@ -63,7 +63,7 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (bitmap != null) {
                 mImageView.setImageBitmap(bitmap);
             } else {
-                Loader.getImageLoader()
+                ImageManager.getImageLoader()
                         .from(car.getNamePicture())
                         .to(mImageView)
                         .load();

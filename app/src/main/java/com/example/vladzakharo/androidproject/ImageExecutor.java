@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class ImageExecutor {
     private static final int corePoolSize = Runtime.getRuntime().availableProcessors();
     private static final int maxPoolSize = corePoolSize;
-    private static final int keepAliveTime = 10;
+    private static final int keepAliveTime = 1;
     private static final TimeUnit timeUnit = TimeUnit.SECONDS;
     private static final BlockingQueue<Runnable> mBlockingQueue = new LinkedBlockingDeque<>();
 

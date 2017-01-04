@@ -58,7 +58,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         new DiskCache.GetBitmapFromDiskCacheTask(mImageView).execute(mCar.getNamePicture());
         if (!(hasImage(mImageView))) {
-            Loader.getImageLoader()
+            ImageManager.getImageLoader()
                     .from(mCar.getNamePicture())
                     .to(mImageView)
                     .load();
