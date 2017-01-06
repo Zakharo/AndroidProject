@@ -1,5 +1,6 @@
 package com.example.vladzakharo.androidproject;
 
+import android.app.Activity;
 import android.graphics.Rect;
 import android.text.Spannable;
 import android.text.Spanned;
@@ -8,11 +9,19 @@ import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Created by Vlad Zakharo on 02.01.2017.
  */
 
 public class LinkTransformationMethod implements TransformationMethod {
+
+    private WeakReference<Activity> mActivity;
+
+    public LinkTransformationMethod(Activity activity) {
+        this.mActivity = new WeakReference<>(activity);
+    }
     @Override
     public CharSequence getTransformation(CharSequence source, View view) {
         TextView textView = (TextView) view;
@@ -28,7 +37,7 @@ public class LinkTransformationMethod implements TransformationMethod {
             int start = text.getSpanStart(span);
             int end = text.getSpanEnd(span);
             text.removeSpan(span);
-            text.setSpan(new NewCustomChromeTab(url), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(new NewCustomChromeTab(url, mActivity), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return text;
     }

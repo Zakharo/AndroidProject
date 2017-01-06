@@ -26,8 +26,8 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Car> mCars;
     private Context mContext;
-    private ImageCache mCache = ImageCache.getInstance();
-    private DiskCache mDiskCache;
+
+    private static  ImageManager sImageManager = ImageManager.getInstance();
 
     public CarAdapter(List<Car> cars, Context context){
         mCars = cars;
@@ -42,6 +42,7 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public ImageView mImageView;
         public TextView mTitleTextView;
         public TextView mDescriptionTextView;
+
 
         public CarHolder(View itemView) {
             super(itemView);
@@ -59,15 +60,11 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
             mImageView.setImageDrawable(placeholder);
 
-            Bitmap bitmap = mCache.getBitmapFromMemoryCache(car.getNamePicture());
-            if (bitmap != null) {
-                mImageView.setImageBitmap(bitmap);
-            } else {
-                ImageManager.getImageLoader()
-                        .from(car.getNamePicture())
-                        .to(mImageView)
-                        .load();
-            }
+            sImageManager.getImageLoader(mContext)
+                    .from(car.getNamePicture())
+                    .to(mImageView)
+                    .load();
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

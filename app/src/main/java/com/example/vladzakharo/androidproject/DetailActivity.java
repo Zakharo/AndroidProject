@@ -22,22 +22,17 @@ public class DetailActivity extends AppCompatActivity {
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mImageView;
     private Toolbar mToolbar;
-    private static ImageCache mCache;
-    private DiskCache mDiskCache;
-    public static Activity activity;
+
+    private ImageManager sImageManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        activity = this;
-
         if (getIntent() != null){
             mCar = getIntent().getParcelableExtra(CarAdapter.CAR_PARCELABLE);
         }
-
-        mCache = ImageCache.getInstance();
 
         fm = getSupportFragmentManager();
         fm.beginTransaction()
@@ -52,17 +47,12 @@ public class DetailActivity extends AppCompatActivity {
         mCollapsingToolbar.setTitle(mCar.getTitle());
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
 
-        Bitmap bitmap = mCache.getBitmapFromMemoryCache(mCar.getNamePicture());
-        if (bitmap != null) {
-            mImageView.setImageBitmap(bitmap);
-        }
-        new DiskCache.GetBitmapFromDiskCacheTask(mImageView).execute(mCar.getNamePicture());
-        if (!(hasImage(mImageView))) {
-            ImageManager.getImageLoader()
-                    .from(mCar.getNamePicture())
-                    .to(mImageView)
-                    .load();
-        }
+        sImageManager = ImageManager.getInstance();
+        sImageManager.getImageLoader(getApplicationContext())
+                .from(mCar.getNamePicture())
+                .to(mImageView)
+                .load();
+
     }
 
     @Override
@@ -71,16 +61,5 @@ public class DetailActivity extends AppCompatActivity {
             finish();
         }
         return true;
-    }
-
-    private boolean hasImage(@NonNull ImageView view) {
-        Drawable drawable = view.getDrawable();
-        boolean hasImage = (drawable != null);
-
-        if (hasImage && (drawable instanceof BitmapDrawable)) {
-            hasImage = ((BitmapDrawable)drawable).getBitmap() != null;
-        }
-
-        return hasImage;
     }
 }

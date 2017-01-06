@@ -1,11 +1,12 @@
 package com.example.vladzakharo.androidproject;
 
+import android.app.Activity;
 import android.net.Uri;
-import android.os.Parcel;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.content.ContextCompat;
 import android.text.style.URLSpan;
 import android.view.View;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by Vlad Zakharo on 02.01.2017.
@@ -14,8 +15,11 @@ import android.view.View;
 public class NewCustomChromeTab extends URLSpan {
 
     private CustomTabsIntent.Builder intentBuilder;
-    public NewCustomChromeTab(String url) {
+    private WeakReference<Activity> mActivity;
+
+    public NewCustomChromeTab(String url, WeakReference<Activity> activity) {
         super(url);
+        mActivity = activity;
     }
 
     @Override
@@ -24,7 +28,7 @@ public class NewCustomChromeTab extends URLSpan {
         intentBuilder = new CustomTabsIntent.Builder();
         intentBuilder.setToolbarColor(view.getResources().getColor(R.color.colorPrimary));
         CustomTabsIntent intent = intentBuilder.build();
-        intent.launchUrl(DetailActivity.activity, Uri.parse(url));
+        Activity activity = mActivity.get();
+        intent.launchUrl(activity, Uri.parse(url));
     }
-
 }

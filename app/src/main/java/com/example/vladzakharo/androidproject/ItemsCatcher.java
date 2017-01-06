@@ -58,7 +58,7 @@ public class ItemsCatcher {
     public List<Car> fetchItems() {
         List<Car> cars = new ArrayList<>();
         try {
-            String jsonString = getUrlString(MainActivity.URL);
+            String jsonString = getUrlString(Constants.URL);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(cars, jsonBody);
         } catch (IOException ioe) {

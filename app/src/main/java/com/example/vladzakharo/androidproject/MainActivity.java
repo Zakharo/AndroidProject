@@ -20,12 +20,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private RecyclerView mCarRecyclerView;
     private CarAdapter mCarAdapter;
     private List<Car> mCars = new ArrayList<>();
-    private static ImageCache mCache;
-    public static final String URL = "http://www.mocky.io/v2/586a58e3110000550e261e66";
     public static final String BUNDLE_URL = "bundle_url";
     private static final int LOADER_ID = 0;
     private Loader<List<Car>> mLoader;
-    private static final String DISK_CACHE_SUBDIR = "thumbnails";
 
     private static final String TAG = "Main Activity";
 
@@ -34,17 +31,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCache = ImageCache.getInstance();
-        mCache.initializeCache();
-
         Bundle bundle = new Bundle();
-        bundle.putString(BUNDLE_URL, URL);
+        bundle.putString(BUNDLE_URL, Constants.URL);
         getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
         mLoader = getSupportLoaderManager().getLoader(LOADER_ID);
         mLoader.forceLoad();
-
-        File cacheDir = DiskCache.getDiskCacheDir(this, DISK_CACHE_SUBDIR);
-        new DiskCache.InitDiskCacheTask().execute(cacheDir);
 
         mCarRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));

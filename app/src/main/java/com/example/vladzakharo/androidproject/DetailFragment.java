@@ -1,5 +1,6 @@
 package com.example.vladzakharo.androidproject;
 
+import android.app.Activity;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,7 +56,8 @@ public class DetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         mTextView = (TextView) view.findViewById(R.id.detail_text_view);
         mTextView.setText(mCar.getDescription());
-        mTextView.setTransformationMethod(new LinkTransformationMethod());
+        Activity activity = getActivity();
+        mTextView.setTransformationMethod(new LinkTransformationMethod(activity));
         mTextView.setMovementMethod(LinkMovementMethod.getInstance());
         return view;
     }
