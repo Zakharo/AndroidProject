@@ -9,14 +9,25 @@ import java.util.HashMap;
  */
 
 public class JsonParser {
-    private static HashMap<String, Converter> mConverters = new HashMap<>();
+    private HashMap<String, Converter> mConverters = new HashMap<>();
+
+    private static final String LIST_CONVERTER = "listConverter";
 
     public JsonParser() {
         mConverters.put(Car.class.getName(), new CarConverter());
+        mConverters.put(LIST_CONVERTER, new CarToListConverter());
     }
 
-    public static <T> T convert (Class<T> t, JSONObject jsonObject) {
+    public <T> T convert (Class<T> t, JSONObject jsonObject) {
         Converter<T> converter = mConverters.get(t.getName());
+        if (converter != null) {
+            return converter.convert(jsonObject);
+        }
+        return null;
+    }
+
+    public <T> T convertToList (JSONObject jsonObject) {
+        Converter<T> converter = mConverters.get(LIST_CONVERTER);
         if (converter != null) {
             return converter.convert(jsonObject);
         }

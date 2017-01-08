@@ -18,12 +18,8 @@ import java.util.List;
 
 public class JsonLoader extends AsyncTaskLoader<List<Car>> {
 
-    private static String mStringJsonObject;
-    private static List<Car> mCars = new ArrayList<>();
+    private String mStringJsonObject;
     private static final String TAG = "JsonLoader";
-
-    private static final String CATEGORIES = "categories";
-    private static final String DATA = "data";
 
     public JsonLoader(Context context) {
         super(context);
@@ -31,19 +27,14 @@ public class JsonLoader extends AsyncTaskLoader<List<Car>> {
 
     @Override
     public List<Car> loadInBackground() {
-        /*mStringJsonObject = JsonFetcher.getJsonObject(Constants.URL);
+        mStringJsonObject = JsonFetcher.getJsonObject(Constants.URL);
+        JSONObject jsonObject = null;
         try {
-            JSONObject jsonObject = new JSONObject(mStringJsonObject);
-            JSONObject categoriesJsonObject = jsonObject.getJSONObject(CATEGORIES);
-            JSONArray dataJsonArray = categoriesJsonObject.getJSONArray(DATA);
-            for (int i = 0; i < dataJsonArray.length(); i++) {
-                JSONObject dataJsonObject = dataJsonArray.getJSONObject(i);
-                mCars.add(JsonParser.convert(Car.class, dataJsonObject));
-            }
+            jsonObject = new JSONObject(mStringJsonObject);
         } catch (JSONException je) {
             Log.e(TAG, "json problems", je);
         }
-        return mCars;*/
-        return new ItemsCatcher().fetchItems();
+        List<Car> cars = new JsonParser().convertToList(jsonObject);
+        return cars;
     }
 }

@@ -27,7 +27,7 @@ public class DiskCache {
     private static final int APP_VERSION = 1;
     private static final int VALUE_COUNT = 1;
     private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10;
-    public static final String TAG = "DiskCache";
+    private static final String TAG = "DiskCache";
 
     private static DiskCache mDiskCache;
 
