@@ -13,6 +13,7 @@ import org.json.JSONObject;
 public class CarConverter implements Converter<Car> {
     private static final String TAG = "CarConverter";
 
+    private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String DESCRIPTION = "description";
     private static final String IMAGE_NAME = "image_name";
@@ -22,6 +23,7 @@ public class CarConverter implements Converter<Car> {
     public Car convert(JSONObject jsonObject) {
         Car car = new Car();
         try {
+            car.setId(jsonObject.getInt(ID));
             car.setTitle(jsonObject.getString(TITLE));
             car.setDescription(jsonObject.getString(DESCRIPTION));
             car.setNamePicture(jsonObject.getString(IMAGE_NAME));

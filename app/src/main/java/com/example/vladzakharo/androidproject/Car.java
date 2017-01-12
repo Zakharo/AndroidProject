@@ -1,5 +1,6 @@
 package com.example.vladzakharo.androidproject;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,17 +12,24 @@ public class Car implements Parcelable{
     private String mTitle;
     private String mDescription;
     private String mNamePicture;
+    private int mId;
+
+    private Car(int id, String title, String description, String namePicture) {
+        this.mId = id;
+        this.mTitle = title;
+        this.mDescription = description;
+        this.mNamePicture = namePicture;
+    }
 
     public Car(){
 
     }
 
     public Car (Parcel parcel){
-        String[] data = new String[3];
-        parcel.readStringArray(data);
-        mTitle = data[0];
-        mDescription = data[1];
-        mNamePicture = data[2];
+        mTitle = parcel.readString();
+        mDescription = parcel.readString();
+        mNamePicture = parcel.readString();
+        mId = parcel.readInt();
     }
 
     public String getNamePicture() {
@@ -48,6 +56,14 @@ public class Car implements Parcelable{
         mTitle = title;
     }
 
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
+    }
+
 
     @Override
     public int describeContents() {
@@ -56,7 +72,10 @@ public class Car implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] {mTitle, mDescription, mNamePicture});
+        dest.writeString(mTitle);
+        dest.writeString(mDescription);
+        dest.writeString(mNamePicture);
+        dest.writeInt(mId);
     }
 
     public static final Parcelable.Creator<Car> CREATOR = new Creator<Car>() {
@@ -70,4 +89,11 @@ public class Car implements Parcelable{
             return new Car[size];
         }
     };
+
+    public static Car getCarFromCursor(Cursor cursor) {
+        return new Car(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_ID)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.DB_NAME)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_IMAGE_URL)));
+    }
 }

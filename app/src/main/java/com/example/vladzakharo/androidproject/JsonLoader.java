@@ -18,7 +18,7 @@ import java.util.List;
 
 public class JsonLoader extends AsyncTaskLoader<List<Car>> {
 
-    private String mStringJsonObject;
+    //private String mStringJsonObject;
     private static final String TAG = "JsonLoader";
 
     public JsonLoader(Context context) {
@@ -27,7 +27,7 @@ public class JsonLoader extends AsyncTaskLoader<List<Car>> {
 
     @Override
     public List<Car> loadInBackground() {
-        mStringJsonObject = JsonFetcher.getJsonObject(Constants.URL);
+        String mStringJsonObject = JsonFetcher.getJsonObject(Constants.URL);
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(mStringJsonObject);

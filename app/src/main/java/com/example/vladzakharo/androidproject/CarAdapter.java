@@ -2,6 +2,7 @@ package com.example.vladzakharo.androidproject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -18,31 +19,30 @@ import java.util.List;
  * Created by Vlad Zakharo on 15.12.2016.
  */
 
-public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
     public static final String CAR_PARCELABLE = "car_title";
     private static final int VIEW_TYPE_NORMAL = 1;
     private static final int VIEW_TYPE_HEADER = 2;
 
-    private List<Car> mCars;
     private Context mContext;
+    //private RecyclerView mRecyclerView;
 
     private static  ImageManager sImageManager = ImageManager.getInstance();
 
-    public CarAdapter(List<Car> cars, Context context){
-        mCars = cars;
+    public CarAdapter(Context context, Cursor cursor){
+        super(context, cursor);
         mContext = context;
     }
 
-    public Car getCar(int pos) {
+    /*public Car getCar(int pos) {
         return mCars.get(pos - 1);
-    }
+    }*/
 
     public class CarHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
         public TextView mTitleTextView;
         public TextView mDescriptionTextView;
-
 
         public CarHolder(View itemView) {
             super(itemView);
@@ -52,8 +52,8 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mImageView = (ImageView) itemView.findViewById(R.id.car_picture);
         }
 
-        private void onBindViewHolder(int position) {
-            final Car car = getCar(position);
+        private void onBindViewHolder(Cursor cursor) {
+            final Car car = Car.getCarFromCursor(cursor);
 
             mTitleTextView.setText(car.getTitle());
             mDescriptionTextView.setText(car.getDescription());
@@ -102,10 +102,10 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
         if (holder.getItemViewType() == VIEW_TYPE_NORMAL) {
             if (holder instanceof CarHolder) {
-                ((CarHolder)holder).onBindViewHolder(position);
+                ((CarHolder)holder).onBindViewHolder(cursor);
             }
         }
     }
@@ -118,10 +118,10 @@ public class CarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return VIEW_TYPE_NORMAL;
     }
 
-    @Override
+    /*@Override
     public int getItemCount() {
         return mCars.size() + 1;
-    }
+    }*/
 
 
 }
