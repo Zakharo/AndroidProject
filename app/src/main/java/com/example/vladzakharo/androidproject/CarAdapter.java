@@ -21,7 +21,7 @@ import java.util.List;
 
 public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
-    public static final String CAR_PARCELABLE = "car_title";
+    public static final String CAR_ID = "car_id";
     private static final int VIEW_TYPE_NORMAL = 1;
     private static final int VIEW_TYPE_HEADER = 2;
 
@@ -35,9 +35,7 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
         mContext = context;
     }
 
-    /*public Car getCar(int pos) {
-        return mCars.get(pos - 1);
-    }*/
+
 
     public class CarHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
@@ -52,7 +50,7 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
             mImageView = (ImageView) itemView.findViewById(R.id.car_picture);
         }
 
-        private void onBindViewHolder(Cursor cursor) {
+        private void onBindViewHolder(final Cursor cursor) {
             final Car car = Car.getCarFromCursor(cursor);
 
             mTitleTextView.setText(car.getTitle());
@@ -70,7 +68,7 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                    intent.putExtra(CAR_PARCELABLE, car);
+                    intent.putExtra(CAR_ID, getItemId());
                     v.getContext().startActivity(intent);
                 }
             });
@@ -117,11 +115,4 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
         }
         return VIEW_TYPE_NORMAL;
     }
-
-    /*@Override
-    public int getItemCount() {
-        return mCars.size() + 1;
-    }*/
-
-
 }

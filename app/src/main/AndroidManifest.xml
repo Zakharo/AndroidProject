@@ -25,12 +25,12 @@
             android:name=".DetailActivity"
             android:theme="@style/AppTheme">
         </activity>
-        <!--<receiver android:name=".FirstReceiver">
+        <receiver android:name=".FirstReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
-        </receiver>-->
+        </receiver>
         <provider
             android:name=".CarsProvider"
             android:authorities="com.example.vladzakharo.provider.cars" />

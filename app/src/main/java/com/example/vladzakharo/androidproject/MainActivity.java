@@ -13,6 +13,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,8 +24,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecyclerView mCarRecyclerView;
+    private ProgressBar mProgressBar;
     private CarAdapter mCarAdapter;
-    private List<Car> mCars = new ArrayList<>();
     private static final int LOADER_ID = 0;
 
     private static final String TAG = "Main Activity";
@@ -36,9 +38,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Intent intentService = new Intent(this, UpdateDataService.class);
         startService(intentService);
 
-
-        mCarRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        mCarRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         updateUi();
 
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         SeparatorDecoration decoration = new SeparatorDecoration(this, getResources().getColor(R.color.colorPrimary), 0.5f);
         mCarRecyclerView.addItemDecoration(decoration);
         mCarRecyclerView.setAdapter(mCarAdapter);
+        mCarRecyclerView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -62,10 +65,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        //int i = cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_ID));
-        //Toast.makeText(getApplicationContext(), i, Toast.LENGTH_LONG).show();
-        //mCarAdapter.changeCursor(cursor);
-        Log.d("TAG", DatabaseUtils.dumpCursorToString(cursor));
+        mCarAdapter.changeCursor(cursor);
+        mProgressBar.setVisibility(View.GONE);
+        mCarRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override

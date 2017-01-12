@@ -1,7 +1,10 @@
 package com.example.vladzakharo.androidproject;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
@@ -19,6 +22,7 @@ import java.util.List;
 
 public class UpdateDataService extends IntentService {
     private static final String TAG = "UpdateDataService";
+    private static final int timeToWait = 1000 * 60 * 10;
 
     public UpdateDataService() {
         super(TAG);
@@ -51,6 +55,11 @@ public class UpdateDataService extends IntentService {
         } catch (RemoteException | OperationApplicationException re) {
             Log.e(TAG, "UpdateDataService", re);
         }
+
+        Intent i = new Intent(this, UpdateDataService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, i, 0);
+        AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeToWait, pendingIntent);
 
     }
 }
