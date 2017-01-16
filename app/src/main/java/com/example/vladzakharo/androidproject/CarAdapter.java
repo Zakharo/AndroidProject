@@ -68,7 +68,7 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                    intent.putExtra(CAR_ID, getItemId());
+                    intent.putExtra(CAR_ID, getPosition());
                     v.getContext().startActivity(intent);
                 }
             });

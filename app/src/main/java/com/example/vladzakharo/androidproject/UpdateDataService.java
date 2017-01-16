@@ -30,7 +30,7 @@ public class UpdateDataService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String mStringJsonObject = JsonFetcher.getJsonObject(Constants.URL);
+        String mStringJsonObject = HttpGetJson.GET(Constants.URL);
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(mStringJsonObject);

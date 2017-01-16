@@ -14,21 +14,22 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    private FragmentManager fm;
-    //private Car mCar;
     private int mCarId;
-
+    private TextView mTvDescription;
+    private ProgressBar mProgressBar;
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mImageView;
     private Toolbar mToolbar;
-
-    private ImageManager sImageManager;
+    private Activity mActivity;
 
     private static final int LOADER_ID = 2;
     private static final String KEY_CAR_ID = "keyCarId";
@@ -39,33 +40,23 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         setContentView(R.layout.activity_detail);
 
         if (getIntent() != null){
-            mCarId = getIntent().getIntExtra(CarAdapter.CAR_ID, 1);
+            mCarId = getIntent().getIntExtra(CarAdapter.CAR_ID, 0);
         }
 
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_CAR_ID, mCarId);
 
-        fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.detail_fragment_container, DetailFragment.newInstance(mCarId))
-                .commit();
-
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
+        mImageView = (ImageView) findViewById(R.id.toolbar_image);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_description);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mTvDescription = (TextView) findViewById(R.id.detail_text_view);
+        mActivity = this;
 
         getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
-
-        /*mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
-        mCollapsingToolbar.setTitle(mCar.getTitle());
-        mImageView = (ImageView) findViewById(R.id.toolbar_image);
-
-        sImageManager = ImageManager.getInstance();
-        sImageManager.getImageLoader(getApplicationContext())
-                .from(mCar.getNamePicture())
-                .to(mImageView)
-                .load();*/
-
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -86,14 +77,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mProgressBar.setVisibility(View.GONE);
+        if (data == null || !data.moveToFirst()) {
+            return;
+        }
         Car car = Car.getCarFromCursor(data);
-
-        mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         mCollapsingToolbar.setTitle(car.getTitle());
-        mImageView = (ImageView) findViewById(R.id.toolbar_image);
-
-        sImageManager = ImageManager.getInstance();
-        sImageManager.getImageLoader(this)
+        mTvDescription.setText(car.getDescription());
+        mTvDescription.setTransformationMethod(new LinkTransformationMethod(mActivity));
+        mTvDescription.setMovementMethod(LinkMovementMethod.getInstance());
+        ImageManager.getInstance().getImageLoader(this)
                 .from(car.getNamePicture())
                 .to(mImageView)
                 .load();

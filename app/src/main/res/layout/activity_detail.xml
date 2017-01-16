@@ -52,11 +52,24 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
-        <FrameLayout
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/detail_fragment_container">
-        </FrameLayout>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/detail_text_view"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

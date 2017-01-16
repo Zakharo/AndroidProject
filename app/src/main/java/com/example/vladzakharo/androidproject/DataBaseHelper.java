@@ -18,7 +18,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + DataBaseConstants.TABLE_CARS + "("
-                + DataBaseConstants.CAR_ID + " INTEGER PRIMARY KEY, "
+                + DataBaseConstants.CAR_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
                 + DataBaseConstants.CAR_TITLE + " TEXT, "
                 + DataBaseConstants.CAR_DESCRIPTION + " TEXT, "
                 + DataBaseConstants.CAR_IMAGE_URL + " TEXT" + " );");

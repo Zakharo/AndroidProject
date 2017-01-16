@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.*;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,16 +16,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecyclerView mCarRecyclerView;
     private ProgressBar mProgressBar;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private CarAdapter mCarAdapter;
     private static final int LOADER_ID = 0;
 
@@ -41,6 +38,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mCarRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Intent intentService = new Intent(getApplicationContext(), UpdateDataService.class);
+                startService(intentService);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         updateUi();
 
