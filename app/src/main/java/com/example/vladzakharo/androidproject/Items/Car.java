@@ -1,8 +1,10 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Items;
 
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.vladzakharo.androidproject.DataBase.DataBaseConstants;
 
 /**
  * Created by Vlad Zakharo on 15.12.2016.

@@ -1,8 +1,10 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.DataBase;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.example.vladzakharo.androidproject.DataBase.DataBaseConstants;
 
 /**
  * Created by Vlad Zakharo on 08.01.2017.

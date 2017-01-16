@@ -1,8 +1,10 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Reciever;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.example.vladzakharo.androidproject.Services.UpdateDataService;
 
 /**
  * Created by Vlad Zakharo on 08.01.2017.

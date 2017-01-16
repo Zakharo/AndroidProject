@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Http;
 
 import java.io.BufferedReader;
 import java.io.IOException;

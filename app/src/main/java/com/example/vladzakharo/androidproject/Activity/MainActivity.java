@@ -1,9 +1,7 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Activity;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.*;
 import android.support.v4.content.Loader;
@@ -12,10 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.example.vladzakharo.androidproject.Adapters.CarAdapter;
+import com.example.vladzakharo.androidproject.DataBase.CarsProvider;
+import com.example.vladzakharo.androidproject.Decoration.Decorator;
+import com.example.vladzakharo.androidproject.R;
+import com.example.vladzakharo.androidproject.Services.UpdateDataService;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void updateUi(){
         mCarAdapter = new CarAdapter(this, null);
-        SeparatorDecoration decoration = new SeparatorDecoration(this, getResources().getColor(R.color.colorPrimary), 0.5f);
+        Decorator decoration = new Decorator(this, getResources().getColor(R.color.colorPrimary), 0.5f);
         mCarRecyclerView.addItemDecoration(decoration);
         mCarRecyclerView.setAdapter(mCarAdapter);
         mCarRecyclerView.setVisibility(View.INVISIBLE);

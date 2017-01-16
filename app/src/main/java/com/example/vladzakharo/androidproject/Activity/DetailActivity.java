@@ -1,13 +1,8 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Activity;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -20,6 +15,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.vladzakharo.androidproject.Items.Car;
+import com.example.vladzakharo.androidproject.Adapters.CarAdapter;
+import com.example.vladzakharo.androidproject.DataBase.CarsProvider;
+import com.example.vladzakharo.androidproject.DataBase.DataBaseConstants;
+import com.example.vladzakharo.androidproject.Images.ImageManager;
+import com.example.vladzakharo.androidproject.Links.LinkTransformationMethod;
+import com.example.vladzakharo.androidproject.R;
 
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {

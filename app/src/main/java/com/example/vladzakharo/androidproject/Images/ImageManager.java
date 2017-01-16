@@ -1,12 +1,15 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Images;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ImageView;
+
+import com.example.vladzakharo.androidproject.Cache.DiskCache;
+import com.example.vladzakharo.androidproject.Cache.ImageCache;
+import com.example.vladzakharo.androidproject.Constants.Constants;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Services;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -9,6 +9,13 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
 import android.util.Log;
+
+import com.example.vladzakharo.androidproject.Constants.Constants;
+import com.example.vladzakharo.androidproject.Converters.JsonParser;
+import com.example.vladzakharo.androidproject.DataBase.CarsProvider;
+import com.example.vladzakharo.androidproject.DataBase.DataBaseConstants;
+import com.example.vladzakharo.androidproject.Http.HttpGetJson;
+import com.example.vladzakharo.androidproject.Items.Car;
 
 import org.json.JSONException;
 import org.json.JSONObject;

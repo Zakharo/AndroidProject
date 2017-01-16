@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Images;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;

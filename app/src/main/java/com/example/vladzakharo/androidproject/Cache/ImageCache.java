@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Cache;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;

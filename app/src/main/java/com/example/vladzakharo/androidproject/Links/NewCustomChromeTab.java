@@ -1,10 +1,12 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Links;
 
 import android.app.Activity;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.text.style.URLSpan;
 import android.view.View;
+
+import com.example.vladzakharo.androidproject.R;
 
 import java.lang.ref.WeakReference;
 

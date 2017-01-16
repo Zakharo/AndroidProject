@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Constants;
 
 /**
  * Created by Vlad Zakharo on 05.01.2017.

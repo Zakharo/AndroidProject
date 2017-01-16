@@ -1,35 +1,25 @@
-package com.example.vladzakharo.androidproject;
+package com.example.vladzakharo.androidproject.Decoration;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 
 /**
- * Created by Vlad Zakharo on 15.12.2016.
+ * Created by Vlad Zakharo on 16.01.2017.
  */
 
-class SeparatorDecoration extends RecyclerView.ItemDecoration {
+public class Decorator extends RecyclerView.ItemDecoration {
 
     private final Paint mPaint;
 
-    /**
-     * Create a decoration that draws a line in the given color and width between the items in the view.
-     *
-     * @param context  a context to access the resources.
-     * @param color    the color of the separator to draw.
-     * @param heightDp the height of the separator in dp.
-     */
-    public SeparatorDecoration(@NonNull Context context, @ColorInt int color,
+    public Decorator(@NonNull Context context, @ColorInt int color,
                                @FloatRange(from = 0, fromInclusive = false) float heightDp) {
         mPaint = new Paint();
         mPaint.setColor(color);
