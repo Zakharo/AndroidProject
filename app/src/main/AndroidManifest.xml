@@ -2,40 +2,51 @@
 <manifest package="com.example.vladzakharo.androidproject"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.QUICKBOOT_POWERON"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true">
-        <activity android:name=".Activity.MainActivity"
-                  android:theme="@style/AppThemeForFirstScreen">
+        <activity
+            android:name=".Activity.MainActivity"
+            android:theme="@style/AppThemeForFirstScreen">
+        </activity>
+        <activity
+            android:name=".Activity.DetailActivity"
+            android:theme="@style/AppTheme">
+        </activity>
+        <activity
+            android:name=".Activity.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activity.DetailActivity"
-            android:theme="@style/AppTheme">
-        </activity>
+
         <receiver android:name=".Reciever.FirstReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+
         <provider
             android:name=".DataBase.CarsProvider"
-            android:authorities="com.example.vladzakharo.provider.cars" />
-        <service
-            android:name=".Services.UpdateDataService" />
+            android:authorities="com.example.vladzakharo.provider.cars"/>
+
+        <service android:name=".Services.UpdateDataService"/>
+
+        <activity android:name=".Activity.WelcomeActivity"
+                  android:theme="@style/Theme.AppCompat.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

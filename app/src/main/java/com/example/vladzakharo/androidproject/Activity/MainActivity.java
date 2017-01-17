@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onRefresh() {
                 Intent intentService = new Intent(getApplicationContext(), UpdateDataService.class);
                 startService(intentService);
-                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -76,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mCarAdapter.changeCursor(cursor);
         mProgressBar.setVisibility(View.GONE);
         mCarRecyclerView.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
