@@ -15,7 +15,7 @@
         android:supportsRtl="true">
         <activity
             android:name=".Activity.MainActivity"
-            android:theme="@style/AppThemeForFirstScreen">
+            android:theme="@style/AppTheme">
         </activity>
         <activity
             android:name=".Activity.DetailActivity"
@@ -26,7 +26,6 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -44,8 +43,9 @@
 
         <service android:name=".Services.UpdateDataService"/>
 
-        <activity android:name=".Activity.WelcomeActivity"
-                  android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity
+            android:name=".Activity.WelcomeActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
     </application>
 

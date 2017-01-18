@@ -49,7 +49,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_CAR_ID, mCarId);
 
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.detail_toolbar);
         mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_description);
