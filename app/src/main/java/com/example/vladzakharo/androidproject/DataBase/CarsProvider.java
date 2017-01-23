@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.DataBase;
+package com.example.vladzakharo.androidproject.dataBase;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;

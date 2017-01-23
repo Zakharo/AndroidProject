@@ -1,9 +1,6 @@
-package com.example.vladzakharo.androidproject.Converters;
+package com.example.vladzakharo.androidproject.converters;
 
-import com.example.vladzakharo.androidproject.Converters.CarConverter;
-import com.example.vladzakharo.androidproject.Converters.CarToListConverter;
-import com.example.vladzakharo.androidproject.Converters.Converter;
-import com.example.vladzakharo.androidproject.Items.Car;
+import com.example.vladzakharo.androidproject.items.Car;
 
 import org.json.JSONObject;
 

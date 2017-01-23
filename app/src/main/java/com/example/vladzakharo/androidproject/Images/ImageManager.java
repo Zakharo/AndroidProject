@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Images;
+package com.example.vladzakharo.androidproject.images;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,9 +7,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.example.vladzakharo.androidproject.Cache.DiskCache;
-import com.example.vladzakharo.androidproject.Cache.ImageCache;
-import com.example.vladzakharo.androidproject.Constants.Constants;
+import com.example.vladzakharo.androidproject.cache.DiskCache;
+import com.example.vladzakharo.androidproject.cache.ImageCache;
+import com.example.vladzakharo.androidproject.constants.Constants;
 
 import java.io.File;
 import java.io.IOException;

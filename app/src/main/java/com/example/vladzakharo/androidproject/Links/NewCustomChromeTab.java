@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Links;
+package com.example.vladzakharo.androidproject.links;
 
 import android.app.Activity;
 import android.net.Uri;

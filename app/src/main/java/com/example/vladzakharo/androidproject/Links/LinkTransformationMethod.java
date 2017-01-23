@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Links;
+package com.example.vladzakharo.androidproject.links;
 
 import android.app.Activity;
 import android.graphics.Rect;
@@ -8,8 +8,6 @@ import android.text.method.TransformationMethod;
 import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.TextView;
-
-import com.example.vladzakharo.androidproject.Links.NewCustomChromeTab;
 
 import java.lang.ref.WeakReference;
 

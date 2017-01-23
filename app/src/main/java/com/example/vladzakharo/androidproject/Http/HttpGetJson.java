@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Http;
+package com.example.vladzakharo.androidproject.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,8 +17,8 @@ public class HttpGetJson {
             URL mUrl = new URL(url);
             HttpURLConnection httpConnection = (HttpURLConnection) mUrl.openConnection();
             httpConnection.setRequestMethod("GET");
-            httpConnection.setConnectTimeout(100000);
-            httpConnection.setReadTimeout(100000);
+            httpConnection.setConnectTimeout(10000);
+            httpConnection.setReadTimeout(10000);
 
             httpConnection.connect();
 

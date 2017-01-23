@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Decoration;
+package com.example.vladzakharo.androidproject.decoration;
 
 import android.content.Context;
 import android.graphics.Canvas;

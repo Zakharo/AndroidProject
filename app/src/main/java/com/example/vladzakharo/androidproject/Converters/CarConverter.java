@@ -1,9 +1,9 @@
-package com.example.vladzakharo.androidproject.Converters;
+package com.example.vladzakharo.androidproject.converters;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.vladzakharo.androidproject.Items.Car;
+import com.example.vladzakharo.androidproject.items.Car;
 
 import org.json.JSONException;
 import org.json.JSONObject;

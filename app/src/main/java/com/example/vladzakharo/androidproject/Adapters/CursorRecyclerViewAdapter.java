@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Adapters;
+package com.example.vladzakharo.androidproject.adapters;
 
 import android.content.Context;
 import android.database.Cursor;

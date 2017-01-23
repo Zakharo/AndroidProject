@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Adapters;
+package com.example.vladzakharo.androidproject.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.vladzakharo.androidproject.Activity.DetailActivity;
-import com.example.vladzakharo.androidproject.Items.Car;
-import com.example.vladzakharo.androidproject.Images.ImageManager;
+import com.example.vladzakharo.androidproject.activity.DetailActivity;
+import com.example.vladzakharo.androidproject.items.Car;
+import com.example.vladzakharo.androidproject.images.ImageManager;
 import com.example.vladzakharo.androidproject.R;
 
 /**

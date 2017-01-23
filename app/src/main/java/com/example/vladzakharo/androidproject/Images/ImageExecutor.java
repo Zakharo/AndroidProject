@@ -1,7 +1,6 @@
-package com.example.vladzakharo.androidproject.Images;
+package com.example.vladzakharo.androidproject.images;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;

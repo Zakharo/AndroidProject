@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Converters;
+package com.example.vladzakharo.androidproject.converters;
 
 import android.support.annotation.Nullable;
 

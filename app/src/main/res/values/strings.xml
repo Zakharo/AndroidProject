@@ -9,7 +9,7 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
 
-    <string name="slide_1_title">Hello Food!</string>
+    <string name="slide_1_title">Good Food!</string>
     <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
 
     <string name="slide_2_title">Movie Tickets</string>
@@ -28,6 +28,6 @@
     <string name="closeDrawer">close_drawer</string>
     <string name="title_activity_navigation_drawer">NavigationDrawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="button_login">Login with VK</string>
 
 </resources>

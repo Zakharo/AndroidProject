@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Activity;
+package com.example.vladzakharo.androidproject.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.vladzakharo.androidproject.R;
-import com.example.vladzakharo.androidproject.SharedPreferences.PrefManager;
+import com.example.vladzakharo.androidproject.sharedPreferences.PrefManager;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -110,7 +110,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void launchHomeScreen() {
         mPrefManager.setFirstTimeLaunch(false);
-        startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+        startActivity(new Intent(WelcomeActivity.this, FirstActivity.class));
         finish();
     }
 

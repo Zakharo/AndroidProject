@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Activity;
+package com.example.vladzakharo.androidproject.activity;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -16,12 +16,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.vladzakharo.androidproject.Items.Car;
-import com.example.vladzakharo.androidproject.Adapters.CarAdapter;
-import com.example.vladzakharo.androidproject.DataBase.CarsProvider;
-import com.example.vladzakharo.androidproject.DataBase.DataBaseConstants;
-import com.example.vladzakharo.androidproject.Images.ImageManager;
-import com.example.vladzakharo.androidproject.Links.LinkTransformationMethod;
+import com.example.vladzakharo.androidproject.items.Car;
+import com.example.vladzakharo.androidproject.adapters.CarAdapter;
+import com.example.vladzakharo.androidproject.dataBase.CarsProvider;
+import com.example.vladzakharo.androidproject.dataBase.DataBaseConstants;
+import com.example.vladzakharo.androidproject.images.ImageManager;
+import com.example.vladzakharo.androidproject.links.LinkTransformationMethod;
 import com.example.vladzakharo.androidproject.R;
 
 
