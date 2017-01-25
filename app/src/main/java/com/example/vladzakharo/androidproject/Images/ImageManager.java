@@ -1,12 +1,17 @@
 package com.example.vladzakharo.androidproject.images;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.example.vladzakharo.androidproject.activity.MainActivity;
+import com.example.vladzakharo.androidproject.activity.ProfileActivity;
 import com.example.vladzakharo.androidproject.cache.DiskCache;
 import com.example.vladzakharo.androidproject.cache.ImageCache;
 import com.example.vladzakharo.androidproject.constants.Constants;
@@ -47,9 +52,11 @@ public class ImageManager {
         private String mUrl;
         private WeakReference<ImageView> mImageView;
         private File cacheDir;
+        private Context mContext;
 
         public ImageLoader(Context context) {
             cacheDir = DiskCache.getDiskCacheDir(context, Constants.DISK_CACHE_SUBDIR);
+            mContext = context;
         }
 
         public ImageLoader from (String url) {
@@ -104,7 +111,14 @@ public class ImageManager {
             if (imageView == null || result == null) {
                 return;
             }
-            imageView.setImageBitmap(result);
+            if (mImageLoader.mContext instanceof ProfileActivity) {
+                imageView.setImageBitmap(result);
+            } else {
+                RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(mImageLoader.mContext.getResources(), result);
+                roundedBitmapDrawable.setCornerRadius(50.0f);
+                roundedBitmapDrawable.setAntiAlias(true);
+                imageView.setImageDrawable(roundedBitmapDrawable);
+            }
         }
     }
 }

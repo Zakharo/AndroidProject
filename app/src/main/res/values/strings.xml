@@ -30,4 +30,7 @@
 
     <string name="button_login">Login with VK</string>
 
+    <string name="city">City: </string>
+    <string name="birthday">Birthday: </string>
+
 </resources>

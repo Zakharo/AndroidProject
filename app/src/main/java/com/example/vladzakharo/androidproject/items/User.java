@@ -7,26 +7,41 @@ import android.os.Parcelable;
  * Created by Vlad Zakharo on 23.01.2017.
  */
 
-public class User implements Parcelable {
+public class User {
 
     private String mFirstName;
     private String mLastName;
     private String mPicture;
-
-    private User(String firstName, String lastName, String picture) {
-        this.mFirstName = firstName;
-        this.mLastName = lastName;
-        this.mPicture = picture;
-    }
+    private String mFullPhoto;
+    private String mDateOfBirth;
+    private String mHomeTown;
 
     public User(){
 
     }
 
-    public User (Parcel parcel){
-        mFirstName = parcel.readString();
-        mLastName = parcel.readString();
-        mPicture = parcel.readString();
+    public String getDateOfBirth() {
+        return mDateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        mDateOfBirth = dateOfBirth;
+    }
+
+    public String getHomeTown() {
+        return mHomeTown;
+    }
+
+    public void setHomeTown(String homeTown) {
+        mHomeTown = homeTown;
+    }
+
+    public String getFullPhoto() {
+        return mFullPhoto;
+    }
+
+    public void setFullPhoto(String fullPhoto) {
+        mFullPhoto = fullPhoto;
     }
 
     public String getPicture() {
@@ -53,28 +68,7 @@ public class User implements Parcelable {
         mFirstName = firstName;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public String toString() {
+        return getFirstName() + " " + getLastName();
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mFirstName);
-        dest.writeString(mLastName);
-        dest.writeString(mPicture);
-    }
-
-    public static final Parcelable.Creator<Car> CREATOR = new Creator<Car>() {
-        @Override
-        public Car createFromParcel(Parcel source) {
-            return new Car(source);
-        }
-
-        @Override
-        public Car[] newArray(int size) {
-            return new Car[size];
-        }
-    };
 }

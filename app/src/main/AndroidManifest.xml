@@ -43,17 +43,21 @@
             android:authorities="com.example.vladzakharo.provider.cars"/>
 
         <service android:name=".services.UpdateDataService"/>
+        
+        <service android:name=".services.DeleteTokenService"/>
+
+        <service android:name=".services.FirstDeleteService"/>
 
         <activity
             android:name=".activity.WelcomeActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.WebActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
         <activity
-            android:name=".activity.FirstActivity"
+            android:name=".activity.LoginActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
         <activity

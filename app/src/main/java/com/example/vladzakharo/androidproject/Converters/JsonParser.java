@@ -1,6 +1,7 @@
 package com.example.vladzakharo.androidproject.converters;
 
 import com.example.vladzakharo.androidproject.items.Car;
+import com.example.vladzakharo.androidproject.items.User;
 
 import org.json.JSONObject;
 
@@ -18,6 +19,7 @@ public class JsonParser {
     public JsonParser() {
         mConverters.put(Car.class.getName(), new CarConverter());
         mConverters.put(LIST_CONVERTER, new CarToListConverter());
+        mConverters.put(User.class.getName(), new UserConverter());
     }
 
     public <T> T convert (Class<T> t, JSONObject jsonObject) {
