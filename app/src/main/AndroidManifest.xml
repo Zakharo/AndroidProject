@@ -39,7 +39,7 @@
         </receiver>
 
         <provider
-            android:name=".dataBase.CarsProvider"
+            android:name=".database.CarsProvider"
             android:authorities="com.example.vladzakharo.provider.cars"/>
 
         <service android:name=".services.UpdateDataService"/>

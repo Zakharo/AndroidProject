@@ -12,8 +12,8 @@ import android.util.Log;
 
 import com.example.vladzakharo.androidproject.constants.Constants;
 import com.example.vladzakharo.androidproject.converters.JsonParser;
-import com.example.vladzakharo.androidproject.dataBase.CarsProvider;
-import com.example.vladzakharo.androidproject.dataBase.DataBaseConstants;
+import com.example.vladzakharo.androidproject.database.CarsProvider;
+import com.example.vladzakharo.androidproject.database.DataBaseConstants;
 import com.example.vladzakharo.androidproject.http.HttpGetJson;
 import com.example.vladzakharo.androidproject.items.Car;
 

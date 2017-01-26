@@ -25,13 +25,13 @@ import android.widget.Toast;
 
 import com.example.vladzakharo.androidproject.loaders.UserLoader;
 import com.example.vladzakharo.androidproject.adapters.CarAdapter;
-import com.example.vladzakharo.androidproject.dataBase.CarsProvider;
+import com.example.vladzakharo.androidproject.database.CarsProvider;
 import com.example.vladzakharo.androidproject.decoration.Decorator;
 import com.example.vladzakharo.androidproject.R;
 import com.example.vladzakharo.androidproject.images.ImageManager;
 import com.example.vladzakharo.androidproject.items.User;
 import com.example.vladzakharo.androidproject.services.UpdateDataService;
-import com.example.vladzakharo.androidproject.sharedPreferences.PrefManager;
+import com.example.vladzakharo.androidproject.sharedpreferences.PrefManager;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         NavigationView.OnNavigationItemSelectedListener,

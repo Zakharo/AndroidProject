@@ -6,7 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.vladzakharo.androidproject.sharedPreferences.PrefManager;
+import com.example.vladzakharo.androidproject.sharedpreferences.PrefManager;
 
 /**
  * Created by Vlad Zakharo on 25.01.2017.

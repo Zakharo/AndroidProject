@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.dataBase;
+package com.example.vladzakharo.androidproject.database;
 
 /**
  * Created by Vlad Zakharo on 08.01.2017.

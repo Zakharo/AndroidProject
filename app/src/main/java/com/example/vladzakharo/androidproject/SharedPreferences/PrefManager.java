@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.sharedPreferences;
+package com.example.vladzakharo.androidproject.sharedpreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;

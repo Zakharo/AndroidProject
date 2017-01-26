@@ -6,9 +6,8 @@ import android.util.Log;
 import com.example.vladzakharo.androidproject.converters.JsonParser;
 import com.example.vladzakharo.androidproject.http.HttpGetJson;
 import com.example.vladzakharo.androidproject.items.User;
-import com.example.vladzakharo.androidproject.sharedPreferences.PrefManager;
+import com.example.vladzakharo.androidproject.sharedpreferences.PrefManager;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

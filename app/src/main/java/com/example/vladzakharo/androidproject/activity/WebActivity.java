@@ -11,12 +11,9 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.example.vladzakharo.androidproject.R;
-import com.example.vladzakharo.androidproject.Utils.VKUtil;
-import com.example.vladzakharo.androidproject.constants.Constants;
+import com.example.vladzakharo.androidproject.utils.VKUtil;
 import com.example.vladzakharo.androidproject.services.FirstDeleteService;
-import com.example.vladzakharo.androidproject.sharedPreferences.PrefManager;
-
-import java.net.URLEncoder;
+import com.example.vladzakharo.androidproject.sharedpreferences.PrefManager;
 
 public class WebActivity extends AppCompatActivity {
 

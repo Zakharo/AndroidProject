@@ -1,4 +1,4 @@
-package com.example.vladzakharo.androidproject.Utils;
+package com.example.vladzakharo.androidproject.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

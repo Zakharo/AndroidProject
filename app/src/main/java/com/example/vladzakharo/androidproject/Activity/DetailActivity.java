@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import com.example.vladzakharo.androidproject.items.Car;
 import com.example.vladzakharo.androidproject.adapters.CarAdapter;
-import com.example.vladzakharo.androidproject.dataBase.CarsProvider;
-import com.example.vladzakharo.androidproject.dataBase.DataBaseConstants;
+import com.example.vladzakharo.androidproject.database.CarsProvider;
+import com.example.vladzakharo.androidproject.database.DataBaseConstants;
 import com.example.vladzakharo.androidproject.images.ImageManager;
 import com.example.vladzakharo.androidproject.links.LinkTransformationMethod;
 import com.example.vladzakharo.androidproject.R;
@@ -58,8 +58,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mTvDescription = (TextView) findViewById(R.id.detail_text_view);
         mActivity = this;
 
-        getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
         mProgressBar.setVisibility(View.VISIBLE);
+        getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
     }
 
     @Override

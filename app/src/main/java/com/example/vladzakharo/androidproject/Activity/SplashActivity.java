@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.vladzakharo.androidproject.sharedPreferences.PrefManager;
+import com.example.vladzakharo.androidproject.sharedpreferences.PrefManager;
 
 /**
  * Created by Vlad Zakharo on 17.01.2017.

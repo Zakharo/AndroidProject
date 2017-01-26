@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.vladzakharo.androidproject.R;
-import com.example.vladzakharo.androidproject.sharedPreferences.PrefManager;
+import com.example.vladzakharo.androidproject.sharedpreferences.PrefManager;
 
 public class WelcomeActivity extends AppCompatActivity {
 

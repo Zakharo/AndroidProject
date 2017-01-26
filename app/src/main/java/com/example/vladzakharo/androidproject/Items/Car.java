@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.vladzakharo.androidproject.dataBase.DataBaseConstants;
+import com.example.vladzakharo.androidproject.database.DataBaseConstants;
 
 /**
  * Created by Vlad Zakharo on 15.12.2016.
