@@ -3,7 +3,7 @@ package com.example.vladzakharo.androidproject.loaders;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 
-import com.example.vladzakharo.androidproject.ApiServices;
+import com.example.vladzakharo.androidproject.services.ApiServices;
 import com.example.vladzakharo.androidproject.items.User;
 
 /**
