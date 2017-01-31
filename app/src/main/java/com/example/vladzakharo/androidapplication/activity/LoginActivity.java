@@ -28,14 +28,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         String token = mPrefManager.getToken();
+        Intent intent;
         if (token.isEmpty()) {
-            Intent intent = new Intent(this, WebActivity.class);
-            startActivity(intent);
-            finish();
+            intent = new Intent(this, WebActivity.class);
+
         }else {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            intent = new Intent(this, MainActivity.class);
         }
+        startActivity(intent);
+        finish();
     }
 }

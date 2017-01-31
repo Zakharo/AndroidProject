@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .getImageLoader(getApplicationContext())
                 .from(user.getPicture())
                 .to(mImgProfile)
+                .transform(true)
                 .load();
     }
 }

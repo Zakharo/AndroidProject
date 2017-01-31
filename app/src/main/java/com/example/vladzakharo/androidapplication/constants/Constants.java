@@ -7,4 +7,11 @@ package com.example.vladzakharo.androidapplication.constants;
 public class Constants {
     public static final String URL = "http://www.mocky.io/v2/58725bb10f00009512c6ac99";
     public static final String DISK_CACHE_SUBDIR = "thumbnails";
+    public static final String AUTHORIZE_URL = "http://oauth.vk.com/authorize?" +
+            "client_id=5829154" +
+            "&scope=wall"+
+            "&redirect_uri=http://oauth.vk.com/blank.html" +
+            "&response_type=token";
+    public static final String OAUTH_ONE = "http://oauth.vk.com/authorize";
+    public static final String OAUTH_TWO = "http://oauth.vk.com/oauth/authorize";
 }
