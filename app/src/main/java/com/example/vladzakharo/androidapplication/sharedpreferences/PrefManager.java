@@ -18,6 +18,7 @@ public class PrefManager {
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
     private static final String TOKEN = "token";
     private static final String UID = "uid";
+    private static final String POST_ID = "post_id";
 
     public PrefManager(Context context) {
         this.mContext = context;
@@ -27,7 +28,7 @@ public class PrefManager {
 
     public void setFirstTimeLaunch(boolean isFirstTime) {
         editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
-        editor.commit();
+        editor.apply();
     }
 
     public boolean isFirstTimeLaunch() {
@@ -36,7 +37,7 @@ public class PrefManager {
 
     public void putToken(String token) {
         editor.putString(TOKEN, token);
-        editor.commit();
+        editor.apply();
     }
 
     public String getToken() {
@@ -45,7 +46,7 @@ public class PrefManager {
 
     public void putUid(String uid) {
         editor.putString(UID, uid);
-        editor.commit();
+        editor.apply();
     }
 
     public String getUid() {
@@ -54,11 +55,20 @@ public class PrefManager {
 
     public void deleteToken() {
         editor.putString(TOKEN, "");
-        editor.commit();
+        editor.apply();
     }
 
     public void deleteUid() {
         editor.putString(UID, "");
-        editor.commit();
+        editor.apply();
+    }
+
+    public void setPostId(int id) {
+        editor.putInt(POST_ID, id);
+        editor.apply();
+    }
+
+    public int getPostId() {
+        return pref.getInt(POST_ID, 0);
     }
 }

@@ -27,7 +27,6 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
     private static final int VIEW_TYPE_HEADER = 2;
 
     private Context mContext;
-    //private RecyclerView mRecyclerView;
 
     private static ImageManager sImageManager = ImageManager.getInstance();
 
@@ -40,21 +39,17 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
 
     public class CarHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
-        public TextView mTitleTextView;
         public TextView mDescriptionTextView;
 
         public CarHolder(View itemView) {
             super(itemView);
-
-            mTitleTextView = (TextView) itemView.findViewById(R.id.car_title);
-            mDescriptionTextView = (TextView) itemView.findViewById(R.id.car_description);
-            mImageView = (ImageView) itemView.findViewById(R.id.car_picture);
+            mDescriptionTextView = (TextView) itemView.findViewById(R.id.card_car_message);
+            mImageView = (ImageView) itemView.findViewById(R.id.card_car_picture);
         }
 
         private void onBindViewHolder(final Cursor cursor) {
             final Car car = Car.getCarFromCursor(cursor);
 
-            mTitleTextView.setText(car.getTitle());
             mDescriptionTextView.setText(car.getDescription());
             Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
             mImageView.setImageDrawable(placeholder);

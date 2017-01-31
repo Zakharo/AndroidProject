@@ -45,6 +45,10 @@ public class ImageManager {
         return sImageManager;
     }
 
+    private ImageManager() {
+
+    }
+
     public ImageLoader getImageLoader(Context context) {
         return new ImageLoader(context);
     }

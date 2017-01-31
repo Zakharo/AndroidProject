@@ -1,7 +1,10 @@
 package com.example.vladzakharo.androidapplication.converters;
 
+import android.content.Context;
+
 import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.items.User;
+import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 
 import org.json.JSONObject;
 
@@ -16,9 +19,9 @@ public class JsonParser {
 
     private static final String LIST_CONVERTER = "listConverter";
 
-    public JsonParser() {
-        mConverters.put(Car.class.getName(), new CarConverter());
-        mConverters.put(LIST_CONVERTER, new CarToListConverter());
+    public JsonParser(PrefManager prefManager) {
+        mConverters.put(Car.class.getName(), new CarConverter(prefManager));
+        mConverters.put(LIST_CONVERTER, new CarToListConverter(prefManager));
         mConverters.put(User.class.getName(), new UserConverter());
     }
 

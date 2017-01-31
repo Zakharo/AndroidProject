@@ -27,6 +27,7 @@ public class ApiServices {
 
     private PrefManager mPrefManager;
     private String mUserInfoUrl;
+    private String mSearchCarsUrl;
     private Context mContext;
     private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
 
@@ -36,6 +37,9 @@ public class ApiServices {
         mUserInfoUrl = "https://api.vk.com/method/users.get?user_ids="
                 + mPrefManager.getUid()
                 + "&fields=photo,photo_200_orig,bdate,home_town&v=5.62";
+        mSearchCarsUrl = "https://api.vk.com/method/newsfeed.search?q="
+                + "%23car"
+                + "&count=15&v=5.62";
     }
 
     public User getUser() {
@@ -46,7 +50,12 @@ public class ApiServices {
         } catch (JSONException je) {
             Log.e(TAG, "json problems", je);
         }
-        return new JsonParser().convert(User.class, jsonObject);
+        return new JsonParser(mPrefManager).convert(User.class, jsonObject);
+    }
+
+    public String getCars() {
+        String stringJsonObject = HttpGetJson.GET(mSearchCarsUrl);
+        return stringJsonObject;
     }
 
     public void parseResponse(String url, WebView webView, ProgressBar progressBar) {

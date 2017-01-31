@@ -4,7 +4,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.vladzakharo.androidapplication.items.Car;
+import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,19 +18,35 @@ public class CarConverter implements Converter<Car> {
     private static final String TAG = "CarConverter";
 
     private static final String ID = "id";
-    private static final String TITLE = "title";
-    private static final String DESCRIPTION = "description";
-    private static final String IMAGE_NAME = "image_name";
+    private static final String TEXT = "text";
+    private static final String ATTACHMENTS = "attachments";
+    private static final String PHOTO = "photo";
+    private static final String IMAGE_NAME = "photo_604";
+    private static final String LIKES = "likes";
+    private static final String LIKES_COUNT = "count";
+
+    private PrefManager mPrefManager;
+
+    public CarConverter(PrefManager prefManager) {
+        mPrefManager = prefManager;
+    }
 
     @Nullable
     @Override
     public Car convert(JSONObject jsonObject) {
         Car car = new Car();
         try {
-            car.setId(jsonObject.getInt(ID));
-            car.setTitle(jsonObject.getString(TITLE));
-            car.setDescription(jsonObject.getString(DESCRIPTION));
-            car.setNamePicture(jsonObject.getString(IMAGE_NAME));
+            car.setId(mPrefManager.getPostId());
+            mPrefManager.setPostId(mPrefManager.getPostId() + 1);
+
+            car.setDescription(jsonObject.getString(TEXT));
+            JSONArray attachmentsArray = jsonObject.getJSONArray(ATTACHMENTS);
+
+            JSONObject objectInsideAttachment = attachmentsArray.getJSONObject(0);
+            JSONObject photoObject = objectInsideAttachment.getJSONObject(PHOTO);
+            car.setNamePicture(photoObject.getString(IMAGE_NAME));
+            JSONObject likesObject = jsonObject.getJSONObject(LIKES);
+            car.setLikes(likesObject.getInt(LIKES_COUNT));
         } catch (JSONException je) {
             Log.e(TAG, "json parse problems", je);
         }

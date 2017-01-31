@@ -22,7 +22,7 @@ import static android.os.Environment.isExternalStorageRemovable;
 
 public class DiskCache {
 
-    private static DiskLruCache mDiskLruCache;
+    private DiskLruCache mDiskLruCache;
     private static final int APP_VERSION = 1;
     private static final int VALUE_COUNT = 1;
     private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10;
@@ -83,7 +83,7 @@ public class DiskCache {
         if (mDiskLruCache != null) {
             try {
 
-                DiskLruCache.Snapshot snapshot = null;
+                DiskLruCache.Snapshot snapshot;
                 snapshot = mDiskLruCache.get(encryptedKey);
                 if (snapshot == null) {
                     return null;

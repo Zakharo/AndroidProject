@@ -3,6 +3,8 @@ package com.example.vladzakharo.androidapplication.cache;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
+import com.example.vladzakharo.androidapplication.images.ImageManager;
+
 /**
  * Created by Vlad Zakharo on 28.12.2016.
  */
@@ -17,6 +19,10 @@ public class ImageCache {
             mCache = new ImageCache();
         }
         return mCache;
+    }
+
+    private ImageCache() {
+
     }
 
     public void initializeCache() {

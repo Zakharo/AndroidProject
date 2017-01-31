@@ -14,10 +14,12 @@ public class Car implements Parcelable{
     private String mTitle;
     private String mDescription;
     private String mNamePicture;
+    private int mLikes;
     private int mId;
 
-    private Car(int id, String title, String description, String namePicture) {
+    private Car(int id, int likes, String title, String description, String namePicture) {
         this.mId = id;
+        this.mLikes = likes;
         this.mTitle = title;
         this.mDescription = description;
         this.mNamePicture = namePicture;
@@ -31,6 +33,7 @@ public class Car implements Parcelable{
         mTitle = parcel.readString();
         mDescription = parcel.readString();
         mNamePicture = parcel.readString();
+        mLikes = parcel.readInt();
         mId = parcel.readInt();
     }
 
@@ -66,6 +69,14 @@ public class Car implements Parcelable{
         mId = id;
     }
 
+    public int getLikes() {
+        return mLikes;
+    }
+
+    public void setLikes(int likes) {
+        mLikes = likes;
+    }
+
 
     @Override
     public int describeContents() {
@@ -77,6 +88,7 @@ public class Car implements Parcelable{
         dest.writeString(mTitle);
         dest.writeString(mDescription);
         dest.writeString(mNamePicture);
+        dest.writeInt(mLikes);
         dest.writeInt(mId);
     }
 
@@ -94,6 +106,7 @@ public class Car implements Parcelable{
 
     public static Car getCarFromCursor(Cursor cursor) {
         return new Car(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_LIKES)),
                 cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_TITLE)),
                 cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_DESCRIPTION)),
                 cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_IMAGE_URL)));

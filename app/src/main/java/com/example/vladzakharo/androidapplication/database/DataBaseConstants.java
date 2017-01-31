@@ -13,4 +13,5 @@ public class DataBaseConstants {
     public static final String CAR_TITLE = "title";
     public static final String CAR_DESCRIPTION = "description";
     public static final String CAR_IMAGE_URL = "image_url";
+    public static final String CAR_LIKES = "likes";
 }
