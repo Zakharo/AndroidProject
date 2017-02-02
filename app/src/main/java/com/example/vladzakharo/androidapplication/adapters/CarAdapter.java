@@ -23,6 +23,7 @@ import com.example.vladzakharo.androidapplication.R;
 public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
     public static final String CAR_ID = "car_id";
+    public static final String CAR_DESCRIPTION = "car_desc";
     private static final int VIEW_TYPE_NORMAL = 1;
     private static final int VIEW_TYPE_HEADER = 2;
 
@@ -64,7 +65,8 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                    intent.putExtra(CAR_ID, getPosition());
+                    intent.putExtra(CAR_DESCRIPTION, car.getDescription());
+                    //intent.putExtra(CAR_ID, getPosition());
                     v.getContext().startActivity(intent);
                 }
             });

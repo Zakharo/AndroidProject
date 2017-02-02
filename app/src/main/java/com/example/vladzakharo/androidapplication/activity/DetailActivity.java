@@ -3,6 +3,7 @@ package com.example.vladzakharo.androidapplication.activity;
 import android.app.Activity;
 import android.database.Cursor;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -23,19 +24,24 @@ import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.links.LinkTransformationMethod;
 import com.example.vladzakharo.androidapplication.R;
+import com.example.vladzakharo.androidapplication.services.ApiServices;
 
 
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
     private int mCarId;
+    private String mCarDescription;
     private TextView mTvDescription;
     private ProgressBar mProgressBar;
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mImageView;
     private Toolbar mToolbar;
     private Activity mActivity;
+    private Car mCar;
+    private FloatingActionButton mFab;
 
     private static final int LOADER_ID = 2;
     private static final String KEY_CAR_ID = "keyCarId";
+    private static final String KEY_CAR_DESCRIPTION = "keyCarDescription";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +49,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         setContentView(R.layout.activity_detail);
 
         if (getIntent() != null){
-            mCarId = getIntent().getIntExtra(CarAdapter.CAR_ID, 0);
+            mCarDescription = getIntent().getStringExtra(CarAdapter.CAR_DESCRIPTION);
+            //mCarId = getIntent().getIntExtra(CarAdapter.CAR_ID, 0);
         }
 
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_CAR_ID, mCarId);
+        bundle.putString(KEY_CAR_DESCRIPTION, mCarDescription);
+
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String response = new ApiServices(getApplicationContext()).addLike(mCar);
+                String awe = response;
+            }
+        });
 
         mToolbar = (Toolbar)findViewById(R.id.detail_toolbar);
         mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
@@ -75,7 +91,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if (id != LOADER_ID) {
             return null;
         }
-        return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CAR_ID + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_ID))}, null);
+        //return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CAR_ID + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_ID))}, null);
+        return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CAR_DESCRIPTION + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_DESCRIPTION))}, null);
     }
 
     @Override
@@ -84,13 +101,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if (data == null || !data.moveToFirst()) {
             return;
         }
-        Car car = Car.getCarFromCursor(data);
-        mCollapsingToolbar.setTitle(car.getTitle());
-        mTvDescription.setText(car.getDescription());
+        mCar = Car.getCarFromCursor(data);
+        //mCollapsingToolbar.setTitle(car.getTitle());
+        mTvDescription.setText(mCar.getDescription());
         mTvDescription.setTransformationMethod(new LinkTransformationMethod(mActivity));
         mTvDescription.setMovementMethod(LinkMovementMethod.getInstance());
         ImageManager.getInstance().getImageLoader(this)
-                .from(car.getNamePicture())
+                .from(mCar.getNamePicture())
                 .to(mImageView)
                 .load();
     }

@@ -20,7 +20,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + DataBaseConstants.TABLE_CARS + "("
                 + DataBaseConstants.CAR_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
                 + DataBaseConstants.CAR_LIKES + " INTEGER, "
-                + DataBaseConstants.CAR_TITLE + " TEXT, "
+                + DataBaseConstants.CAR_POST_ID + " INTEGER, "
+                + DataBaseConstants.CAR_POST_OWNER_ID + " INTEGER, "
                 + DataBaseConstants.CAR_DESCRIPTION + " TEXT, "
                 + DataBaseConstants.CAR_IMAGE_URL + " TEXT" + " );");
     }

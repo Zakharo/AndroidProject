@@ -2,6 +2,8 @@ package com.example.vladzakharo.androidapplication.services;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -10,6 +12,7 @@ import android.widget.ProgressBar;
 import com.example.vladzakharo.androidapplication.activity.MainActivity;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
+import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.items.User;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 import com.example.vladzakharo.androidapplication.utils.VKUtil;
@@ -26,20 +29,27 @@ public class ApiServices {
     private static final String TAG = "ApiService";
 
     private PrefManager mPrefManager;
+    private SharedPreferences mySharedPreferences;
+    private String mCountOfCars;
     private String mUserInfoUrl;
     private String mSearchCarsUrl;
+    private String mAddLikeUrl;
     private Context mContext;
     private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
+    private static final String PREF_KEY = "amount_of_cars";
 
     public ApiServices(Context context) {
         mContext = context;
         mPrefManager = new PrefManager(context);
+        mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        mCountOfCars = mySharedPreferences.getString(PREF_KEY, "10");
         mUserInfoUrl = "https://api.vk.com/method/users.get?user_ids="
                 + mPrefManager.getUid()
                 + "&fields=photo,photo_200_orig,bdate,home_town&v=5.62";
-        mSearchCarsUrl = "https://api.vk.com/method/newsfeed.search?q="
-                + "%23car"
-                + "&count=15&v=5.62";
+        mSearchCarsUrl = "https://api.vk.com/method/newsfeed.search?q=%23car&extended=0&count="
+                + mCountOfCars
+                + "&v=5.62";
+
     }
 
     public User getUser() {
@@ -56,6 +66,17 @@ public class ApiServices {
     public String getCars() {
         String stringJsonObject = HttpGetJson.GET(mSearchCarsUrl);
         return stringJsonObject;
+    }
+
+    public String addLike(Car car) {
+        mAddLikeUrl = "https://api.vk.com/method/likes.add?type=post&owner_id="
+                + car.getOwnerId()
+                + "&item_id="
+                + car.getPostId()
+                + "&v=5.62";
+
+        String response = HttpGetJson.GET(mAddLikeUrl);
+        return response;
     }
 
     public void parseResponse(String url, WebView webView, ProgressBar progressBar) {

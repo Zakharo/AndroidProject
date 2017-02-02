@@ -17,13 +17,14 @@ import org.json.JSONObject;
 public class CarConverter implements Converter<Car> {
     private static final String TAG = "CarConverter";
 
-    private static final String ID = "id";
     private static final String TEXT = "text";
     private static final String ATTACHMENTS = "attachments";
     private static final String PHOTO = "photo";
     private static final String IMAGE_NAME = "photo_604";
     private static final String LIKES = "likes";
     private static final String LIKES_COUNT = "count";
+    private static final String POST_ID = "id";
+    private static final String OWNER_ID = "owner_id";
 
     private PrefManager mPrefManager;
 
@@ -39,6 +40,8 @@ public class CarConverter implements Converter<Car> {
             car.setId(mPrefManager.getPostId());
             mPrefManager.setPostId(mPrefManager.getPostId() + 1);
 
+            car.setPostId(jsonObject.getInt(POST_ID));
+            car.setOwnerId(jsonObject.getInt(OWNER_ID));
             car.setDescription(jsonObject.getString(TEXT));
             JSONArray attachmentsArray = jsonObject.getJSONArray(ATTACHMENTS);
 

@@ -40,7 +40,6 @@ public class UpdateDataService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         mPrefManager = new PrefManager(getApplicationContext());
-        //String mStringJsonObject = HttpGetJson.GET(Constants.URL);
         String mStringJsonObject = new ApiServices(getApplicationContext()).getCars();
         JSONObject jsonObject = null;
         try {
@@ -48,10 +47,11 @@ public class UpdateDataService extends IntentService {
         } catch (JSONException je) {
             Log.e(TAG, "json problems", je);
         }
-
         List<Car> cars = new JsonParser(mPrefManager).convertToList(jsonObject);
+
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         ArrayList<ContentProviderOperation> deleteOperations = new ArrayList<>();
+
         deleteOperations.add(ContentProviderOperation.newDelete(CarsProvider.CAR_CONTENT_URI).build());
         try {
             getContentResolver().applyBatch(CarsProvider.AUTHORITY, deleteOperations);
@@ -64,7 +64,8 @@ public class UpdateDataService extends IntentService {
             operations.add(ContentProviderOperation.newInsert(CarsProvider.CAR_CONTENT_URI)
             .withValue(DataBaseConstants.CAR_ID, car.getId())
             .withValue(DataBaseConstants.CAR_LIKES, car.getLikes())
-            .withValue(DataBaseConstants.CAR_TITLE, car.getTitle())
+            .withValue(DataBaseConstants.CAR_POST_ID, car.getPostId())
+            .withValue(DataBaseConstants.CAR_POST_OWNER_ID, car.getOwnerId())
             .withValue(DataBaseConstants.CAR_DESCRIPTION, car.getDescription())
             .withValue(DataBaseConstants.CAR_IMAGE_URL, car.getNamePicture())
             .build());
