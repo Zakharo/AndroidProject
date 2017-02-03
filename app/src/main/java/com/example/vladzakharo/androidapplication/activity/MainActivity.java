@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
+    private Cursor mCursor = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,27 +101,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        /*mCarRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Intent intentService = new Intent(getApplicationContext(), UpdateDataService.class);
-                startService(intentService);
-            }
-        });*/
-
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(mViewPager);
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        updateUi();
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 
-        //getSupportLoaderManager().initLoader(LOADER_ID, null, this);
         getSupportLoaderManager().initLoader(LOADER_USER_ID, null, new LoaderManager.LoaderCallbacks<User>() {
             @Override
             public Loader<User> onCreateLoader(int id, Bundle args) {
@@ -143,24 +132,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(FragmentOne.newInstance(null), Constants.TAB_DATE);
-        adapter.addFragment(FragmentTwo.newInstance(null), Constants.TAB_LIKES);
+        adapter.addFragment(FragmentOne.newInstance(mCursor), Constants.TAB_DATE);
+        adapter.addFragment(FragmentTwo.newInstance(mCursor), Constants.TAB_LIKES);
         viewPager.setAdapter(adapter);
-    }
-
-    private void setupViewPagerWithCursor(ViewPager viewPager, Cursor cursor) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(FragmentOne.newInstance(cursor), Constants.TAB_DATE);
-        adapter.addFragment(FragmentTwo.newInstance(cursor), Constants.TAB_LIKES);
-        viewPager.setAdapter(adapter);
-    }
-
-    private void updateUi() {
-        /*mCarAdapter = new CarAdapter(this, null);
-        Decorator decoration = new Decorator(this, getResources().getColor(R.color.colorPrimary), 0.5f);
-        mCarRecyclerView.addItemDecoration(decoration);
-        mCarRecyclerView.setAdapter(mCarAdapter);
-        mCarRecyclerView.setVisibility(View.INVISIBLE);*/
     }
 
     @Override
@@ -173,11 +147,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        /*mCarAdapter.changeCursor(cursor);
-        mProgressBar.setVisibility(View.GONE);
-        mCarRecyclerView.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(false);*/
-        setupViewPagerWithCursor(mViewPager, cursor);
+
+        mCursor = cursor;
+        setupViewPager(mViewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
+
     }
 
     @Override

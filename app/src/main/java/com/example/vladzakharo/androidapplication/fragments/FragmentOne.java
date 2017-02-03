@@ -30,7 +30,7 @@ public class FragmentOne extends Fragment implements LoaderManager.LoaderCallbac
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CarAdapter mCarAdapter;
 
-    private Cursor mCursor;
+    private Cursor mCursor = null;
 
     public FragmentOne() {
 
@@ -51,6 +51,7 @@ public class FragmentOne extends Fragment implements LoaderManager.LoaderCallbac
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -97,6 +98,9 @@ public class FragmentOne extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        //mCarAdapter.changeCursor(data);
+        //mCursor = data;
+        //updateUi();
         mCarAdapter.changeCursor(data);
         mProgressBar.setVisibility(View.GONE);
         mCarRecyclerView.setVisibility(View.VISIBLE);
