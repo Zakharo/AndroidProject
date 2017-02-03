@@ -54,6 +54,9 @@ public class DiskCache {
                 DiskLruCache.Snapshot snapshot = mDiskLruCache.get(encryptedKey);
                 if (snapshot == null) {
                     DiskLruCache.Editor editor = mDiskLruCache.edit(encryptedKey);
+                    if (editor == null) {
+                        snapshot.getInputStream(0).close();
+                    }
                     out = editor.newOutputStream(0);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     editor.commit();

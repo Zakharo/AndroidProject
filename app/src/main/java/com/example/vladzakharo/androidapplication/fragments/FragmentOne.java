@@ -98,9 +98,6 @@ public class FragmentOne extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        //mCarAdapter.changeCursor(data);
-        //mCursor = data;
-        //updateUi();
         mCarAdapter.changeCursor(data);
         mProgressBar.setVisibility(View.GONE);
         mCarRecyclerView.setVisibility(View.VISIBLE);

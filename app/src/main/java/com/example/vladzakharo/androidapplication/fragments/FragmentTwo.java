@@ -20,12 +20,14 @@ import android.widget.ProgressBar;
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
+import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.decoration.Decorator;
 import com.example.vladzakharo.androidapplication.services.UpdateDataService;
 
 public class FragmentTwo extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final int LOADER_ID = 5;
+    private static final String SORT = "sort_by_likes";
 
     private RecyclerView mCarRecyclerView;
     private ProgressBar mProgressBar;
@@ -94,7 +96,7 @@ public class FragmentTwo extends Fragment implements LoaderManager.LoaderCallbac
         if (id != LOADER_ID) {
             return null;
         }
-        return new CursorLoader(getActivity(), CarsProvider.CAR_CONTENT_URI, null, null, null, null);
+        return new CursorLoader(getActivity(), CarsProvider.CAR_CONTENT_URI, null, null, null, SORT);
     }
 
     @Override

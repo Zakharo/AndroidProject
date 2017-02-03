@@ -101,7 +101,7 @@ public class ImageManager {
             Bitmap downloadBitmap;
             downloadBitmap = mImageCache.getBitmapFromMemoryCache(mImageLoader.mUrl);
             if (downloadBitmap == null) {
-                //downloadBitmap = mDiskCache.getBitmapFromDiskCache(mImageLoader.mUrl);
+                downloadBitmap = mDiskCache.getBitmapFromDiskCache(mImageLoader.mUrl);
                 if (downloadBitmap == null) {
                     try {
                         InputStream in = new URL(mImageLoader.mUrl).openStream();
@@ -110,7 +110,7 @@ public class ImageManager {
                         Log.e(TAG, "Something wrong with url", ioe);
                     }
                     mImageCache.addBitmapToMemoryCache(mImageLoader.mUrl, downloadBitmap);
-                    //mDiskCache.addBitmapToDiskCache(mImageLoader.mUrl, downloadBitmap);
+                    mDiskCache.addBitmapToDiskCache(mImageLoader.mUrl, downloadBitmap);
                 }
             }
             return downloadBitmap;

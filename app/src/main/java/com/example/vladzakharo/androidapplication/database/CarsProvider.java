@@ -48,8 +48,10 @@ public class CarsProvider extends ContentProvider {
             case URI_CARS:
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = DataBaseConstants.CAR_ID + " ASC";
-                    break;
+                } else {
+                    sortOrder = DataBaseConstants.TABLE_CARS + "." + DataBaseConstants.CAR_LIKES + " DESC";
                 }
+                break;
             case URI_CARS_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
