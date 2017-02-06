@@ -13,6 +13,4 @@ public class Constants {
             "&response_type=token";
     public static final String OAUTH_ONE = "http://oauth.vk.com/authorize";
     public static final String OAUTH_TWO = "http://oauth.vk.com/oauth/authorize";
-    public static final String TAB_DATE = "Date";
-    public static final String TAB_LIKES = "Likes";
 }

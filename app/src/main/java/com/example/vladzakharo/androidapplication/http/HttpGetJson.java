@@ -41,4 +41,35 @@ public class HttpGetJson {
         }
         return null;
     }
+
+    public static String POST(String url) {
+        try {
+
+            URL mUrl = new URL(url);
+            HttpURLConnection httpConnection = (HttpURLConnection) mUrl.openConnection();
+            httpConnection.setRequestMethod("POST");
+            httpConnection.setConnectTimeout(10000);
+            httpConnection.setReadTimeout(10000);
+
+            httpConnection.connect();
+
+            int responseCode = httpConnection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+                return sb.toString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 }

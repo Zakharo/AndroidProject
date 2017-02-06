@@ -1,9 +1,15 @@
 package com.example.vladzakharo.androidapplication.activity;
 
 import android.app.Activity;
+import android.content.ContentProviderOperation;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.RemoteException;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -11,12 +17,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
 import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
@@ -26,13 +34,13 @@ import com.example.vladzakharo.androidapplication.links.LinkTransformationMethod
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.services.ApiServices;
 
+import java.util.ArrayList;
+
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-    private int mCarId;
     private String mCarDescription;
     private TextView mTvDescription;
     private ProgressBar mProgressBar;
-    private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mImageView;
     private Toolbar mToolbar;
     private Activity mActivity;
@@ -40,8 +48,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private FloatingActionButton mFab;
 
     private static final int LOADER_ID = 2;
-    private static final String KEY_CAR_ID = "keyCarId";
     private static final String KEY_CAR_DESCRIPTION = "keyCarDescription";
+    private static final String TAG = "DetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +58,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         if (getIntent() != null){
             mCarDescription = getIntent().getStringExtra(CarAdapter.CAR_DESCRIPTION);
-            //mCarId = getIntent().getIntExtra(CarAdapter.CAR_ID, 0);
         }
 
         Bundle bundle = new Bundle();
@@ -60,13 +67,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String response = new ApiServices(getApplicationContext()).addLike(mCar);
-                String awe = response;
+                new ApiServices(getApplicationContext()).addLike(mCar);
+                addCarToFavorite(mCar);
+                Snackbar.make(v, "Like!", Snackbar.LENGTH_SHORT).show();
             }
         });
 
         mToolbar = (Toolbar)findViewById(R.id.detail_toolbar);
-        mCollapsingToolbar = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_description);
         setSupportActionBar(mToolbar);
@@ -91,8 +98,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if (id != LOADER_ID) {
             return null;
         }
-        //return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CAR_ID + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_ID))}, null);
-        return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CAR_DESCRIPTION + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_DESCRIPTION))}, null);
+        return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CARS_CAR_DESCRIPTION + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_DESCRIPTION))}, null);
     }
 
     @Override
@@ -102,7 +108,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
         mCar = Car.getCarFromCursor(data);
-        //mCollapsingToolbar.setTitle(car.getTitle());
         mTvDescription.setText(mCar.getDescription());
         mTvDescription.setTransformationMethod(new LinkTransformationMethod(mActivity));
         mTvDescription.setMovementMethod(LinkMovementMethod.getInstance());
@@ -115,5 +120,23 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private void addCarToFavorite(Car car) {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        operations.add(ContentProviderOperation.newInsert(FavoritesProvider.FAVORITE_CAR_CONTENT_URI)
+                .withValue(DataBaseConstants.FAVORITES_CAR_ID, car.getId())
+                .withValue(DataBaseConstants.FAVORITES_CAR_LIKES, car.getLikes())
+                .withValue(DataBaseConstants.FAVORITES_CAR_POST_ID, car.getPostId())
+                .withValue(DataBaseConstants.FAVORITES_CAR_POST_OWNER_ID, car.getOwnerId())
+                .withValue(DataBaseConstants.FAVORITES_CAR_DESCRIPTION, car.getDescription())
+                .withValue(DataBaseConstants.FAVORITES_CAR_IMAGE_URL, car.getNamePicture())
+                .build());
+
+        try {
+            getContentResolver().applyBatch(FavoritesProvider.AUTHORITY, operations);
+        } catch (RemoteException | OperationApplicationException re) {
+            Log.e(TAG, "applyBatch()", re);
+        }
     }
 }

@@ -43,6 +43,7 @@ public class CarConverter implements Converter<Car> {
             car.setPostId(jsonObject.getInt(POST_ID));
             car.setOwnerId(jsonObject.getInt(OWNER_ID));
             car.setDescription(jsonObject.getString(TEXT));
+
             JSONArray attachmentsArray = jsonObject.getJSONArray(ATTACHMENTS);
 
             JSONObject objectInsideAttachment = attachmentsArray.getJSONObject(0);

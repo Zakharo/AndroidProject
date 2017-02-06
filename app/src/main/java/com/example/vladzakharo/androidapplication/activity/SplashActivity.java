@@ -20,14 +20,15 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mPrefManager = new PrefManager(this);
+        Intent intent;
         if (mPrefManager.isFirstTimeLaunch()) {
-            Intent intent = new Intent(this, WelcomeActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            intent = new Intent(this, WelcomeActivity.class);
+        } else if (mPrefManager.getToken() == null) {
+            intent = new Intent(this, LoginActivity.class);
+        } else{
+            intent = new Intent(this, MainActivity.class);
         }
+        startActivity(intent);
+        finish();
     }
 }

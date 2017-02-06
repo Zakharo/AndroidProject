@@ -117,11 +117,11 @@ public class Car implements Parcelable{
     };
 
     public static Car getCarFromCursor(Cursor cursor) {
-        return new Car(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_ID)),
-                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_LIKES)),
-                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_POST_ID)),
-                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_POST_OWNER_ID)),
-                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_DESCRIPTION)),
-                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_IMAGE_URL)));
+        return new Car(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_LIKES)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_POST_OWNER_ID)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_IMAGE_URL)));
     }
 }

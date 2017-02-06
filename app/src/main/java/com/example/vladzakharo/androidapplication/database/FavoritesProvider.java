@@ -10,26 +10,28 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.io.File;
+
 /**
- * Created by Vlad Zakharo on 08.01.2017.
+ * Created by Vlad Zakharo on 06.02.2017.
  */
 
-public class CarsProvider extends ContentProvider {
+public class FavoritesProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "com.example.vladzakharo.provider.cars";
-    static final String CAR_PATH = "cars";
-    public static final Uri CAR_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + CAR_PATH);
+    public static final String AUTHORITY = "com.example.vladzakharo.provider.favorites";
+    static final String FAVORITE_PATH = "favorite";
+    public static final Uri FAVORITE_CAR_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + FAVORITE_PATH);
 
-    static final int URI_CARS = 1;
-    static final int URI_CARS_ID = 2;
+    static final int URI_FAVORITE = 1;
+    static final int URI_FAVORITE_ID = 2;
 
-    static final String CAR_CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + AUTHORITY + "." + CAR_PATH;
-    static final String CAR_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + CAR_PATH;
+    static final String FAVORITE_CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + AUTHORITY + "." + FAVORITE_PATH;
+    static final String FAVORITE_CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd." + AUTHORITY + "." + FAVORITE_PATH;
 
     private static final UriMatcher mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
-        mUriMatcher.addURI(AUTHORITY, CAR_PATH, URI_CARS);
-        mUriMatcher.addURI(AUTHORITY, CAR_PATH + "/#", URI_CARS_ID);
+        mUriMatcher.addURI(AUTHORITY, FAVORITE_PATH, URI_FAVORITE);
+        mUriMatcher.addURI(AUTHORITY, FAVORITE_PATH + "/#", URI_FAVORITE_ID);
     }
 
     private DataBaseHelper mDBHelper;
@@ -45,19 +47,17 @@ public class CarsProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         switch (mUriMatcher.match(uri)) {
-            case URI_CARS:
+            case URI_FAVORITE:
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = DataBaseConstants.CARS_CAR_ID + " ASC";
-                } else {
-                    sortOrder = DataBaseConstants.CARS_TABLE_CARS + "." + DataBaseConstants.CARS_CAR_LIKES + " DESC";
+                    sortOrder = DataBaseConstants.FAVORITES_CAR_ID + " ASC";
                 }
                 break;
-            case URI_CARS_ID:
+            case URI_FAVORITE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
                 }
                 break;
             default:
@@ -65,8 +65,8 @@ public class CarsProvider extends ContentProvider {
         }
 
         mDataBase = mDBHelper.getReadableDatabase();
-        Cursor cursor = mDataBase.query(DataBaseConstants.CARS_TABLE_CARS, projection, selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), CAR_CONTENT_URI);
+        Cursor cursor = mDataBase.query(DataBaseConstants.FAVORITES_TABLE_CARS, projection, selection, selectionArgs, null, null, sortOrder);
+        cursor.setNotificationUri(getContext().getContentResolver(), FAVORITE_CAR_CONTENT_URI);
         return cursor;
     }
 
@@ -74,10 +74,10 @@ public class CarsProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (mUriMatcher.match(uri)) {
-            case URI_CARS:
-                return CAR_CONTENT_TYPE;
-            case URI_CARS_ID:
-                return CAR_CONTENT_ITEM_TYPE;
+            case URI_FAVORITE:
+                return FAVORITE_CONTENT_TYPE;
+            case URI_FAVORITE_ID:
+                return FAVORITE_CONTENT_ITEM_TYPE;
         }
         return null;
     }
@@ -85,12 +85,12 @@ public class CarsProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        if (mUriMatcher.match(uri) != URI_CARS)
+        if (mUriMatcher.match(uri) != URI_FAVORITE)
             throw new IllegalArgumentException("Wrong URI: " + uri);
 
         mDataBase = mDBHelper.getWritableDatabase();
-        long rowID = mDataBase.insert(DataBaseConstants.CARS_TABLE_CARS, null, values);
-        Uri resultUri = ContentUris.withAppendedId(CAR_CONTENT_URI, rowID);
+        long rowID = mDataBase.insert(DataBaseConstants.FAVORITES_TABLE_CARS, null, values);
+        Uri resultUri = ContentUris.withAppendedId(FAVORITE_CAR_CONTENT_URI, rowID);
         getContext().getContentResolver().notifyChange(resultUri, null);
         return resultUri;
     }
@@ -98,21 +98,21 @@ public class CarsProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         switch (mUriMatcher.match(uri)) {
-            case URI_CARS:
+            case URI_FAVORITE:
                 break;
-            case URI_CARS_ID:
+            case URI_FAVORITE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
                 }
                 break;
             default:
                 throw new IllegalArgumentException("Wrong URI: " + uri);
         }
         mDataBase = mDBHelper.getWritableDatabase();
-        int cnt = mDataBase.delete(DataBaseConstants.CARS_TABLE_CARS, selection, selectionArgs);
+        int cnt = mDataBase.delete(DataBaseConstants.FAVORITES_TABLE_CARS, selection, selectionArgs);
         getContext().getContentResolver().notifyChange(uri, null);
         return cnt;
     }
@@ -120,21 +120,21 @@ public class CarsProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         switch (mUriMatcher.match(uri)) {
-            case URI_CARS:
+            case URI_FAVORITE:
                 break;
-            case URI_CARS_ID:
+            case URI_FAVORITE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
                 }
                 break;
             default:
                 throw new IllegalArgumentException("Wrong URI: " + uri);
         }
         mDataBase = mDBHelper.getWritableDatabase();
-        int cnt = mDataBase.update(DataBaseConstants.CARS_TABLE_CARS, values, selection, selectionArgs);
+        int cnt = mDataBase.update(DataBaseConstants.FAVORITES_TABLE_CARS, values, selection, selectionArgs);
         getContext().getContentResolver().notifyChange(uri, null);
         return cnt;
     }

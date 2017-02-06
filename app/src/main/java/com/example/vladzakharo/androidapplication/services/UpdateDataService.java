@@ -62,12 +62,12 @@ public class UpdateDataService extends IntentService {
         for (int i = 0; i < cars.size(); i++) {
             Car car = cars.get(i);
             operations.add(ContentProviderOperation.newInsert(CarsProvider.CAR_CONTENT_URI)
-            .withValue(DataBaseConstants.CAR_ID, car.getId())
-            .withValue(DataBaseConstants.CAR_LIKES, car.getLikes())
-            .withValue(DataBaseConstants.CAR_POST_ID, car.getPostId())
-            .withValue(DataBaseConstants.CAR_POST_OWNER_ID, car.getOwnerId())
-            .withValue(DataBaseConstants.CAR_DESCRIPTION, car.getDescription())
-            .withValue(DataBaseConstants.CAR_IMAGE_URL, car.getNamePicture())
+            .withValue(DataBaseConstants.CARS_CAR_ID, car.getId())
+            .withValue(DataBaseConstants.CARS_CAR_LIKES, car.getLikes())
+            .withValue(DataBaseConstants.CARS_CAR_POST_ID, car.getPostId())
+            .withValue(DataBaseConstants.CARS_CAR_POST_OWNER_ID, car.getOwnerId())
+            .withValue(DataBaseConstants.CARS_CAR_DESCRIPTION, car.getDescription())
+            .withValue(DataBaseConstants.CARS_CAR_IMAGE_URL, car.getNamePicture())
             .build());
         }
 

@@ -42,7 +42,7 @@
     <string name="dialog_title_edittext_preference">Amount</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="date">DATE</string>
+    <string name="likes">LIKES</string>
 
 </resources>

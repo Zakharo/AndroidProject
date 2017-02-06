@@ -1,9 +1,7 @@
 package com.example.vladzakharo.androidapplication.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -20,23 +18,21 @@ import android.widget.ProgressBar;
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
-import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.decoration.Decorator;
 import com.example.vladzakharo.androidapplication.services.UpdateDataService;
 
-public class FragmentTwo extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class FragmentDate extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int LOADER_ID = 5;
-    private static final String SORT = "sort_by_likes";
+    private static final int LOADER_ID = 0;
 
     private RecyclerView mCarRecyclerView;
     private ProgressBar mProgressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CarAdapter mCarAdapter;
 
-    private Cursor mCursor;
+    private Cursor mCursor = null;
 
-    public FragmentTwo() {
+    public FragmentDate() {
 
     }
 
@@ -44,10 +40,10 @@ public class FragmentTwo extends Fragment implements LoaderManager.LoaderCallbac
         mCursor = cursor;
     }
 
-    public static FragmentTwo newInstance(Cursor cursor) {
-        FragmentTwo fragmentTwo = new FragmentTwo();
-        fragmentTwo.setCursor(cursor);
-        return fragmentTwo;
+    public static FragmentDate newInstance(Cursor cursor) {
+        FragmentDate fragment = new FragmentDate();
+        fragment.setCursor(cursor);
+        return fragment;
     }
 
     @Override
@@ -55,17 +51,18 @@ public class FragmentTwo extends Fragment implements LoaderManager.LoaderCallbac
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_two, container, false);
+        View v = inflater.inflate(R.layout.fragment_one, container, false);
 
-        mCarRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_two_recycler_view);
+        mCarRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mProgressBar = (ProgressBar) v.findViewById(R.id.fragment_two_progress_bar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.fragment_two_swipeContainer);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -96,12 +93,14 @@ public class FragmentTwo extends Fragment implements LoaderManager.LoaderCallbac
         if (id != LOADER_ID) {
             return null;
         }
-        return new CursorLoader(getActivity(), CarsProvider.CAR_CONTENT_URI, null, null, null, SORT);
+        return new CursorLoader(getActivity(), CarsProvider.CAR_CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mCarAdapter.changeCursor(data);
+        mCursor = data;
+        updateUi();
+
         mProgressBar.setVisibility(View.GONE);
         mCarRecyclerView.setVisibility(View.VISIBLE);
         mSwipeRefreshLayout.setRefreshing(false);

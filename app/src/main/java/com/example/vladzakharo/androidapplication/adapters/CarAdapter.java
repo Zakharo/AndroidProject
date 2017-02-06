@@ -22,13 +22,10 @@ import com.example.vladzakharo.androidapplication.R;
 
 public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
-    public static final String CAR_ID = "car_id";
     public static final String CAR_DESCRIPTION = "car_desc";
     private static final int VIEW_TYPE_NORMAL = 1;
-    private static final int VIEW_TYPE_HEADER = 2;
 
     private Context mContext;
-
     private static ImageManager sImageManager = ImageManager.getInstance();
 
     public CarAdapter(Context context, Cursor cursor){
@@ -66,32 +63,14 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
                     intent.putExtra(CAR_DESCRIPTION, car.getDescription());
-                    //intent.putExtra(CAR_ID, getPosition());
                     v.getContext().startActivity(intent);
                 }
             });
         }
     }
 
-    public class HeaderItem extends RecyclerView.ViewHolder {
-        public HeaderItem(View itemView) {
-            super(itemView);
-        }
-    }
-
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case VIEW_TYPE_HEADER: {
-                LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-                View view = layoutInflater.inflate(R.layout.header_recyclerview, parent, false);
-                return new HeaderItem(view);
-            }
-            case VIEW_TYPE_NORMAL:
-                break;
-
-        }
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.single_item, parent, false);
         return new CarHolder(view);
@@ -108,9 +87,6 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return VIEW_TYPE_HEADER;
-        }
         return VIEW_TYPE_NORMAL;
     }
 }
