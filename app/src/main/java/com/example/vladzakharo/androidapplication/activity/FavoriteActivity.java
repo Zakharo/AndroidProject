@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -25,7 +26,6 @@ public class FavoriteActivity extends AppCompatActivity implements LoaderManager
 
     private RecyclerView mCarRecyclerView;
     private ProgressBar mProgressBar;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private CarAdapter mCarAdapter;
     private Toolbar mToolbar;
     private Cursor mCursor = null;
@@ -39,8 +39,9 @@ public class FavoriteActivity extends AppCompatActivity implements LoaderManager
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mToolbar = (Toolbar) findViewById(R.id.favorite_toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getResources().getString(R.string.toolbar_title_favorites));
         mProgressBar = (ProgressBar) findViewById(R.id.favorite_progress_bar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.favorite_swipeContainer);
 
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
         updateUi();
@@ -69,11 +70,18 @@ public class FavoriteActivity extends AppCompatActivity implements LoaderManager
 
         mProgressBar.setVisibility(View.GONE);
         mCarRecyclerView.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return true;
     }
 }

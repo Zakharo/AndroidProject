@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.QUICKBOOT_POWERON"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -72,6 +74,7 @@
         </activity>
         <activity
             android:name=".activity.FavoriteActivity"
+            android:label="@string/toolbar_title_favorites"
             android:theme="@style/AppTheme">
         </activity>
     </application>

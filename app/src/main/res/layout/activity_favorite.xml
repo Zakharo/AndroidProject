@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     >
 
     <android.support.design.widget.AppBarLayout
@@ -13,27 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:fitsSystemWindows="false"
         >
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/favorite_collapsing_toolbar"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/favorite_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginStart="@dimen/expandedTitleMarginStart"
-            app:expandedTitleMarginEnd="@dimen/expandedTitleMarginEnd"
-            >
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/favorite_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:fitsSystemWindows="true"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin"/>
-        </android.support.design.widget.CollapsingToolbarLayout>
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"/>
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
@@ -52,17 +39,11 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/favorite_swipeContainer"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/favorite_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/favorite_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-        </android.support.v4.widget.SwipeRefreshLayout>
 
     </RelativeLayout>
 

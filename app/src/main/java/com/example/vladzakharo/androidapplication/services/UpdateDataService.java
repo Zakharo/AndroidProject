@@ -7,6 +7,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.net.ConnectivityManager;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -39,6 +40,9 @@ public class UpdateDataService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (!isNetworkConnected()) {
+            return;
+        }
         mPrefManager = new PrefManager(getApplicationContext());
         String mStringJsonObject = new ApiServices(getApplicationContext()).getCars();
         JSONObject jsonObject = null;
@@ -82,5 +86,11 @@ public class UpdateDataService extends IntentService {
         AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeToWait, pendingIntent);
 
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }

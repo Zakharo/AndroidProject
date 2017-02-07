@@ -10,14 +10,14 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
 
-    <string name="slide_1_title">Good Food!</string>
-    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
+    <string name="slide_1_title">Login with VK</string>
+    <string name="slide_1_desc">It is absolutely safe, I will not steal your account</string>
 
-    <string name="slide_2_title">Movie Tickets</string>
-    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
+    <string name="slide_2_title">Best Cars</string>
+    <string name="slide_2_desc">Enjoy amazing posts with cars</string>
 
-    <string name="slide_3_title">Great Discounts</string>
-    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+    <string name="slide_3_title">Add Like</string>
+    <string name="slide_3_desc">Save your favorite news in bookmarks</string>
 
     <!-- Navigation Drawer menu labels -->
     <string name="nav_home">Home</string>
@@ -44,5 +44,6 @@
 
     <string name="date">DATE</string>
     <string name="likes">LIKES</string>
+    <string name="toolbar_title_favorites">Favorites</string>
 
 </resources>
