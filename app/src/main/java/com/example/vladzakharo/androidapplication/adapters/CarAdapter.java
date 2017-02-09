@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vladzakharo.androidapplication.activity.DetailActivity;
+import com.example.vladzakharo.androidapplication.activity.FavoriteActivity;
 import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.R;
@@ -23,6 +24,7 @@ import com.example.vladzakharo.androidapplication.R;
 public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
     public static final String CAR_DESCRIPTION = "car_desc";
+    public static final String FLAG = "flag";
     private static final int VIEW_TYPE_NORMAL = 1;
 
     private Context mContext;
@@ -63,6 +65,9 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
                     intent.putExtra(CAR_DESCRIPTION, car.getDescription());
+                    if (mContext.getClass().equals(FavoriteActivity.class)) {
+                        intent.putExtra(FLAG, true);
+                    }
                     v.getContext().startActivity(intent);
                 }
             });

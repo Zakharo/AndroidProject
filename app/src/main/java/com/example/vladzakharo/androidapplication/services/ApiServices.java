@@ -1,9 +1,12 @@
 package com.example.vladzakharo.androidapplication.services;
 
+import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.RemoteException;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +15,8 @@ import android.widget.ProgressBar;
 
 import com.example.vladzakharo.androidapplication.activity.MainActivity;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
+import com.example.vladzakharo.androidapplication.database.CarsProvider;
+import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
 import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.items.User;
@@ -20,6 +25,8 @@ import com.example.vladzakharo.androidapplication.utils.VKUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by Vlad Zakharo on 24.01.2017.
@@ -65,7 +72,26 @@ public class ApiServices {
         } catch (JSONException je) {
             Log.e(TAG, "json problems", je);
         }
-        return new JsonParser(mPrefManager).convert(User.class, jsonObject);
+
+        User user = new JsonParser(mPrefManager).convert(User.class, jsonObject);
+
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        operations.add(ContentProviderOperation.newInsert(CarsProvider.CAR_CONTENT_URI)
+                .withValue(DataBaseConstants.USER_ID, user.getId())
+                .withValue(DataBaseConstants.USER_FIRST_NAME, user.getFirstName())
+                .withValue(DataBaseConstants.USER_LAST_NAME, user.getLastName())
+                .withValue(DataBaseConstants.USER_PICTURE, user.getPicture())
+                .withValue(DataBaseConstants.USER_FULL_PHOTO, user.getFullPhoto())
+                .withValue(DataBaseConstants.USER_DATE_OF_BIRTH, user.getDateOfBirth())
+                .withValue(DataBaseConstants.USER_HOMETOWN, user.getHomeTown())
+                .build());
+        try {
+            mContext.getContentResolver().applyBatch(CarsProvider.AUTHORITY, operations);
+        } catch (RemoteException | OperationApplicationException re) {
+            Log.e(TAG, "UpdateDataService", re);
+        }
+
+        return user;
     }
 
     public String getCars() {

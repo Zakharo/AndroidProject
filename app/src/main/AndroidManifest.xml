@@ -46,6 +46,9 @@
         <provider
             android:name=".database.FavoritesProvider"
             android:authorities="com.example.vladzakharo.provider.favorites"/>
+        <provider
+            android:authorities="com.example.vladzakharo.provider.users"
+            android:name=".database.UserProvider"/>
 
         <service android:name=".services.UpdateDataService"/>
         <service android:name=".services.DeleteTokenService"/>

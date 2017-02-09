@@ -46,6 +46,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private Activity mActivity;
     private Car mCar;
     private FloatingActionButton mFab;
+    private boolean flag;
 
     private static final int LOADER_ID = 2;
     private static final String KEY_CAR_DESCRIPTION = "keyCarDescription";
@@ -58,12 +59,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         if (getIntent() != null){
             mCarDescription = getIntent().getStringExtra(CarAdapter.CAR_DESCRIPTION);
+            flag = getIntent().getBooleanExtra(CarAdapter.FLAG, false);
         }
 
         Bundle bundle = new Bundle();
         bundle.putString(KEY_CAR_DESCRIPTION, mCarDescription);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+        if (flag) {
+            mFab.setVisibility(View.INVISIBLE);
+        }
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

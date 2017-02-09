@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.fragments.FragmentDate;
 import com.example.vladzakharo.androidapplication.fragments.FragmentLikes;
+import com.example.vladzakharo.androidapplication.images.RoundTransformer;
 import com.example.vladzakharo.androidapplication.loaders.UserLoader;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.R;

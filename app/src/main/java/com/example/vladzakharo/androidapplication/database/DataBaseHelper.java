@@ -34,6 +34,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + DataBaseConstants.FAVORITES_CAR_DESCRIPTION + " TEXT, "
                 + DataBaseConstants.FAVORITES_CAR_IMAGE_URL + " TEXT" + " );");
 
+        db.execSQL("CREATE TABLE " + DataBaseConstants.USER_TABLE_USER + "("
+                + DataBaseConstants.USER_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + DataBaseConstants.USER_FIRST_NAME +  "TEXT, "
+                + DataBaseConstants.USER_LAST_NAME + " TEXT, "
+                + DataBaseConstants.USER_PICTURE + " TEXT, "
+                + DataBaseConstants.USER_FULL_PHOTO + " TEXT, "
+                + DataBaseConstants.USER_DATE_OF_BIRTH + " TEXT, "
+                + DataBaseConstants.USER_HOMETOWN + " TEXT" + " );");
     }
 
     @Override

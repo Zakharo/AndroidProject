@@ -16,8 +16,6 @@ public class DataBaseConstants {
     public static final String CARS_CAR_IMAGE_URL = "image_url";
     public static final String CARS_CAR_LIKES = "likes";
 
-
-
     public static final String FAVORITES_TABLE_CARS = "favorites";
     public static final String FAVORITES_CAR_ID = "_id";
     public static final String FAVORITES_CAR_POST_ID = "post_id";
@@ -25,5 +23,14 @@ public class DataBaseConstants {
     public static final String FAVORITES_CAR_DESCRIPTION = "description";
     public static final String FAVORITES_CAR_IMAGE_URL = "image_url";
     public static final String FAVORITES_CAR_LIKES = "likes";
+
+    public static final String USER_TABLE_USER = "user";
+    public static final String USER_ID = "_id";
+    public static final String USER_FIRST_NAME = "first_name";
+    public static final String USER_LAST_NAME = "last_name";
+    public static final String USER_PICTURE = "picture";
+    public static final String USER_FULL_PHOTO = "full_photo";
+    public static final String USER_DATE_OF_BIRTH = "date_of_birth";
+    public static final String USER_HOMETOWN = "hometown";
 
 }

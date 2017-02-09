@@ -77,6 +77,7 @@ public class FragmentDate extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onResume() {
         super.onResume();
+
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
