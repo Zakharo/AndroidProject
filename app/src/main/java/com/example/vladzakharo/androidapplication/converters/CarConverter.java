@@ -25,6 +25,7 @@ public class CarConverter implements Converter<Car> {
     private static final String LIKES_COUNT = "count";
     private static final String POST_ID = "id";
     private static final String OWNER_ID = "owner_id";
+    private static final String USER_LIKES = "user_likes";
 
     private PrefManager mPrefManager;
 
@@ -51,6 +52,7 @@ public class CarConverter implements Converter<Car> {
             car.setNamePicture(photoObject.getString(IMAGE_NAME));
             JSONObject likesObject = jsonObject.getJSONObject(LIKES);
             car.setLikes(likesObject.getInt(LIKES_COUNT));
+            car.setCarLiked(likesObject.getInt(USER_LIKES));
         } catch (JSONException je) {
             Log.e(TAG, "json parse problems", je);
         }

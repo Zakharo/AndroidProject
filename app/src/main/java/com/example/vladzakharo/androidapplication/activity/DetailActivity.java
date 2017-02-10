@@ -38,7 +38,7 @@ import java.util.ArrayList;
 
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-    private String mCarDescription;
+    private String mCarNamePicture;
     private TextView mTvDescription;
     private ProgressBar mProgressBar;
     private ImageView mImageView;
@@ -47,9 +47,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private Car mCar;
     private FloatingActionButton mFab;
     private boolean flag;
+    private int mButtonLikeState;
+    private Bundle bundle;
 
-    private static final int LOADER_ID = 2;
-    private static final String KEY_CAR_DESCRIPTION = "keyCarDescription";
+    private static final int CAR_LOADER_ID = 2;
+    private static final int FAVORITE_LOADER_ID = 3;
+    private static final String KEY_CAR_NAME_PICTURE = "keyCarPic";
     private static final String TAG = "DetailActivity";
 
     @Override
@@ -58,23 +61,31 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         setContentView(R.layout.activity_detail);
 
         if (getIntent() != null){
-            mCarDescription = getIntent().getStringExtra(CarAdapter.CAR_DESCRIPTION);
+            mCarNamePicture = getIntent().getStringExtra(CarAdapter.CAR_NAME_PICTURE);
             flag = getIntent().getBooleanExtra(CarAdapter.FLAG, false);
         }
 
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_CAR_DESCRIPTION, mCarDescription);
+        bundle = new Bundle();
+        bundle.putString(KEY_CAR_NAME_PICTURE, mCarNamePicture);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        if (flag) {
-            mFab.setVisibility(View.INVISIBLE);
-        }
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ApiServices(getApplicationContext()).addLike(mCar);
-                addCarToFavorite(mCar);
-                Snackbar.make(v, "Like!", Snackbar.LENGTH_SHORT).show();
+                if (mButtonLikeState == 0) {
+                    new ApiServices(getApplicationContext()).addLike(mCar);
+                    addCarToFavorite(mCar);
+                    mFab.setImageResource(R.drawable.ic_like_add);
+                    Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
+                    mButtonLikeState++;
+                } else {
+                    new ApiServices(getApplicationContext()).deleteLike(mCar);
+                    deleteCarFromFavorite();
+                    mFab.setImageResource(R.drawable.ic_like_not_add);
+                    Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
+                    mButtonLikeState--;
+                }
+
             }
         });
 
@@ -87,7 +98,18 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mActivity = this;
 
         mProgressBar.setVisibility(View.VISIBLE);
-        getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (flag) {
+            getSupportLoaderManager().initLoader(FAVORITE_LOADER_ID, bundle, this);
+        } else {
+            getSupportLoaderManager().initLoader(CAR_LOADER_ID, bundle, this);
+        }
     }
 
     @Override
@@ -100,10 +122,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (id != LOADER_ID) {
+        if (id == CAR_LOADER_ID) {
+            return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CARS_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_NAME_PICTURE))}, null);
+        }else if (id == FAVORITE_LOADER_ID) {
+            return new CursorLoader(this, FavoritesProvider.FAVORITE_CAR_CONTENT_URI, null, DataBaseConstants.FAVORITES_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_NAME_PICTURE))}, null);
+        } else {
             return null;
         }
-        return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CARS_CAR_DESCRIPTION + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_DESCRIPTION))}, null);
     }
 
     @Override
@@ -120,6 +145,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 .from(mCar.getNamePicture())
                 .to(mImageView)
                 .load();
+        if (mCar.getIsCarLiked() == 1) {
+            mFab.setImageResource(R.drawable.ic_like_add);
+        }
+
+        mButtonLikeState = mCar.getIsCarLiked();
     }
 
     @Override
@@ -132,14 +162,40 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         operations.add(ContentProviderOperation.newInsert(FavoritesProvider.FAVORITE_CAR_CONTENT_URI)
                 .withValue(DataBaseConstants.FAVORITES_CAR_ID, car.getId())
                 .withValue(DataBaseConstants.FAVORITES_CAR_LIKES, car.getLikes())
+                .withValue(DataBaseConstants.FAVORITES_CAR_IS_LIKED, 1)
                 .withValue(DataBaseConstants.FAVORITES_CAR_POST_ID, car.getPostId())
                 .withValue(DataBaseConstants.FAVORITES_CAR_POST_OWNER_ID, car.getOwnerId())
                 .withValue(DataBaseConstants.FAVORITES_CAR_DESCRIPTION, car.getDescription())
                 .withValue(DataBaseConstants.FAVORITES_CAR_IMAGE_URL, car.getNamePicture())
                 .build());
 
+
+        ArrayList<ContentProviderOperation> update = new ArrayList<>();
+        update.add(ContentProviderOperation.newUpdate(CarsProvider.CAR_CONTENT_URI)
+                .withSelection(DataBaseConstants.CARS_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(mCarNamePicture)})
+                .withValue(DataBaseConstants.CARS_CAR_IS_LIKED, 1)
+                .build());
         try {
             getContentResolver().applyBatch(FavoritesProvider.AUTHORITY, operations);
+            getContentResolver().applyBatch(CarsProvider.AUTHORITY, update);
+        } catch (RemoteException | OperationApplicationException re) {
+            Log.e(TAG, "applyBatch()", re);
+        }
+    }
+
+    private void deleteCarFromFavorite() {
+        ArrayList<ContentProviderOperation> deleteFromFavorites = new ArrayList<>();
+        deleteFromFavorites.add(ContentProviderOperation.newDelete(FavoritesProvider.FAVORITE_CAR_CONTENT_URI)
+                .withSelection(DataBaseConstants.FAVORITES_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(mCarNamePicture)})
+                .build());
+
+        ArrayList<ContentProviderOperation> deleteFromCars = new ArrayList<>();
+        deleteFromCars.add(ContentProviderOperation.newDelete(CarsProvider.CAR_CONTENT_URI)
+                .withSelection(DataBaseConstants.CARS_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(mCarNamePicture)})
+                .build());
+        try {
+            getContentResolver().applyBatch(FavoritesProvider.AUTHORITY, deleteFromFavorites);
+            getContentResolver().applyBatch(CarsProvider.AUTHORITY, deleteFromCars);
         } catch (RemoteException | OperationApplicationException re) {
             Log.e(TAG, "applyBatch()", re);
         }

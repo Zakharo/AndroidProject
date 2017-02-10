@@ -42,6 +42,7 @@ public class ApiServices {
     private String mUserInfoUrl;
     private String mSearchCarsUrl;
     private String mAddLikeUrl;
+    private String mDeleteLikeUrl;
     private Context mContext;
     private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
     private static final String PREF_KEY = "amount_of_cars";
@@ -108,7 +109,19 @@ public class ApiServices {
                 + "&access_token="
                 + mPrefManager.getToken();
 
-        new AddLike().execute(mAddLikeUrl);
+        new Like().execute(mAddLikeUrl);
+    }
+
+    public void deleteLike(Car car) {
+        mDeleteLikeUrl = "https://api.vk.com/method/likes.delete?type=post&owner_id="
+                + car.getOwnerId()
+                + "&item_id="
+                + car.getPostId()
+                + "&v=5.62"
+                + "&access_token="
+                + mPrefManager.getToken();
+
+        new Like().execute(mDeleteLikeUrl);
     }
 
     public void parseResponse(String url) {
@@ -135,7 +148,7 @@ public class ApiServices {
         }
     }
 
-    private static class AddLike extends AsyncTask<String, Void, Void> {
+    private static class Like extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {

@@ -68,6 +68,7 @@ public class UpdateDataService extends IntentService {
             operations.add(ContentProviderOperation.newInsert(CarsProvider.CAR_CONTENT_URI)
             .withValue(DataBaseConstants.CARS_CAR_ID, car.getId())
             .withValue(DataBaseConstants.CARS_CAR_LIKES, car.getLikes())
+            .withValue(DataBaseConstants.CARS_CAR_IS_LIKED, car.getIsCarLiked())
             .withValue(DataBaseConstants.CARS_CAR_POST_ID, car.getPostId())
             .withValue(DataBaseConstants.CARS_CAR_POST_OWNER_ID, car.getOwnerId())
             .withValue(DataBaseConstants.CARS_CAR_DESCRIPTION, car.getDescription())
