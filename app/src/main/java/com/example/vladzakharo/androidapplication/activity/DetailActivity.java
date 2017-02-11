@@ -93,6 +93,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mImageView = (ImageView) findViewById(R.id.toolbar_image);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar_description);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(R.string.toolbar_title_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mTvDescription = (TextView) findViewById(R.id.detail_text_view);
         mActivity = this;

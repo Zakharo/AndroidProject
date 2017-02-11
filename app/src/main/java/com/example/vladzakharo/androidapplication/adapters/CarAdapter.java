@@ -40,11 +40,13 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
     public class CarHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
         public TextView mDescriptionTextView;
+        public TextView mLikeCounter;
 
         public CarHolder(View itemView) {
             super(itemView);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.card_car_message);
             mImageView = (ImageView) itemView.findViewById(R.id.card_car_picture);
+            mLikeCounter = (TextView) itemView.findViewById(R.id.card_count_likes);
         }
 
         private void onBindViewHolder(final Cursor cursor) {
@@ -53,6 +55,7 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
             mDescriptionTextView.setText(car.getDescription());
             Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
             mImageView.setImageDrawable(placeholder);
+            mLikeCounter.setText(String.valueOf(car.getLikes()));
 
             sImageManager.getImageLoader(mContext)
                     .from(car.getNamePicture())

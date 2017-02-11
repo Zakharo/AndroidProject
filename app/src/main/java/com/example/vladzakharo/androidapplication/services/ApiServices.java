@@ -17,6 +17,8 @@ import com.example.vladzakharo.androidapplication.activity.MainActivity;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
+import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
+import com.example.vladzakharo.androidapplication.database.UserProvider;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
 import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.items.User;
@@ -76,8 +78,19 @@ public class ApiServices {
 
         User user = new JsonParser(mPrefManager).convert(User.class, jsonObject);
 
+        ArrayList<ContentProviderOperation> delete = new ArrayList<>();
+        delete.add(ContentProviderOperation.newDelete(UserProvider.USER_CONTENT_URI)
+                .withSelection(DataBaseConstants.USER_ID + " = ?", new String[]{String.valueOf(1)})
+                .build());
+
+        try {
+            mContext.getContentResolver().applyBatch(UserProvider.AUTHORITY, delete);
+        } catch (RemoteException | OperationApplicationException re) {
+            Log.e(TAG, "UpdateDataService", re);
+        }
+
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        operations.add(ContentProviderOperation.newInsert(CarsProvider.CAR_CONTENT_URI)
+        operations.add(ContentProviderOperation.newInsert(UserProvider.USER_CONTENT_URI)
                 .withValue(DataBaseConstants.USER_ID, user.getId())
                 .withValue(DataBaseConstants.USER_FIRST_NAME, user.getFirstName())
                 .withValue(DataBaseConstants.USER_LAST_NAME, user.getLastName())
@@ -87,17 +100,16 @@ public class ApiServices {
                 .withValue(DataBaseConstants.USER_HOMETOWN, user.getHomeTown())
                 .build());
         try {
-            mContext.getContentResolver().applyBatch(CarsProvider.AUTHORITY, operations);
+            mContext.getContentResolver().applyBatch(UserProvider.AUTHORITY, operations);
         } catch (RemoteException | OperationApplicationException re) {
             Log.e(TAG, "UpdateDataService", re);
         }
-
+        Log.d(TAG, "user loaded");
         return user;
     }
 
     public String getCars() {
-        String stringJsonObject = HttpGetJson.GET(mSearchCarsUrl);
-        return stringJsonObject;
+        return HttpGetJson.GET(mSearchCarsUrl);
     }
 
     public void addLike(Car car) {
@@ -110,6 +122,7 @@ public class ApiServices {
                 + mPrefManager.getToken();
 
         new Like().execute(mAddLikeUrl);
+        Log.d(TAG, "like added");
     }
 
     public void deleteLike(Car car) {
@@ -122,6 +135,7 @@ public class ApiServices {
                 + mPrefManager.getToken();
 
         new Like().execute(mDeleteLikeUrl);
+        Log.d(TAG, "like deleted");
     }
 
     public void parseResponse(String url) {
@@ -146,6 +160,7 @@ public class ApiServices {
         } catch(Exception e) {
             Log.d(TAG, "parse url problem");
         }
+        Log.d(TAG, "token and user id saved");
     }
 
     private static class Like extends AsyncTask<String, Void, Void> {

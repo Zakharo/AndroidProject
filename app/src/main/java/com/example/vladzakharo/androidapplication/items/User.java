@@ -12,7 +12,7 @@ import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 
 public class User {
 
-    private int mId;
+    private int mId = 1;
     private String mFirstName;
     private String mLastName;
     private String mPicture;
@@ -35,7 +35,7 @@ public class User {
     }
 
     public int getId() {
-        return 1;
+        return mId;
     }
 
     public void setId(int id) {

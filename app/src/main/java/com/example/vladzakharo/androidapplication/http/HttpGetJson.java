@@ -1,5 +1,7 @@
 package com.example.vladzakharo.androidapplication.http;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +13,7 @@ import java.net.URL;
  */
 
 public class HttpGetJson {
+    private static final String TAG = "HttpGetJson";
     public static String GET(String url) {
         try {
 
@@ -32,37 +35,7 @@ public class HttpGetJson {
                     sb.append(line + "\n");
                 }
                 br.close();
-                return sb.toString();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public static String POST(String url) {
-        try {
-
-            URL mUrl = new URL(url);
-            HttpURLConnection httpConnection = (HttpURLConnection) mUrl.openConnection();
-            httpConnection.setRequestMethod("POST");
-            httpConnection.setConnectTimeout(10000);
-            httpConnection.setReadTimeout(10000);
-
-            httpConnection.connect();
-
-            int responseCode = httpConnection.getResponseCode();
-
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                br.close();
+                Log.d(TAG, "return response");
                 return sb.toString();
             }
         } catch (IOException e) {

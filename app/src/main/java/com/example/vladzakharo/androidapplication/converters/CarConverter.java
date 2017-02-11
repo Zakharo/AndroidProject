@@ -48,8 +48,15 @@ public class CarConverter implements Converter<Car> {
             JSONArray attachmentsArray = jsonObject.getJSONArray(ATTACHMENTS);
 
             JSONObject objectInsideAttachment = attachmentsArray.getJSONObject(0);
-            JSONObject photoObject = objectInsideAttachment.getJSONObject(PHOTO);
-            car.setNamePicture(photoObject.getString(IMAGE_NAME));
+
+            if (objectInsideAttachment.has(PHOTO)) {
+                JSONObject photoObject = objectInsideAttachment.getJSONObject(PHOTO);
+                car.setNamePicture(photoObject.getString(IMAGE_NAME));
+            }
+            /*JSONObject photoObject = objectInsideAttachment.getJSONObject(PHOTO);
+            if (photoObject != null) {
+                car.setNamePicture(photoObject.getString(IMAGE_NAME));
+            }*/
             JSONObject likesObject = jsonObject.getJSONObject(LIKES);
             car.setLikes(likesObject.getInt(LIKES_COUNT));
             car.setCarLiked(likesObject.getInt(USER_LIKES));

@@ -128,6 +128,7 @@ public class ImageManager {
             } else {
                 imageView.setImageBitmap(result);
             }
+            Log.d(TAG, "image loaded");
         }
     }
 }

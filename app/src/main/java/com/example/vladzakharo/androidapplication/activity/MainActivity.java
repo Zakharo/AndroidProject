@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mLastName = (TextView) mNavHeader.findViewById(R.id.last_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.toolbar_title_main);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

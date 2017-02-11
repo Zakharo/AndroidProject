@@ -45,6 +45,7 @@ public class UpdateDataService extends IntentService {
         }
         mPrefManager = new PrefManager(getApplicationContext());
         String mStringJsonObject = new ApiServices(getApplicationContext()).getCars();
+        Log.d(TAG, "cars loaded");
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(mStringJsonObject);
