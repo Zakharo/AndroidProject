@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vladzakharo.androidapplication.activity.DetailActivity;
+import com.example.vladzakharo.androidapplication.activity.FavoriteActivity;
 import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.R;
@@ -22,13 +23,11 @@ import com.example.vladzakharo.androidapplication.R;
 
 public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
-    public static final String CAR_ID = "car_id";
+    public static final String CAR_NAME_PICTURE = "car_picture";
+    public static final String FLAG = "flag";
     private static final int VIEW_TYPE_NORMAL = 1;
-    private static final int VIEW_TYPE_HEADER = 2;
 
     private Context mContext;
-    //private RecyclerView mRecyclerView;
-
     private static ImageManager sImageManager = ImageManager.getInstance();
 
     public CarAdapter(Context context, Cursor cursor){
@@ -40,24 +39,23 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
 
     public class CarHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
-        public TextView mTitleTextView;
         public TextView mDescriptionTextView;
+        public TextView mLikeCounter;
 
         public CarHolder(View itemView) {
             super(itemView);
-
-            mTitleTextView = (TextView) itemView.findViewById(R.id.car_title);
-            mDescriptionTextView = (TextView) itemView.findViewById(R.id.car_description);
-            mImageView = (ImageView) itemView.findViewById(R.id.car_picture);
+            mDescriptionTextView = (TextView) itemView.findViewById(R.id.card_car_message);
+            mImageView = (ImageView) itemView.findViewById(R.id.card_car_picture);
+            mLikeCounter = (TextView) itemView.findViewById(R.id.card_count_likes);
         }
 
         private void onBindViewHolder(final Cursor cursor) {
             final Car car = Car.getCarFromCursor(cursor);
 
-            mTitleTextView.setText(car.getTitle());
             mDescriptionTextView.setText(car.getDescription());
             Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
             mImageView.setImageDrawable(placeholder);
+            mLikeCounter.setText(String.valueOf(car.getLikes()));
 
             sImageManager.getImageLoader(mContext)
                     .from(car.getNamePicture())
@@ -69,32 +67,18 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                    intent.putExtra(CAR_ID, getPosition());
+                    intent.putExtra(CAR_NAME_PICTURE, car.getNamePicture());
+                    if (mContext.getClass().equals(FavoriteActivity.class)) {
+                        intent.putExtra(FLAG, true);
+                    }
                     v.getContext().startActivity(intent);
                 }
             });
         }
     }
 
-    public class HeaderItem extends RecyclerView.ViewHolder {
-        public HeaderItem(View itemView) {
-            super(itemView);
-        }
-    }
-
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case VIEW_TYPE_HEADER: {
-                LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-                View view = layoutInflater.inflate(R.layout.header_recyclerview, parent, false);
-                return new HeaderItem(view);
-            }
-            case VIEW_TYPE_NORMAL:
-                break;
-
-        }
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.single_item, parent, false);
         return new CarHolder(view);
@@ -111,9 +95,6 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return VIEW_TYPE_HEADER;
-        }
         return VIEW_TYPE_NORMAL;
     }
 }

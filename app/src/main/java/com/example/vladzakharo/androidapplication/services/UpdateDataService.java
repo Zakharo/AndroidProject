@@ -7,6 +7,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.net.ConnectivityManager;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -16,6 +17,7 @@ import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
 import com.example.vladzakharo.androidapplication.items.Car;
+import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +32,7 @@ import java.util.List;
 public class UpdateDataService extends IntentService {
     private static final String TAG = "UpdateDataService";
     private static final int timeToWait = 1000 * 60 * 10;
+    private PrefManager mPrefManager;
 
     public UpdateDataService() {
         super(TAG);
@@ -37,23 +40,40 @@ public class UpdateDataService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String mStringJsonObject = HttpGetJson.GET(Constants.URL);
+        if (!isNetworkConnected()) {
+            return;
+        }
+        mPrefManager = new PrefManager(getApplicationContext());
+        String mStringJsonObject = new ApiServices(getApplicationContext()).getCars();
+        Log.d(TAG, "cars loaded");
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(mStringJsonObject);
         } catch (JSONException je) {
             Log.e(TAG, "json problems", je);
         }
+        List<Car> cars = new JsonParser(mPrefManager).convertToList(jsonObject);
 
-        List<Car> cars = new JsonParser().convertToList(jsonObject);
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        ArrayList<ContentProviderOperation> deleteOperations = new ArrayList<>();
+
+        deleteOperations.add(ContentProviderOperation.newDelete(CarsProvider.CAR_CONTENT_URI).build());
+        try {
+            getContentResolver().applyBatch(CarsProvider.AUTHORITY, deleteOperations);
+        } catch (RemoteException | OperationApplicationException re) {
+            Log.e(TAG, "UpdateDataService", re);
+        }
+
         for (int i = 0; i < cars.size(); i++) {
             Car car = cars.get(i);
             operations.add(ContentProviderOperation.newInsert(CarsProvider.CAR_CONTENT_URI)
-            .withValue(DataBaseConstants.CAR_ID, car.getId())
-            .withValue(DataBaseConstants.CAR_TITLE, car.getTitle())
-            .withValue(DataBaseConstants.CAR_DESCRIPTION, car.getDescription())
-            .withValue(DataBaseConstants.CAR_IMAGE_URL, car.getNamePicture())
+            .withValue(DataBaseConstants.CARS_CAR_ID, car.getId())
+            .withValue(DataBaseConstants.CARS_CAR_LIKES, car.getLikes())
+            .withValue(DataBaseConstants.CARS_CAR_IS_LIKED, car.getIsCarLiked())
+            .withValue(DataBaseConstants.CARS_CAR_POST_ID, car.getPostId())
+            .withValue(DataBaseConstants.CARS_CAR_POST_OWNER_ID, car.getOwnerId())
+            .withValue(DataBaseConstants.CARS_CAR_DESCRIPTION, car.getDescription())
+            .withValue(DataBaseConstants.CARS_CAR_IMAGE_URL, car.getNamePicture())
             .build());
         }
 
@@ -68,5 +88,11 @@ public class UpdateDataService extends IntentService {
         AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeToWait, pendingIntent);
 
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }

@@ -11,16 +11,22 @@ import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
  */
 
 public class Car implements Parcelable{
-    private String mTitle;
     private String mDescription;
     private String mNamePicture;
+    private int mLikes;
+    private int mPostId;
+    private int mOwnerId;
     private int mId;
+    private int mIsLiked;
 
-    private Car(int id, String title, String description, String namePicture) {
+    private Car(int id, int likes, int isLiked, int postId, int ownerId, String description, String namePicture) {
         this.mId = id;
-        this.mTitle = title;
+        this.mLikes = likes;
+        this.mPostId = postId;
+        this.mOwnerId = ownerId;
         this.mDescription = description;
         this.mNamePicture = namePicture;
+        this.mIsLiked = isLiked;
     }
 
     public Car(){
@@ -28,10 +34,21 @@ public class Car implements Parcelable{
     }
 
     public Car (Parcel parcel){
-        mTitle = parcel.readString();
+        mPostId = parcel.readInt();
         mDescription = parcel.readString();
         mNamePicture = parcel.readString();
+        mLikes = parcel.readInt();
         mId = parcel.readInt();
+        mOwnerId = parcel.readInt();
+        mIsLiked= parcel.readInt();
+    }
+
+    public int getIsCarLiked() {
+        return mIsLiked;
+    }
+
+    public void setCarLiked(int value) {
+        mIsLiked = value;
     }
 
     public String getNamePicture() {
@@ -50,12 +67,12 @@ public class Car implements Parcelable{
         mDescription = description;
     }
 
-    public String getTitle() {
-        return mTitle;
+    public int getPostId() {
+        return mPostId;
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
+    public void setPostId(int postId) {
+        mPostId = postId;
     }
 
     public int getId() {
@@ -66,6 +83,22 @@ public class Car implements Parcelable{
         mId = id;
     }
 
+    public int getLikes() {
+        return mLikes;
+    }
+
+    public void setLikes(int likes) {
+        mLikes = likes;
+    }
+
+    public void setOwnerId(int ownerId) {
+        mOwnerId = ownerId;
+    }
+
+    public int getOwnerId() {
+        return mOwnerId;
+    }
+
 
     @Override
     public int describeContents() {
@@ -74,10 +107,13 @@ public class Car implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mTitle);
+        dest.writeInt(mPostId);
         dest.writeString(mDescription);
         dest.writeString(mNamePicture);
+        dest.writeInt(mLikes);
         dest.writeInt(mId);
+        dest.writeInt(mOwnerId);
+        dest.writeInt(mIsLiked);
     }
 
     public static final Parcelable.Creator<Car> CREATOR = new Creator<Car>() {
@@ -93,9 +129,12 @@ public class Car implements Parcelable{
     };
 
     public static Car getCarFromCursor(Cursor cursor) {
-        return new Car(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CAR_ID)),
-                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_TITLE)),
-                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_DESCRIPTION)),
-                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CAR_IMAGE_URL)));
+        return new Car(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_LIKES)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_IS_LIKED)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_POST_OWNER_ID)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_IMAGE_URL)));
     }
 }

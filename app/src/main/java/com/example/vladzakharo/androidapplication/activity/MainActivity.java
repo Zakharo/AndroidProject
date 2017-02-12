@@ -3,47 +3,49 @@ package com.example.vladzakharo.androidapplication.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.*;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.vladzakharo.androidapplication.constants.Constants;
+import com.example.vladzakharo.androidapplication.fragments.FragmentDate;
+import com.example.vladzakharo.androidapplication.fragments.FragmentLikes;
+import com.example.vladzakharo.androidapplication.images.RoundTransformer;
 import com.example.vladzakharo.androidapplication.loaders.UserLoader;
-import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
-import com.example.vladzakharo.androidapplication.decoration.Decorator;
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.items.User;
 import com.example.vladzakharo.androidapplication.services.UpdateDataService;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
 
-    private RecyclerView mCarRecyclerView;
-    private ProgressBar mProgressBar;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private CarAdapter mCarAdapter;
-
     private static final int LOADER_ID = 0;
     private static final int LOADER_USER_ID = 1;
+    private static final int REQUEST_CODE_PREFERENCES = 0;
 
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
@@ -53,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView mLastName;
     private Toolbar toolbar;
     private PrefManager mPrefManager;
+
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+
+    private Cursor mCursor = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mLastName = (TextView) mNavHeader.findViewById(R.id.last_name);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.toolbar_title_main);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -81,21 +89,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        mCarRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Intent intentService = new Intent(getApplicationContext(), UpdateDataService.class);
-                startService(intentService);
-            }
-        });
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(mViewPager);
 
-        updateUi();
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout.setupWithViewPager(mViewPager);
 
-        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
         getSupportLoaderManager().initLoader(LOADER_USER_ID, null, new LoaderManager.LoaderCallbacks<User>() {
             @Override
             public Loader<User> onCreateLoader(int id, Bundle args) {
@@ -117,12 +116,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
     }
 
-    private void updateUi() {
-        mCarAdapter = new CarAdapter(this, null);
-        Decorator decoration = new Decorator(this, getResources().getColor(R.color.colorPrimary), 0.5f);
-        mCarRecyclerView.addItemDecoration(decoration);
-        mCarRecyclerView.setAdapter(mCarAdapter);
-        mCarRecyclerView.setVisibility(View.INVISIBLE);
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(FragmentDate.newInstance(mCursor), getResources().getString(R.string.date));
+        adapter.addFragment(FragmentLikes.newInstance(mCursor), getResources().getString(R.string.likes));
+        viewPager.setAdapter(adapter);
     }
 
     @Override
@@ -135,10 +133,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mCarAdapter.changeCursor(cursor);
-        mProgressBar.setVisibility(View.GONE);
-        mCarRecyclerView.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(false);
+
+        mCursor = cursor;
+        setupViewPager(mViewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
+
     }
 
     @Override
@@ -170,6 +169,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(intent);
                 finish();
                 break;
+            case R.id.nav_favorite:
+                Intent intentFav = new Intent(this, FavoriteActivity.class);
+                startActivity(intentFav);
+                break;
+            case R.id.nav_settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivityForResult(i, REQUEST_CODE_PREFERENCES);
+                break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -189,6 +196,51 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .getImageLoader(getApplicationContext())
                 .from(user.getPicture())
                 .to(mImgProfile)
+                .transform(true)
                 .load();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_PREFERENCES) {
+            loadNewAmountOfCars();
+        }
+    }
+
+    private void loadNewAmountOfCars() {
+        Intent intentService = new Intent(this, UpdateDataService.class);
+        startService(intentService);
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }

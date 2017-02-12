@@ -17,11 +17,33 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + DataBaseConstants.TABLE_CARS + "("
-                + DataBaseConstants.CAR_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
-                + DataBaseConstants.CAR_TITLE + " TEXT, "
-                + DataBaseConstants.CAR_DESCRIPTION + " TEXT, "
-                + DataBaseConstants.CAR_IMAGE_URL + " TEXT" + " );");
+        db.execSQL("CREATE TABLE " + DataBaseConstants.CARS_TABLE_CARS + "("
+                + DataBaseConstants.CARS_CAR_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + DataBaseConstants.CARS_CAR_LIKES + " INTEGER, "
+                + DataBaseConstants.CARS_CAR_IS_LIKED + " INTEGER, "
+                + DataBaseConstants.CARS_CAR_POST_ID + " INTEGER, "
+                + DataBaseConstants.CARS_CAR_POST_OWNER_ID + " INTEGER, "
+                + DataBaseConstants.CARS_CAR_DESCRIPTION + " TEXT, "
+                + DataBaseConstants.CARS_CAR_IMAGE_URL + " TEXT" + " );");
+
+
+        db.execSQL("CREATE TABLE " + DataBaseConstants.FAVORITES_TABLE_CARS + "("
+                + DataBaseConstants.FAVORITES_CAR_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + DataBaseConstants.FAVORITES_CAR_LIKES + " INTEGER, "
+                + DataBaseConstants.FAVORITES_CAR_IS_LIKED + " INTEGER, "
+                + DataBaseConstants.FAVORITES_CAR_POST_ID + " INTEGER, "
+                + DataBaseConstants.FAVORITES_CAR_POST_OWNER_ID + " INTEGER, "
+                + DataBaseConstants.FAVORITES_CAR_DESCRIPTION + " TEXT, "
+                + DataBaseConstants.FAVORITES_CAR_IMAGE_URL + " TEXT" + " );");
+
+        db.execSQL("CREATE TABLE " + DataBaseConstants.USER_TABLE_USER + "("
+                + DataBaseConstants.USER_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + DataBaseConstants.USER_FIRST_NAME +  "TEXT, "
+                + DataBaseConstants.USER_LAST_NAME + " TEXT, "
+                + DataBaseConstants.USER_PICTURE + " TEXT, "
+                + DataBaseConstants.USER_FULL_PHOTO + " TEXT, "
+                + DataBaseConstants.USER_DATE_OF_BIRTH + " TEXT, "
+                + DataBaseConstants.USER_HOMETOWN + " TEXT" + " );");
     }
 
     @Override

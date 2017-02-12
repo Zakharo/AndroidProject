@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -44,6 +45,10 @@ public class ImageManager {
         return sImageManager;
     }
 
+    private ImageManager() {
+
+    }
+
     public ImageLoader getImageLoader(Context context) {
         return new ImageLoader(context);
     }
@@ -53,6 +58,7 @@ public class ImageManager {
         private WeakReference<ImageView> mImageView;
         private File cacheDir;
         private Context mContext;
+        private boolean mTransformation = false;
 
         public ImageLoader(Context context) {
             cacheDir = DiskCache.getDiskCacheDir(context, Constants.DISK_CACHE_SUBDIR);
@@ -66,6 +72,11 @@ public class ImageManager {
 
         public ImageLoader to (ImageView image) {
             this.mImageView = new WeakReference<>(image);
+            return this;
+        }
+
+        public ImageLoader transform(boolean value) {
+            this.mTransformation = value;
             return this;
         }
 
@@ -111,14 +122,13 @@ public class ImageManager {
             if (imageView == null || result == null) {
                 return;
             }
-            if (mImageLoader.mContext instanceof ProfileActivity) {
-                imageView.setImageBitmap(result);
+            if (mImageLoader.mTransformation) {
+                Drawable drawable = new RoundTransformer(mImageLoader.mContext.getApplicationContext()).transform(result);
+                imageView.setImageDrawable(drawable);
             } else {
-                RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(mImageLoader.mContext.getResources(), result);
-                roundedBitmapDrawable.setCornerRadius(50.0f);
-                roundedBitmapDrawable.setAntiAlias(true);
-                imageView.setImageDrawable(roundedBitmapDrawable);
+                imageView.setImageBitmap(result);
             }
+            Log.d(TAG, "image loaded");
         }
     }
 }

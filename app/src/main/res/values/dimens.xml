@@ -10,6 +10,7 @@
     <dimen name="image_size">60dp</dimen>
     <dimen name="app_bar_layout_height">250dp</dimen>
     <dimen name="profile_app_bar_layout_height">400dp</dimen>
+    <dimen name="toolbar">56dp</dimen>
 
     <dimen name="dots_height">30dp</dimen>
     <dimen name="dots_margin_bottom">20dp</dimen>
@@ -24,4 +25,6 @@
     <dimen name="profile_height">75dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_size">20dp</dimen>
+
+    <dimen name="spacing_large">16dp</dimen>
 </resources>

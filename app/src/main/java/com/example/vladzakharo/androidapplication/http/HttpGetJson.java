@@ -1,5 +1,7 @@
 package com.example.vladzakharo.androidapplication.http;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +13,7 @@ import java.net.URL;
  */
 
 public class HttpGetJson {
+    private static final String TAG = "HttpGetJson";
     public static String GET(String url) {
         try {
 
@@ -32,6 +35,7 @@ public class HttpGetJson {
                     sb.append(line + "\n");
                 }
                 br.close();
+                Log.d(TAG, "return response");
                 return sb.toString();
             }
         } catch (IOException e) {

@@ -47,15 +47,17 @@ public class CarsProvider extends ContentProvider {
         switch (mUriMatcher.match(uri)) {
             case URI_CARS:
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = DataBaseConstants.CAR_ID + " ASC";
-                    break;
+                    sortOrder = DataBaseConstants.CARS_CAR_ID + " ASC";
+                } else {
+                    sortOrder = DataBaseConstants.CARS_TABLE_CARS + "." + DataBaseConstants.CARS_CAR_LIKES + " DESC";
                 }
+                break;
             case URI_CARS_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CAR_ID + " = " + id;
+                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
                 }
                 break;
             default:
@@ -63,7 +65,7 @@ public class CarsProvider extends ContentProvider {
         }
 
         mDataBase = mDBHelper.getReadableDatabase();
-        Cursor cursor = mDataBase.query(DataBaseConstants.TABLE_CARS, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = mDataBase.query(DataBaseConstants.CARS_TABLE_CARS, projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), CAR_CONTENT_URI);
         return cursor;
     }
@@ -87,7 +89,7 @@ public class CarsProvider extends ContentProvider {
             throw new IllegalArgumentException("Wrong URI: " + uri);
 
         mDataBase = mDBHelper.getWritableDatabase();
-        long rowID = mDataBase.insert(DataBaseConstants.TABLE_CARS, null, values);
+        long rowID = mDataBase.insert(DataBaseConstants.CARS_TABLE_CARS, null, values);
         Uri resultUri = ContentUris.withAppendedId(CAR_CONTENT_URI, rowID);
         getContext().getContentResolver().notifyChange(resultUri, null);
         return resultUri;
@@ -101,16 +103,16 @@ public class CarsProvider extends ContentProvider {
             case URI_CARS_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CAR_ID + " = " + id;
+                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
                 }
                 break;
             default:
                 throw new IllegalArgumentException("Wrong URI: " + uri);
         }
         mDataBase = mDBHelper.getWritableDatabase();
-        int cnt = mDataBase.delete(DataBaseConstants.TABLE_CARS, selection, selectionArgs);
+        int cnt = mDataBase.delete(DataBaseConstants.CARS_TABLE_CARS, selection, selectionArgs);
         getContext().getContentResolver().notifyChange(uri, null);
         return cnt;
     }
@@ -123,16 +125,16 @@ public class CarsProvider extends ContentProvider {
             case URI_CARS_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CAR_ID + " = " + id;
+                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
                 }
                 break;
             default:
                 throw new IllegalArgumentException("Wrong URI: " + uri);
         }
         mDataBase = mDBHelper.getWritableDatabase();
-        int cnt = mDataBase.update(DataBaseConstants.TABLE_CARS, values, selection, selectionArgs);
+        int cnt = mDataBase.update(DataBaseConstants.CARS_TABLE_CARS, values, selection, selectionArgs);
         getContext().getContentResolver().notifyChange(uri, null);
         return cnt;
     }
