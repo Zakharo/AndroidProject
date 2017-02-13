@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.QUICKBOOT_POWERON"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -47,8 +47,11 @@
             android:name=".database.FavoritesProvider"
             android:authorities="com.example.vladzakharo.provider.favorites"/>
         <provider
-            android:authorities="com.example.vladzakharo.provider.users"
-            android:name=".database.UserProvider"/>
+            android:name=".database.UserProvider"
+            android:authorities="com.example.vladzakharo.provider.users"/>
+        <provider
+            android:authorities="com.example.vladzakharo.provider.searchSuggestions"
+            android:name=".database.SearchSuggestionsProvider" />
 
         <service android:name=".services.UpdateDataService"/>
         <service android:name=".services.DeleteTokenService"/>
@@ -79,6 +82,15 @@
             android:name=".activity.FavoriteActivity"
             android:label="@string/toolbar_title_favorites"
             android:theme="@style/AppTheme">
+        </activity>
+        <activity
+            android:name=".activity.SearchActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        <meta-data android:name="android.app.searchable"
+                   android:resource="@xml/searchable"/>
         </activity>
     </application>
 

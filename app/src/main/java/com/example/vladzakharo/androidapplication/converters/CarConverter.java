@@ -20,6 +20,7 @@ public class CarConverter implements Converter<Car> {
     private static final String TEXT = "text";
     private static final String ATTACHMENTS = "attachments";
     private static final String PHOTO = "photo";
+    private static final String LINK = "link";
     private static final String IMAGE_NAME = "photo_604";
     private static final String LIKES = "likes";
     private static final String LIKES_COUNT = "count";
@@ -53,10 +54,21 @@ public class CarConverter implements Converter<Car> {
                 JSONObject photoObject = objectInsideAttachment.getJSONObject(PHOTO);
                 car.setNamePicture(photoObject.getString(IMAGE_NAME));
             }
-            /*JSONObject photoObject = objectInsideAttachment.getJSONObject(PHOTO);
-            if (photoObject != null) {
-                car.setNamePicture(photoObject.getString(IMAGE_NAME));
-            }*/
+            if (car.getNamePicture() == null) {
+                if (objectInsideAttachment.has(LINK)) {
+                    JSONObject linkObject = objectInsideAttachment.getJSONObject(LINK);
+                    JSONObject photoObject = linkObject.getJSONObject(PHOTO);
+                    car.setNamePicture(photoObject.getString(IMAGE_NAME));
+                }
+            }
+            if (car.getNamePicture() == null) {
+                JSONObject secondObjectInsideAttachment = attachmentsArray.getJSONObject(1);
+                if (secondObjectInsideAttachment.has(LINK)) {
+                    JSONObject linkObject = secondObjectInsideAttachment.getJSONObject(LINK);
+                    JSONObject photoObject = linkObject.getJSONObject(PHOTO);
+                    car.setNamePicture(photoObject.getString(IMAGE_NAME));
+                }
+            }
             JSONObject likesObject = jsonObject.getJSONObject(LIKES);
             car.setLikes(likesObject.getInt(LIKES_COUNT));
             car.setCarLiked(likesObject.getInt(USER_LIKES));

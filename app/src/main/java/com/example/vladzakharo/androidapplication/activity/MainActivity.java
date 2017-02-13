@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,7 +42,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         NavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener {
+        View.OnClickListener,
+        MenuItem.OnMenuItemClickListener {
 
     private static final int LOADER_ID = 0;
     private static final int LOADER_USER_ID = 1;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mImgProfile.setOnClickListener(this);
         mFirstName = (TextView) mNavHeader.findViewById(R.id.first_name);
         mLastName = (TextView) mNavHeader.findViewById(R.id.last_name);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.toolbar_title_main);
@@ -213,6 +216,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Intent intentService = new Intent(this, UpdateDataService.class);
         startService(intentService);
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        searchItem.setOnMenuItemClickListener(this);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.menu_item_search:
+                startActivity(new Intent(this, SearchActivity.class));
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

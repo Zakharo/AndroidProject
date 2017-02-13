@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.content.SearchRecentSuggestionsProvider;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.RemoteException;
@@ -21,6 +22,7 @@ import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
 import com.example.vladzakharo.androidapplication.database.UserProvider;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
 import com.example.vladzakharo.androidapplication.items.Car;
+import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.items.User;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 import com.example.vladzakharo.androidapplication.utils.VKUtil;
@@ -29,6 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Vlad Zakharo on 24.01.2017.
@@ -43,9 +47,11 @@ public class ApiServices {
     private String mCountOfCars;
     private String mUserInfoUrl;
     private String mSearchCarsUrl;
+    private String mSearchUrl;
     private String mAddLikeUrl;
     private String mDeleteLikeUrl;
     private Context mContext;
+    private String mSearchJsonObject;
     private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
     private static final String PREF_KEY = "amount_of_cars";
 
@@ -65,6 +71,11 @@ public class ApiServices {
                 + "&access_token="
                 + mPrefManager.getToken();
 
+        /*mSearchUrl = "https://api.vk.com/method/newsfeed.search?q=%cat&extended=0&count="
+                + mCountOfCars
+                + "&v=5.62"
+                + "&access_token="
+                + mPrefManager.getToken();*/
     }
 
     public User getUser() {
@@ -112,6 +123,28 @@ public class ApiServices {
         return HttpGetJson.GET(mSearchCarsUrl);
     }
 
+    public List<Post> searchNews(String what) {
+        mSearchUrl = "https://api.vk.com/method/newsfeed.search?q="
+                + what
+                +"&extended=0&count="
+                + mCountOfCars
+                + "&v=5.62"
+                + "&access_token="
+                + mPrefManager.getToken();
+
+        List<Post> posts = null;
+        try {
+            mSearchJsonObject = new SearchNewsTask(this).execute(mSearchUrl).get();
+            Log.d(TAG, "items found");
+            JSONObject jsonObject;
+            jsonObject = new JSONObject(mSearchJsonObject);
+            posts = new JsonParser(mPrefManager).convertSearchToList(jsonObject);
+        } catch (ExecutionException | InterruptedException | JSONException ex) {
+            Log.e(TAG, "search problems", ex);
+        }
+
+        return posts;
+    }
     public void addLike(Car car) {
         mAddLikeUrl = "https://api.vk.com/method/likes.add?type=post&owner_id="
                 + car.getOwnerId()
@@ -161,6 +194,26 @@ public class ApiServices {
             Log.d(TAG, "parse url problem");
         }
         Log.d(TAG, "token and user id saved");
+    }
+
+    private static class SearchNewsTask extends AsyncTask<String, Void, String> {
+
+        private ApiServices mApiServices;
+
+        public SearchNewsTask(ApiServices apiServices) {
+            mApiServices = apiServices;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String url = params[0];
+            return HttpGetJson.GET(url);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            mApiServices.mSearchJsonObject = s;
+        }
     }
 
     private static class Like extends AsyncTask<String, Void, Void> {
