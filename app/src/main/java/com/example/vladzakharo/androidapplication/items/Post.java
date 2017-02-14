@@ -1,10 +1,13 @@
 package com.example.vladzakharo.androidapplication.items;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Vlad Zakharo on 13.02.2017.
  */
 
-public class Post {
+public class Post implements Parcelable {
     private String mDescription;
     private String mNamePicture;
     private int mLikes;
@@ -25,6 +28,16 @@ public class Post {
 
     public Post(){
 
+    }
+
+    public Post (Parcel parcel) {
+        mPostId = parcel.readInt();
+        mDescription = parcel.readString();
+        mNamePicture = parcel.readString();
+        mLikes = parcel.readInt();
+        mId = parcel.readInt();
+        mOwnerId = parcel.readInt();
+        mIsLiked= parcel.readInt();
     }
 
     public int getIsCarLiked() {
@@ -82,4 +95,32 @@ public class Post {
     public int getOwnerId() {
         return mOwnerId;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mPostId);
+        dest.writeString(mDescription);
+        dest.writeString(mNamePicture);
+        dest.writeInt(mLikes);
+        dest.writeInt(mId);
+        dest.writeInt(mOwnerId);
+        dest.writeInt(mIsLiked);
+    }
+
+    public static final Parcelable.Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel source) {
+            return new Post(source);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
 }

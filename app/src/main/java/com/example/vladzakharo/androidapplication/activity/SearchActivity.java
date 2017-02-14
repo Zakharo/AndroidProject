@@ -1,5 +1,6 @@
 package com.example.vladzakharo.androidapplication.activity;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.ActionBar;
@@ -31,12 +32,12 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     private SearchView mSearchView;
     private RecyclerView mRecyclerView;
     private SearchAdapter mSearchAdapter;
+    private String textToColor = null;
 
     private static final int SEARCH_DELAY = 300;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Runnable mTextListener;
-
     private List<Post> mPosts = null;
 
     @Override
@@ -56,7 +57,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     private void updateUi() {
-        mSearchAdapter = new SearchAdapter(getApplicationContext(), mPosts);
+        mSearchAdapter = new SearchAdapter(this, mPosts, mRecyclerView, textToColor);
         Decorator decoration = new Decorator(getApplicationContext(), getResources().getColor(R.color.colorPrimary), 0.5f);
         mRecyclerView.addItemDecoration(decoration);
         mRecyclerView.setAdapter(mSearchAdapter);
@@ -75,6 +76,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
             public void run() {
                 String myText = newText.replace("#", "%23");
                 String text = myText.replace(" ", "%20");
+                textToColor = text;
                 mPosts = new ApiServices(getApplicationContext()).searchNews(text);
                 updateUi();
             }

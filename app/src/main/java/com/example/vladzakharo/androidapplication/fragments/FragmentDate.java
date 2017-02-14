@@ -51,7 +51,6 @@ public class FragmentDate extends Fragment implements LoaderManager.LoaderCallba
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class FragmentDate extends Fragment implements LoaderManager.LoaderCallba
                 getActivity().startService(intentService);
             }
         });
-        updateUi();
+        //updateUi();
         return v;
     }
 

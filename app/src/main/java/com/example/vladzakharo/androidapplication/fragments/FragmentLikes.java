@@ -70,7 +70,7 @@ public class FragmentLikes extends Fragment implements LoaderManager.LoaderCallb
                 getActivity().startService(intentService);
             }
         });
-        updateUi();
+        //updateUi();
         return v;
     }
 

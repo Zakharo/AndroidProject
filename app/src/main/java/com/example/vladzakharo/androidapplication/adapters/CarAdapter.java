@@ -24,7 +24,7 @@ import com.example.vladzakharo.androidapplication.R;
 public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
     public static final String CAR_NAME_PICTURE = "car_picture";
-    public static final String FLAG = "flag";
+    public static final String FAVOITE_FLAG = "flag";
     private static final int VIEW_TYPE_NORMAL = 1;
 
     private Context mContext;
@@ -69,7 +69,7 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
                     intent.putExtra(CAR_NAME_PICTURE, car.getNamePicture());
                     if (mContext.getClass().equals(FavoriteActivity.class)) {
-                        intent.putExtra(FLAG, true);
+                        intent.putExtra(FAVOITE_FLAG, true);
                     }
                     v.getContext().startActivity(intent);
                 }

@@ -62,12 +62,15 @@ public class CarConverter implements Converter<Car> {
                 }
             }
             if (car.getNamePicture() == null) {
-                JSONObject secondObjectInsideAttachment = attachmentsArray.getJSONObject(1);
-                if (secondObjectInsideAttachment.has(LINK)) {
-                    JSONObject linkObject = secondObjectInsideAttachment.getJSONObject(LINK);
-                    JSONObject photoObject = linkObject.getJSONObject(PHOTO);
-                    car.setNamePicture(photoObject.getString(IMAGE_NAME));
+                if (attachmentsArray.length() > 1) {
+                    JSONObject secondObjectInsideAttachment = attachmentsArray.getJSONObject(1);
+                    if (secondObjectInsideAttachment.has(LINK)) {
+                        JSONObject linkObject = secondObjectInsideAttachment.getJSONObject(LINK);
+                        JSONObject photoObject = linkObject.getJSONObject(PHOTO);
+                        car.setNamePicture(photoObject.getString(IMAGE_NAME));
+                    }
                 }
+
             }
             JSONObject likesObject = jsonObject.getJSONObject(LIKES);
             car.setLikes(likesObject.getInt(LIKES_COUNT));

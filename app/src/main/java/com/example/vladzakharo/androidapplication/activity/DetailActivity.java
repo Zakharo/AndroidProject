@@ -24,12 +24,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.vladzakharo.androidapplication.adapters.SearchAdapter;
 import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
 import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
+import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.links.LinkTransformationMethod;
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.services.ApiServices;
@@ -38,7 +40,7 @@ import java.util.ArrayList;
 
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-    private String mCarNamePicture;
+    private String mCarNamePicture = null;
     private TextView mTvDescription;
     private ProgressBar mProgressBar;
     private ImageView mImageView;
@@ -46,9 +48,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private Activity mActivity;
     private Car mCar;
     private FloatingActionButton mFab;
-    private boolean flag;
+    private boolean favorite_flag = false;
     private int mButtonLikeState;
     private Bundle bundle;
+    private Post mPost = null;
 
     private static final int CAR_LOADER_ID = 2;
     private static final int FAVORITE_LOADER_ID = 3;
@@ -62,7 +65,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         if (getIntent() != null){
             mCarNamePicture = getIntent().getStringExtra(CarAdapter.CAR_NAME_PICTURE);
-            flag = getIntent().getBooleanExtra(CarAdapter.FLAG, false);
+            favorite_flag = getIntent().getBooleanExtra(CarAdapter.FAVOITE_FLAG, false);
+            mPost = getIntent().getParcelableExtra(SearchAdapter.PARCELABLE_POST);
         }
 
         bundle = new Bundle();
@@ -72,20 +76,35 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mButtonLikeState == 0) {
-                    new ApiServices(getApplicationContext()).addLike(mCar);
-                    addCarToFavorite(mCar);
-                    mFab.setImageResource(R.drawable.ic_like_add);
-                    Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
-                    mButtonLikeState++;
+                if (mPost != null) {
+                    if (mButtonLikeState == 0) {
+                        new ApiServices(getApplicationContext()).addLike(mPost.getOwnerId(), mPost.getPostId());
+                        //addPostToFavorite(mPost);
+                        mFab.setImageResource(R.drawable.ic_like_add);
+                        Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
+                        mButtonLikeState++;
+                    } else {
+                        new ApiServices(getApplicationContext()).deleteLike(mPost.getOwnerId(), mPost.getPostId());
+                        //deletePostFromFavorite();
+                        mFab.setImageResource(R.drawable.ic_like_not_add);
+                        Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
+                        mButtonLikeState--;
+                    }
                 } else {
-                    new ApiServices(getApplicationContext()).deleteLike(mCar);
-                    deleteCarFromFavorite();
-                    mFab.setImageResource(R.drawable.ic_like_not_add);
-                    Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
-                    mButtonLikeState--;
+                    if (mButtonLikeState == 0) {
+                        new ApiServices(getApplicationContext()).addLike(mCar.getOwnerId(), mCar.getPostId());
+                        addCarToFavorite(mCar);
+                        mFab.setImageResource(R.drawable.ic_like_add);
+                        Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
+                        mButtonLikeState++;
+                    } else {
+                        new ApiServices(getApplicationContext()).deleteLike(mCar.getOwnerId(), mCar.getPostId());
+                        deleteCarFromFavorite();
+                        mFab.setImageResource(R.drawable.ic_like_not_add);
+                        Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
+                        mButtonLikeState--;
+                    }
                 }
-
             }
         });
 
@@ -106,9 +125,24 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     protected void onResume() {
         super.onResume();
 
-        if (flag) {
+        if (favorite_flag) {
             getSupportLoaderManager().initLoader(FAVORITE_LOADER_ID, bundle, this);
         } else {
+            if (mPost != null) {
+                mTvDescription.setText(mPost.getDescription());
+                mTvDescription.setTransformationMethod(new LinkTransformationMethod(mActivity));
+                mTvDescription.setMovementMethod(LinkMovementMethod.getInstance());
+                ImageManager.getInstance().getImageLoader(this)
+                        .from(mPost.getNamePicture())
+                        .to(mImageView)
+                        .load();
+
+                if (mPost.getIsCarLiked() == 1) {
+                    mFab.setImageResource(R.drawable.ic_like_add);
+                }
+                mButtonLikeState = mPost.getIsCarLiked();
+                getSupportActionBar().setTitle("Awesome News");
+            }
             getSupportLoaderManager().initLoader(CAR_LOADER_ID, bundle, this);
         }
     }

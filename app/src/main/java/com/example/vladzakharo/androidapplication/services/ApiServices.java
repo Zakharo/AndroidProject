@@ -70,12 +70,6 @@ public class ApiServices {
                 + "&v=5.62"
                 + "&access_token="
                 + mPrefManager.getToken();
-
-        /*mSearchUrl = "https://api.vk.com/method/newsfeed.search?q=%cat&extended=0&count="
-                + mCountOfCars
-                + "&v=5.62"
-                + "&access_token="
-                + mPrefManager.getToken();*/
     }
 
     public User getUser() {
@@ -145,11 +139,11 @@ public class ApiServices {
 
         return posts;
     }
-    public void addLike(Car car) {
+    public void addLike(int ownerId, int postId) {
         mAddLikeUrl = "https://api.vk.com/method/likes.add?type=post&owner_id="
-                + car.getOwnerId()
+                + ownerId
                 + "&item_id="
-                + car.getPostId()
+                + postId
                 + "&v=5.62"
                 + "&access_token="
                 + mPrefManager.getToken();
@@ -158,11 +152,11 @@ public class ApiServices {
         Log.d(TAG, "like added");
     }
 
-    public void deleteLike(Car car) {
+    public void deleteLike(int ownerId, int postId) {
         mDeleteLikeUrl = "https://api.vk.com/method/likes.delete?type=post&owner_id="
-                + car.getOwnerId()
+                + ownerId
                 + "&item_id="
-                + car.getPostId()
+                + postId
                 + "&v=5.62"
                 + "&access_token="
                 + mPrefManager.getToken();
