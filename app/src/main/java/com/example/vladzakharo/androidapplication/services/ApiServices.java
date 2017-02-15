@@ -4,24 +4,17 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
-import android.content.SearchRecentSuggestionsProvider;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
-import android.webkit.WebView;
-import android.widget.ProgressBar;
 
 import com.example.vladzakharo.androidapplication.activity.MainActivity;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
-import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
-import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
 import com.example.vladzakharo.androidapplication.database.UserProvider;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
-import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.items.User;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
@@ -118,7 +111,7 @@ public class ApiServices {
     }
 
     public List<Post> searchNews(String what) {
-        mSearchUrl = "https://api.vk.com/method/newsfeed.search?q="
+        mSearchUrl = "https://api.vk.com/method/newsfeed.search?q=%23car%20"
                 + what
                 +"&extended=0&count="
                 + mCountOfCars
@@ -132,7 +125,7 @@ public class ApiServices {
             Log.d(TAG, "items found");
             JSONObject jsonObject;
             jsonObject = new JSONObject(mSearchJsonObject);
-            posts = new JsonParser(mPrefManager).convertSearchToList(jsonObject);
+            posts = new JsonParser(mPrefManager).convertToList(jsonObject);
         } catch (ExecutionException | InterruptedException | JSONException ex) {
             Log.e(TAG, "search problems", ex);
         }

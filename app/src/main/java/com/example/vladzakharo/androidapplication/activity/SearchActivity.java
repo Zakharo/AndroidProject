@@ -1,8 +1,11 @@
 package com.example.vladzakharo.androidapplication.activity;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,13 +23,14 @@ import android.widget.ImageView;
 
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.adapters.SearchAdapter;
+import com.example.vladzakharo.androidapplication.database.SearchSuggestionsProvider;
 import com.example.vladzakharo.androidapplication.decoration.Decorator;
 import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.services.ApiServices;
 
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener {
 
     private Toolbar mToolbar;
     private SearchView mSearchView;
@@ -50,8 +54,12 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
         mRecyclerView = (RecyclerView) findViewById(R.id.search_recycler_view);
         mSearchView = (SearchView) findViewById(R.id.searchview_search);
-        //mSearchView.setLayoutParams(new ActionBar.LayoutParams(Gravity.RIGHT));
         mSearchView.setOnQueryTextListener(this);
+        mSearchView.setOnSuggestionListener(this);
+        mSearchView.onActionViewExpanded();
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
     }
@@ -65,7 +73,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return false;
+        return true;
     }
 
     @Override
@@ -89,8 +97,29 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){
+            SearchRecentSuggestions suggestions =
+                    new SearchRecentSuggestions(this, SearchSuggestionsProvider.AUTHORITY, SearchSuggestionsProvider.MODE);
+            suggestions.saveRecentQuery(textToColor, null);
+
             finish();
         }
         return true;
+    }
+
+    @Override
+    public boolean onSuggestionSelect(int position) {
+        return false;
+    }
+
+    @Override
+    public boolean onSuggestionClick(int position) {
+        String query = getSuggestedItem(position);
+        mSearchView.setQuery(query, false);
+        return true;
+    }
+
+    private String getSuggestedItem(int position) {
+        Cursor cursor = (Cursor) mSearchView.getSuggestionsAdapter().getItem(position);
+        return cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
     }
 }

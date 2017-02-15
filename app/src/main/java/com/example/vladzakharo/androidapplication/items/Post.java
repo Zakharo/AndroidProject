@@ -1,7 +1,10 @@
 package com.example.vladzakharo.androidapplication.items;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 
 /**
  * Created by Vlad Zakharo on 13.02.2017.
@@ -40,11 +43,11 @@ public class Post implements Parcelable {
         mIsLiked= parcel.readInt();
     }
 
-    public int getIsCarLiked() {
+    public int getIsPostLiked() {
         return mIsLiked;
     }
 
-    public void setCarLiked(int value) {
+    public void setPostLiked(int value) {
         mIsLiked = value;
     }
 
@@ -123,4 +126,24 @@ public class Post implements Parcelable {
             return new Post[size];
         }
     };
+
+    public static Post getPostFromCarsDb(Cursor cursor) {
+        return new Post(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_LIKES)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_IS_LIKED)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_OWNER_ID)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_POST_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_POST_IMAGE_URL)));
+    }
+
+    public static Post getPostFromFavoritesDb(Cursor cursor) {
+        return new Post(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_LIKES)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_IS_LIKED)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_OWNER_ID)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_IMAGE_URL)));
+    }
 }

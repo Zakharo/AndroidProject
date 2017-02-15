@@ -18,23 +18,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + DataBaseConstants.CARS_TABLE_CARS + "("
-                + DataBaseConstants.CARS_CAR_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
-                + DataBaseConstants.CARS_CAR_LIKES + " INTEGER, "
-                + DataBaseConstants.CARS_CAR_IS_LIKED + " INTEGER, "
-                + DataBaseConstants.CARS_CAR_POST_ID + " INTEGER, "
-                + DataBaseConstants.CARS_CAR_POST_OWNER_ID + " INTEGER, "
-                + DataBaseConstants.CARS_CAR_DESCRIPTION + " TEXT, "
-                + DataBaseConstants.CARS_CAR_IMAGE_URL + " TEXT" + " );");
+                + DataBaseConstants.CARS_POST_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + DataBaseConstants.CARS_POST_LIKES + " INTEGER, "
+                + DataBaseConstants.CARS_POST_IS_LIKED + " INTEGER, "
+                + DataBaseConstants.CARS_POST_POST_ID + " INTEGER, "
+                + DataBaseConstants.CARS_POST_OWNER_ID + " INTEGER, "
+                + DataBaseConstants.CARS_POST_DESCRIPTION + " TEXT, "
+                + DataBaseConstants.CARS_POST_IMAGE_URL + " TEXT" + " );");
 
 
         db.execSQL("CREATE TABLE " + DataBaseConstants.FAVORITES_TABLE_CARS + "("
-                + DataBaseConstants.FAVORITES_CAR_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
-                + DataBaseConstants.FAVORITES_CAR_LIKES + " INTEGER, "
-                + DataBaseConstants.FAVORITES_CAR_IS_LIKED + " INTEGER, "
-                + DataBaseConstants.FAVORITES_CAR_POST_ID + " INTEGER, "
-                + DataBaseConstants.FAVORITES_CAR_POST_OWNER_ID + " INTEGER, "
-                + DataBaseConstants.FAVORITES_CAR_DESCRIPTION + " TEXT, "
-                + DataBaseConstants.FAVORITES_CAR_IMAGE_URL + " TEXT" + " );");
+                + DataBaseConstants.FAVORITES_POST_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + DataBaseConstants.FAVORITES_POST_LIKES + " INTEGER, "
+                + DataBaseConstants.FAVORITES_POST_IS_LIKED + " INTEGER, "
+                + DataBaseConstants.FAVORITES_POST_POST_ID + " INTEGER, "
+                + DataBaseConstants.FAVORITES_POST_OWNER_ID + " INTEGER, "
+                + DataBaseConstants.FAVORITES_POST_DESCRIPTION + " TEXT, "
+                + DataBaseConstants.FAVORITES_POST_IMAGE_URL + " TEXT" + " );");
 
         db.execSQL("CREATE TABLE " + DataBaseConstants.USER_TABLE_USER + "("
                 + DataBaseConstants.USER_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "

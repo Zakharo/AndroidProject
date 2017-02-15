@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.RemoteException;
+import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,10 +27,10 @@ import android.widget.TextView;
 
 import com.example.vladzakharo.androidapplication.adapters.SearchAdapter;
 import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
-import com.example.vladzakharo.androidapplication.items.Car;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
+import com.example.vladzakharo.androidapplication.database.SearchSuggestionsProvider;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.links.LinkTransformationMethod;
@@ -40,22 +41,25 @@ import java.util.ArrayList;
 
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-    private String mCarNamePicture = null;
+    private String mPostNamePicture = null;
+    private String mPostDescription = null;
     private TextView mTvDescription;
     private ProgressBar mProgressBar;
     private ImageView mImageView;
     private Toolbar mToolbar;
     private Activity mActivity;
-    private Car mCar;
+
     private FloatingActionButton mFab;
     private boolean favorite_flag = false;
+    private boolean search_flag = false;
     private int mButtonLikeState;
     private Bundle bundle;
     private Post mPost = null;
 
     private static final int CAR_LOADER_ID = 2;
     private static final int FAVORITE_LOADER_ID = 3;
-    private static final String KEY_CAR_NAME_PICTURE = "keyCarPic";
+    private static final String KEY_POST_NAME_PICTURE = "keyPostPic";
+    private static final String KEY_POST_DESCRIPTION = "keyPostDesc";
     private static final String TAG = "DetailActivity";
 
     @Override
@@ -64,46 +68,35 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         setContentView(R.layout.activity_detail);
 
         if (getIntent() != null){
-            mCarNamePicture = getIntent().getStringExtra(CarAdapter.CAR_NAME_PICTURE);
+            mPostNamePicture = getIntent().getStringExtra(CarAdapter.CAR_NAME_PICTURE);
+            mPostDescription = getIntent().getStringExtra(CarAdapter.CAR_DESCRIPTION);
             favorite_flag = getIntent().getBooleanExtra(CarAdapter.FAVOITE_FLAG, false);
-            mPost = getIntent().getParcelableExtra(SearchAdapter.PARCELABLE_POST);
+            search_flag = getIntent().getBooleanExtra(SearchAdapter.SEARCH_FLAG, false);
+            if (search_flag) {
+                mPost = getIntent().getParcelableExtra(SearchAdapter.PARCELABLE_POST);
+            }
         }
 
         bundle = new Bundle();
-        bundle.putString(KEY_CAR_NAME_PICTURE, mCarNamePicture);
+        bundle.putString(KEY_POST_NAME_PICTURE, mPostNamePicture);
+        bundle.putString(KEY_POST_DESCRIPTION, mPostDescription);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mPost != null) {
-                    if (mButtonLikeState == 0) {
-                        new ApiServices(getApplicationContext()).addLike(mPost.getOwnerId(), mPost.getPostId());
-                        //addPostToFavorite(mPost);
-                        mFab.setImageResource(R.drawable.ic_like_add);
-                        Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
-                        mButtonLikeState++;
-                    } else {
-                        new ApiServices(getApplicationContext()).deleteLike(mPost.getOwnerId(), mPost.getPostId());
-                        //deletePostFromFavorite();
-                        mFab.setImageResource(R.drawable.ic_like_not_add);
-                        Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
-                        mButtonLikeState--;
-                    }
+                if (mButtonLikeState == 0) {
+                    new ApiServices(getApplication()).addLike(mPost.getOwnerId(), mPost.getPostId());
+                    addPostToFavorite(mPost);
+                    mFab.setImageResource(R.drawable.ic_like_add);
+                    Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
+                    mButtonLikeState++;
                 } else {
-                    if (mButtonLikeState == 0) {
-                        new ApiServices(getApplicationContext()).addLike(mCar.getOwnerId(), mCar.getPostId());
-                        addCarToFavorite(mCar);
-                        mFab.setImageResource(R.drawable.ic_like_add);
-                        Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
-                        mButtonLikeState++;
-                    } else {
-                        new ApiServices(getApplicationContext()).deleteLike(mCar.getOwnerId(), mCar.getPostId());
-                        deleteCarFromFavorite();
-                        mFab.setImageResource(R.drawable.ic_like_not_add);
-                        Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
-                        mButtonLikeState--;
-                    }
+                    new ApiServices(getApplicationContext()).deleteLike(mPost.getOwnerId(), mPost.getPostId());
+                    deletePostFromFavorite();
+                    mFab.setImageResource(R.drawable.ic_like_not_add);
+                    Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
+                    mButtonLikeState--;
                 }
             }
         });
@@ -127,22 +120,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         if (favorite_flag) {
             getSupportLoaderManager().initLoader(FAVORITE_LOADER_ID, bundle, this);
-        } else {
-            if (mPost != null) {
-                mTvDescription.setText(mPost.getDescription());
-                mTvDescription.setTransformationMethod(new LinkTransformationMethod(mActivity));
-                mTvDescription.setMovementMethod(LinkMovementMethod.getInstance());
-                ImageManager.getInstance().getImageLoader(this)
-                        .from(mPost.getNamePicture())
-                        .to(mImageView)
-                        .load();
+        } else if (search_flag) {
+            mTvDescription.setText(mPost.getDescription());
+            mTvDescription.setTransformationMethod(new LinkTransformationMethod(mActivity));
+            mTvDescription.setMovementMethod(LinkMovementMethod.getInstance());
+            ImageManager.getInstance().getImageLoader(this)
+                    .from(mPost.getNamePicture())
+                    .to(mImageView)
+                    .load();
 
-                if (mPost.getIsCarLiked() == 1) {
-                    mFab.setImageResource(R.drawable.ic_like_add);
-                }
-                mButtonLikeState = mPost.getIsCarLiked();
-                getSupportActionBar().setTitle("Awesome News");
+            if (mPost.getIsPostLiked() == 1) {
+                mFab.setImageResource(R.drawable.ic_like_add);
             }
+            mButtonLikeState = mPost.getIsPostLiked();
+            getSupportActionBar().setTitle(R.string.toolbar_title_search);
+        } else {
             getSupportLoaderManager().initLoader(CAR_LOADER_ID, bundle, this);
         }
     }
@@ -150,6 +142,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){
+            if (search_flag) {
+                //addSearchToDb();
+            }
             finish();
         }
         return true;
@@ -158,9 +153,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == CAR_LOADER_ID) {
-            return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CARS_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_NAME_PICTURE))}, null);
+            if (mPostNamePicture == null) {
+                return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CARS_POST_DESCRIPTION + " = ?", new String[]{String.valueOf(args.get(KEY_POST_DESCRIPTION))}, null);
+            } else {
+                return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, DataBaseConstants.CARS_POST_IMAGE_URL + " = ?", new String[]{String.valueOf(args.get(KEY_POST_NAME_PICTURE))}, null);
+            }
         }else if (id == FAVORITE_LOADER_ID) {
-            return new CursorLoader(this, FavoritesProvider.FAVORITE_CAR_CONTENT_URI, null, DataBaseConstants.FAVORITES_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(args.get(KEY_CAR_NAME_PICTURE))}, null);
+            return new CursorLoader(this, FavoritesProvider.FAVORITE_CAR_CONTENT_URI, null, DataBaseConstants.FAVORITES_POST_IMAGE_URL + " = ?", new String[]{String.valueOf(args.get(KEY_POST_NAME_PICTURE))}, null);
         } else {
             return null;
         }
@@ -172,19 +171,23 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if (data == null || !data.moveToFirst()) {
             return;
         }
-        mCar = Car.getCarFromCursor(data);
-        mTvDescription.setText(mCar.getDescription());
+
+        if (loader.getId() == CAR_LOADER_ID) {
+            mPost = Post.getPostFromCarsDb(data);
+        } else {
+            mPost = Post.getPostFromFavoritesDb(data);
+        }
+        mTvDescription.setText(mPost.getDescription());
         mTvDescription.setTransformationMethod(new LinkTransformationMethod(mActivity));
         mTvDescription.setMovementMethod(LinkMovementMethod.getInstance());
         ImageManager.getInstance().getImageLoader(this)
-                .from(mCar.getNamePicture())
+                .from(mPost.getNamePicture())
                 .to(mImageView)
                 .load();
-        if (mCar.getIsCarLiked() == 1) {
+        if (mPost.getIsPostLiked() == 1) {
             mFab.setImageResource(R.drawable.ic_like_add);
         }
-
-        mButtonLikeState = mCar.getIsCarLiked();
+        mButtonLikeState = mPost.getIsPostLiked();
     }
 
     @Override
@@ -192,23 +195,23 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     }
 
-    private void addCarToFavorite(Car car) {
+    private void addPostToFavorite(Post post) {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newInsert(FavoritesProvider.FAVORITE_CAR_CONTENT_URI)
-                .withValue(DataBaseConstants.FAVORITES_CAR_ID, car.getId())
-                .withValue(DataBaseConstants.FAVORITES_CAR_LIKES, car.getLikes())
-                .withValue(DataBaseConstants.FAVORITES_CAR_IS_LIKED, 1)
-                .withValue(DataBaseConstants.FAVORITES_CAR_POST_ID, car.getPostId())
-                .withValue(DataBaseConstants.FAVORITES_CAR_POST_OWNER_ID, car.getOwnerId())
-                .withValue(DataBaseConstants.FAVORITES_CAR_DESCRIPTION, car.getDescription())
-                .withValue(DataBaseConstants.FAVORITES_CAR_IMAGE_URL, car.getNamePicture())
+                .withValue(DataBaseConstants.FAVORITES_POST_ID, post.getId())
+                .withValue(DataBaseConstants.FAVORITES_POST_LIKES, post.getLikes())
+                .withValue(DataBaseConstants.FAVORITES_POST_IS_LIKED, 1)
+                .withValue(DataBaseConstants.FAVORITES_POST_POST_ID, post.getPostId())
+                .withValue(DataBaseConstants.FAVORITES_POST_OWNER_ID, post.getOwnerId())
+                .withValue(DataBaseConstants.FAVORITES_POST_DESCRIPTION, post.getDescription())
+                .withValue(DataBaseConstants.FAVORITES_POST_IMAGE_URL, post.getNamePicture())
                 .build());
 
 
         ArrayList<ContentProviderOperation> update = new ArrayList<>();
         update.add(ContentProviderOperation.newUpdate(CarsProvider.CAR_CONTENT_URI)
-                .withSelection(DataBaseConstants.CARS_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(mCarNamePicture)})
-                .withValue(DataBaseConstants.CARS_CAR_IS_LIKED, 1)
+                .withSelection(DataBaseConstants.CARS_POST_IMAGE_URL + " = ?", new String[]{String.valueOf(mPostNamePicture)})
+                .withValue(DataBaseConstants.CARS_POST_IS_LIKED, 1)
                 .build());
         try {
             getContentResolver().applyBatch(FavoritesProvider.AUTHORITY, operations);
@@ -218,19 +221,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
-    private void deleteCarFromFavorite() {
+    private void deletePostFromFavorite() {
         ArrayList<ContentProviderOperation> deleteFromFavorites = new ArrayList<>();
         deleteFromFavorites.add(ContentProviderOperation.newDelete(FavoritesProvider.FAVORITE_CAR_CONTENT_URI)
-                .withSelection(DataBaseConstants.FAVORITES_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(mCarNamePicture)})
+                .withSelection(DataBaseConstants.FAVORITES_POST_IMAGE_URL + " = ?", new String[]{String.valueOf(mPostNamePicture)})
                 .build());
 
-        ArrayList<ContentProviderOperation> deleteFromCars = new ArrayList<>();
-        deleteFromCars.add(ContentProviderOperation.newDelete(CarsProvider.CAR_CONTENT_URI)
-                .withSelection(DataBaseConstants.CARS_CAR_IMAGE_URL + " = ?", new String[]{String.valueOf(mCarNamePicture)})
+        ArrayList<ContentProviderOperation> updateTableCars = new ArrayList<>();
+        updateTableCars.add(ContentProviderOperation.newUpdate(CarsProvider.CAR_CONTENT_URI)
+                .withSelection(DataBaseConstants.CARS_POST_IMAGE_URL + " = ?", new String[]{String.valueOf(mPostNamePicture)})
+                .withValue(DataBaseConstants.CARS_POST_IS_LIKED, 0)
                 .build());
         try {
             getContentResolver().applyBatch(FavoritesProvider.AUTHORITY, deleteFromFavorites);
-            getContentResolver().applyBatch(CarsProvider.AUTHORITY, deleteFromCars);
+            getContentResolver().applyBatch(CarsProvider.AUTHORITY, updateTableCars);
         } catch (RemoteException | OperationApplicationException re) {
             Log.e(TAG, "applyBatch()", re);
         }

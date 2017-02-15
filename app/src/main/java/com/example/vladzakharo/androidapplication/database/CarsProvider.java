@@ -47,17 +47,17 @@ public class CarsProvider extends ContentProvider {
         switch (mUriMatcher.match(uri)) {
             case URI_CARS:
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = DataBaseConstants.CARS_CAR_ID + " ASC";
+                    sortOrder = DataBaseConstants.CARS_POST_ID + " ASC";
                 } else {
-                    sortOrder = DataBaseConstants.CARS_TABLE_CARS + "." + DataBaseConstants.CARS_CAR_LIKES + " DESC";
+                    sortOrder = DataBaseConstants.CARS_TABLE_CARS + "." + DataBaseConstants.CARS_POST_LIKES + " DESC";
                 }
                 break;
             case URI_CARS_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.CARS_POST_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.CARS_POST_ID + " = " + id;
                 }
                 break;
             default:
@@ -103,9 +103,9 @@ public class CarsProvider extends ContentProvider {
             case URI_CARS_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.CARS_POST_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.CARS_POST_ID + " = " + id;
                 }
                 break;
             default:
@@ -125,9 +125,9 @@ public class CarsProvider extends ContentProvider {
             case URI_CARS_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.CARS_POST_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.CARS_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.CARS_POST_ID + " = " + id;
                 }
                 break;
             default:

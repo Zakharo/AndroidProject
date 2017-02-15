@@ -25,10 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.vladzakharo.androidapplication.constants.Constants;
-import com.example.vladzakharo.androidapplication.fragments.FragmentDate;
-import com.example.vladzakharo.androidapplication.fragments.FragmentLikes;
-import com.example.vladzakharo.androidapplication.images.RoundTransformer;
+import com.example.vladzakharo.androidapplication.fragments.DateFragment;
+import com.example.vladzakharo.androidapplication.fragments.LikesFragment;
 import com.example.vladzakharo.androidapplication.loaders.UserLoader;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.R;
@@ -45,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         View.OnClickListener,
         MenuItem.OnMenuItemClickListener {
 
-    private static final int LOADER_ID = 0;
+    private static final int LOADER_POSTS_ID = 0;
     private static final int LOADER_USER_ID = 1;
     private static final int REQUEST_CODE_PREFERENCES = 0;
 
@@ -98,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+        getSupportLoaderManager().initLoader(LOADER_POSTS_ID, null, this);
         getSupportLoaderManager().initLoader(LOADER_USER_ID, null, new LoaderManager.LoaderCallbacks<User>() {
             @Override
             public Loader<User> onCreateLoader(int id, Bundle args) {
@@ -122,14 +120,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(FragmentDate.newInstance(mCursor), getResources().getString(R.string.date));
-        adapter.addFragment(FragmentLikes.newInstance(mCursor), getResources().getString(R.string.likes));
+        adapter.addFragment(DateFragment.newInstance(mCursor), getResources().getString(R.string.date));
+        adapter.addFragment(LikesFragment.newInstance(mCursor), getResources().getString(R.string.likes));
         viewPager.setAdapter(adapter);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (id != LOADER_ID) {
+        if (id != LOADER_POSTS_ID) {
             return null;
         }
         return new CursorLoader(this, CarsProvider.CAR_CONTENT_URI, null, null, null, null);
@@ -155,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-        super.onBackPressed();
+        return;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -216,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void loadNewAmountOfCars() {
         Intent intentService = new Intent(this, UpdateDataService.class);
         startService(intentService);
-        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+        getSupportLoaderManager().initLoader(LOADER_POSTS_ID, null, this);
     }
 
     @Override

@@ -30,6 +30,7 @@ import java.util.List;
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchHolder> {
 
     public static final String PARCELABLE_POST = "parcelable_post";
+    public static final String SEARCH_FLAG = "search_flag";
 
     private String mTextToColor = "a";
     private RecyclerView mRecyclerView;
@@ -94,6 +95,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchHold
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, DetailActivity.class);
                 Post post = mPosts.get(mRecyclerView.getChildLayoutPosition(v));
+                intent.putExtra(SEARCH_FLAG, true);
                 intent.putExtra(PARCELABLE_POST, post);
                 v.getContext().startActivity(intent);
             }

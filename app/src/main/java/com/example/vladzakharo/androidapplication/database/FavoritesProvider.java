@@ -49,15 +49,15 @@ public class FavoritesProvider extends ContentProvider {
         switch (mUriMatcher.match(uri)) {
             case URI_FAVORITE:
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = DataBaseConstants.FAVORITES_CAR_ID + " ASC";
+                    sortOrder = DataBaseConstants.FAVORITES_POST_ID + " ASC";
                 }
                 break;
             case URI_FAVORITE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.FAVORITES_POST_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.FAVORITES_POST_ID + " = " + id;
                 }
                 break;
             default:
@@ -103,9 +103,9 @@ public class FavoritesProvider extends ContentProvider {
             case URI_FAVORITE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.FAVORITES_POST_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.FAVORITES_POST_ID + " = " + id;
                 }
                 break;
             default:
@@ -125,9 +125,9 @@ public class FavoritesProvider extends ContentProvider {
             case URI_FAVORITE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    selection = DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
+                    selection = DataBaseConstants.FAVORITES_POST_ID + " = " + id;
                 } else {
-                    selection = selection + " AND " + DataBaseConstants.FAVORITES_CAR_ID + " = " + id;
+                    selection = selection + " AND " + DataBaseConstants.FAVORITES_POST_ID + " = " + id;
                 }
                 break;
             default:

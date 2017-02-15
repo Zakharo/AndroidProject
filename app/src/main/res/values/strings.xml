@@ -46,6 +46,7 @@
     <string name="likes">LIKES</string>
     <string name="toolbar_title_favorites">Favorites</string>
     <string name="toolbar_title_main">Awesome Cars</string>
+    <string name="toolbar_title_search">Awesome News</string>
 
     <string name="like">Like!</string>
     <string name="dislike">Dislike!</string>

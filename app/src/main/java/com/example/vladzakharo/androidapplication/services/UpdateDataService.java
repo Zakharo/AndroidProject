@@ -11,12 +11,10 @@ import android.net.ConnectivityManager;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
-import com.example.vladzakharo.androidapplication.http.HttpGetJson;
-import com.example.vladzakharo.androidapplication.items.Car;
+import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 
 import org.json.JSONException;
@@ -52,7 +50,7 @@ public class UpdateDataService extends IntentService {
         } catch (JSONException je) {
             Log.e(TAG, "json problems", je);
         }
-        List<Car> cars = new JsonParser(mPrefManager).convertToList(jsonObject);
+        List<Post> posts = new JsonParser(mPrefManager).convertToList(jsonObject);
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         ArrayList<ContentProviderOperation> deleteOperations = new ArrayList<>();
@@ -64,16 +62,16 @@ public class UpdateDataService extends IntentService {
             Log.e(TAG, "UpdateDataService", re);
         }
 
-        for (int i = 0; i < cars.size(); i++) {
-            Car car = cars.get(i);
+        for (int i = 0; i < posts.size(); i++) {
+            Post post = posts.get(i);
             operations.add(ContentProviderOperation.newInsert(CarsProvider.CAR_CONTENT_URI)
-            .withValue(DataBaseConstants.CARS_CAR_ID, car.getId())
-            .withValue(DataBaseConstants.CARS_CAR_LIKES, car.getLikes())
-            .withValue(DataBaseConstants.CARS_CAR_IS_LIKED, car.getIsCarLiked())
-            .withValue(DataBaseConstants.CARS_CAR_POST_ID, car.getPostId())
-            .withValue(DataBaseConstants.CARS_CAR_POST_OWNER_ID, car.getOwnerId())
-            .withValue(DataBaseConstants.CARS_CAR_DESCRIPTION, car.getDescription())
-            .withValue(DataBaseConstants.CARS_CAR_IMAGE_URL, car.getNamePicture())
+            .withValue(DataBaseConstants.CARS_POST_ID, post.getId())
+            .withValue(DataBaseConstants.CARS_POST_LIKES, post.getLikes())
+            .withValue(DataBaseConstants.CARS_POST_IS_LIKED, post.getIsPostLiked())
+            .withValue(DataBaseConstants.CARS_POST_POST_ID, post.getPostId())
+            .withValue(DataBaseConstants.CARS_POST_OWNER_ID, post.getOwnerId())
+            .withValue(DataBaseConstants.CARS_POST_DESCRIPTION, post.getDescription())
+            .withValue(DataBaseConstants.CARS_POST_IMAGE_URL, post.getNamePicture())
             .build());
         }
 
