@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.vladzakharo.androidapplication.fragments.DateFragment;
 import com.example.vladzakharo.androidapplication.fragments.LikesFragment;
+import com.example.vladzakharo.androidapplication.images.RoundTransformer;
 import com.example.vladzakharo.androidapplication.loaders.UserLoader;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.R;
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .getImageLoader(getApplicationContext())
                 .from(user.getPicture())
                 .to(mImgProfile)
-                .transform(true)
+                .transform(new RoundTransformer(this))
                 .load();
     }
 

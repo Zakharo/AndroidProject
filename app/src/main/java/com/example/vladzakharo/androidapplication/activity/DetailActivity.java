@@ -2,6 +2,7 @@ package com.example.vladzakharo.androidapplication.activity;
 
 import android.app.Activity;
 import android.content.ContentProviderOperation;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -36,6 +37,7 @@ import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.links.LinkTransformationMethod;
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.services.ApiServices;
+import com.example.vladzakharo.androidapplication.services.UpdateDataService;
 
 import java.util.ArrayList;
 
@@ -98,6 +100,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
                     mButtonLikeState--;
                 }
+                Intent intentService = new Intent(v.getContext(), UpdateDataService.class);
+                startService(intentService);
             }
         });
 
@@ -134,6 +138,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
             mButtonLikeState = mPost.getIsPostLiked();
             getSupportActionBar().setTitle(R.string.toolbar_title_search);
+            mProgressBar.setVisibility(View.GONE);
         } else {
             getSupportLoaderManager().initLoader(CAR_LOADER_ID, bundle, this);
         }
@@ -142,9 +147,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){
-            if (search_flag) {
-                //addSearchToDb();
-            }
             finish();
         }
         return true;
@@ -199,7 +201,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newInsert(FavoritesProvider.FAVORITE_CAR_CONTENT_URI)
                 .withValue(DataBaseConstants.FAVORITES_POST_ID, post.getId())
-                .withValue(DataBaseConstants.FAVORITES_POST_LIKES, post.getLikes())
+                .withValue(DataBaseConstants.FAVORITES_POST_LIKES, post.getLikes()+1)
                 .withValue(DataBaseConstants.FAVORITES_POST_IS_LIKED, 1)
                 .withValue(DataBaseConstants.FAVORITES_POST_POST_ID, post.getPostId())
                 .withValue(DataBaseConstants.FAVORITES_POST_OWNER_ID, post.getOwnerId())

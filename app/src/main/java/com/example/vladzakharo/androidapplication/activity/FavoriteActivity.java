@@ -2,6 +2,7 @@ package com.example.vladzakharo.androidapplication.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,8 @@ public class FavoriteActivity extends AppCompatActivity implements LoaderManager
     private ProgressBar mProgressBar;
     private CarAdapter mCarAdapter;
     private Toolbar mToolbar;
+    private RelativeLayout mRelativeLayout;
+    private ImageView mImageView;
 
     private Cursor mCursor = null;
 
@@ -49,6 +53,9 @@ public class FavoriteActivity extends AppCompatActivity implements LoaderManager
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
+
+        mRelativeLayout = (RelativeLayout) findViewById(R.id.favorite_relative_layout);
+        mImageView = (ImageView) findViewById(R.id.favorite_background_image);
 
         mCarRecyclerView = (RecyclerView) findViewById(R.id.favorite_recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -80,6 +87,10 @@ public class FavoriteActivity extends AppCompatActivity implements LoaderManager
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data == null) {
+            mRelativeLayout.setBackgroundColor(Color.WHITE);
+            mImageView.setVisibility(View.GONE);
+        }
         mCursor = data;
         updateUi();
         mProgressBar.setVisibility(View.GONE);

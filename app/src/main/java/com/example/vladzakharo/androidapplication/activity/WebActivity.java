@@ -42,6 +42,7 @@ public class WebActivity extends AppCompatActivity {
         mWebView.loadUrl(Constants.AUTHORIZE_URL);
         mWebView.setVisibility(View.VISIBLE);
 
+
     }
 
     class VkWebViewClient extends WebViewClient {

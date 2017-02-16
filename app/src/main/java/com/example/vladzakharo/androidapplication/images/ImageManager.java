@@ -30,17 +30,14 @@ import java.util.concurrent.ExecutorService;
 
 public class ImageManager {
 
-    private static final String TAG = "ImageManager";
-    private static ImageCache mImageCache = ImageCache.getInstance();
-    private static DiskCache mDiskCache;
     private static final ExecutorService EXECUTOR_SERVICE = ImageExecutor.threadPoolExecutor;
+    private static final String TAG = "ImageManager";
 
     private static ImageManager sImageManager;
 
     public static ImageManager getInstance() {
         if (sImageManager == null) {
             sImageManager = new ImageManager();
-            mImageCache.initializeCache();
         }
         return sImageManager;
     }
@@ -58,11 +55,15 @@ public class ImageManager {
         private WeakReference<ImageView> mImageView;
         private File cacheDir;
         private Context mContext;
-        private boolean mTransformation = false;
+        private DiskCache mDiskCache;
+        private ImageCache mImageCache = ImageCache.getInstance();
+        private Transformer mTransformation = null;
 
         public ImageLoader(Context context) {
             cacheDir = DiskCache.getDiskCacheDir(context, Constants.DISK_CACHE_SUBDIR);
             mContext = context;
+            mImageCache.initializeCache();
+            mDiskCache = DiskCache.getInstance(cacheDir);
         }
 
         public ImageLoader from (String url) {
@@ -75,8 +76,8 @@ public class ImageManager {
             return this;
         }
 
-        public ImageLoader transform(boolean value) {
-            this.mTransformation = value;
+        public ImageLoader transform(Transformer transform) {
+            this.mTransformation = transform;
             return this;
         }
 
@@ -97,11 +98,10 @@ public class ImageManager {
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-            mDiskCache = DiskCache.getInstance(mImageLoader.cacheDir);
             Bitmap downloadBitmap;
-            downloadBitmap = mImageCache.getBitmapFromMemoryCache(mImageLoader.mUrl);
+            downloadBitmap = mImageLoader.mImageCache.getBitmapFromMemoryCache(mImageLoader.mUrl);
             if (downloadBitmap == null) {
-                downloadBitmap = mDiskCache.getBitmapFromDiskCache(mImageLoader.mUrl);
+                downloadBitmap = mImageLoader.mDiskCache.getBitmapFromDiskCache(mImageLoader.mUrl);
                 if (downloadBitmap == null) {
                     try {
                         InputStream in = new URL(mImageLoader.mUrl).openStream();
@@ -109,8 +109,8 @@ public class ImageManager {
                     } catch (IOException ioe) {
                         Log.e(TAG, "Something wrong with url", ioe);
                     }
-                    mImageCache.addBitmapToMemoryCache(mImageLoader.mUrl, downloadBitmap);
-                    mDiskCache.addBitmapToDiskCache(mImageLoader.mUrl, downloadBitmap);
+                    mImageLoader.mImageCache.addBitmapToMemoryCache(mImageLoader.mUrl, downloadBitmap);
+                    mImageLoader.mDiskCache.addBitmapToDiskCache(mImageLoader.mUrl, downloadBitmap);
                 }
             }
             return downloadBitmap;
@@ -118,12 +118,13 @@ public class ImageManager {
 
         @Override
         protected void onPostExecute(Bitmap result) {
+            Transformer transformer = mImageLoader.mTransformation;
             ImageView imageView = mImageLoader.mImageView.get();
             if (imageView == null || result == null) {
                 return;
             }
-            if (mImageLoader.mTransformation) {
-                Drawable drawable = new RoundTransformer(mImageLoader.mContext.getApplicationContext()).transform(result);
+            if (transformer != null) {
+                Drawable drawable = transformer.transform(result);
                 imageView.setImageDrawable(drawable);
             } else {
                 imageView.setImageBitmap(result);

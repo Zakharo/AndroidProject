@@ -14,12 +14,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.adapters.SearchAdapter;
@@ -27,18 +29,25 @@ import com.example.vladzakharo.androidapplication.database.SearchSuggestionsProv
 import com.example.vladzakharo.androidapplication.decoration.Decorator;
 import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.services.ApiServices;
+import com.example.vladzakharo.androidapplication.services.Callback;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener {
+public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,
+        SearchView.OnSuggestionListener,
+        Callback{
 
     private Toolbar mToolbar;
     private SearchView mSearchView;
     private RecyclerView mRecyclerView;
     private SearchAdapter mSearchAdapter;
     private String textToColor = null;
+    private Callback mCallback;
+    private ProgressBar mProgressBar;
 
     private static final int SEARCH_DELAY = 300;
+    private static final String TAG = "SearchActivity";
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Runnable mTextListener;
@@ -51,6 +60,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
         mToolbar = (Toolbar) findViewById(R.id.search_toolbar);
         setSupportActionBar(mToolbar);
+
+        mCallback = this;
+
+        mProgressBar = (ProgressBar) findViewById(R.id.search_progress_bar);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.search_recycler_view);
         mSearchView = (SearchView) findViewById(R.id.searchview_search);
@@ -69,6 +82,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         Decorator decoration = new Decorator(getApplicationContext(), getResources().getColor(R.color.colorPrimary), 0.5f);
         mRecyclerView.addItemDecoration(decoration);
         mRecyclerView.setAdapter(mSearchAdapter);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -85,8 +99,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 String myText = newText.replace("#", "%23");
                 String text = myText.replace(" ", "%20");
                 textToColor = text;
-                mPosts = new ApiServices(getApplicationContext()).searchNews(text);
-                updateUi();
+                new ApiServices(getApplicationContext()).searchNews(text, mCallback);
             }
         };
         mHandler.postDelayed(mTextListener, SEARCH_DELAY);
@@ -121,5 +134,16 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     private String getSuggestedItem(int position) {
         Cursor cursor = (Cursor) mSearchView.getSuggestionsAdapter().getItem(position);
         return cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+    }
+
+    @Override
+    public void onSuccess(ArrayList<Post> posts) {
+        mPosts = posts;
+        updateUi();
+    }
+
+    @Override
+    public void onError(Throwable tr) {
+        Log.e(TAG, "error searching", tr);
     }
 }

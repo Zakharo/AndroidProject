@@ -37,4 +37,6 @@
         <item>@color/dot_dark_screen2</item>
         <item>@color/dot_dark_screen3</item>
     </array>
+
+    <color name="favorite_empty_screen">#d3d9e0</color>
 </resources>

@@ -31,7 +31,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.example.vladzakharo.androidapplication.activity.FavoriteActivity">
+        tools:context="com.example.vladzakharo.androidapplication.activity.FavoriteActivity"
+        android:background="@color/favorite_empty_screen">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/deactivated_100"
+            android:layout_centerInParent="true"
+            android:id="@+id/favorite_background_image"/>
 
         <ProgressBar
             android:id="@+id/favorite_progress_bar"

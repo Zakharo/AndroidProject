@@ -35,7 +35,7 @@ public class ApiServices {
 
     private static final String TAG = "ApiService";
 
-    private PrefManager mPrefManager;
+    private static PrefManager mPrefManager;
     private SharedPreferences mySharedPreferences;
     private String mCountOfCars;
     private String mUserInfoUrl;
@@ -44,7 +44,6 @@ public class ApiServices {
     private String mAddLikeUrl;
     private String mDeleteLikeUrl;
     private Context mContext;
-    private String mSearchJsonObject;
     private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
     private static final String PREF_KEY = "amount_of_cars";
 
@@ -110,7 +109,7 @@ public class ApiServices {
         return HttpGetJson.GET(mSearchCarsUrl);
     }
 
-    public List<Post> searchNews(String what) {
+    public void searchNews(String what, Callback callback) {
         mSearchUrl = "https://api.vk.com/method/newsfeed.search?q=%23car%20"
                 + what
                 +"&extended=0&count="
@@ -119,18 +118,7 @@ public class ApiServices {
                 + "&access_token="
                 + mPrefManager.getToken();
 
-        List<Post> posts = null;
-        try {
-            mSearchJsonObject = new SearchNewsTask(this).execute(mSearchUrl).get();
-            Log.d(TAG, "items found");
-            JSONObject jsonObject;
-            jsonObject = new JSONObject(mSearchJsonObject);
-            posts = new JsonParser(mPrefManager).convertToList(jsonObject);
-        } catch (ExecutionException | InterruptedException | JSONException ex) {
-            Log.e(TAG, "search problems", ex);
-        }
-
-        return posts;
+        new SearchNewsTask(callback).execute(mSearchUrl);
     }
     public void addLike(int ownerId, int postId) {
         mAddLikeUrl = "https://api.vk.com/method/likes.add?type=post&owner_id="
@@ -183,23 +171,31 @@ public class ApiServices {
         Log.d(TAG, "token and user id saved");
     }
 
-    private static class SearchNewsTask extends AsyncTask<String, Void, String> {
+    private static class SearchNewsTask extends AsyncTask<String, Void, ArrayList<Post>> {
 
-        private ApiServices mApiServices;
+        private Callback mCallback;
 
-        public SearchNewsTask(ApiServices apiServices) {
-            mApiServices = apiServices;
+        public SearchNewsTask(Callback callback) {
+            mCallback = callback;
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected ArrayList<Post> doInBackground(String... params) {
             String url = params[0];
-            return HttpGetJson.GET(url);
+            String response = HttpGetJson.GET(url);
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(response);
+            } catch (JSONException je) {
+                Log.d(TAG, "json problems", je);
+            }
+
+            return new JsonParser(mPrefManager).convertToList(jsonObject);
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            mApiServices.mSearchJsonObject = s;
+        protected void onPostExecute(ArrayList<Post> list) {
+            mCallback.onSuccess(list);
         }
     }
 
