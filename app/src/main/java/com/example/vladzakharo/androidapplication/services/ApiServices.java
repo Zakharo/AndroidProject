@@ -8,10 +8,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.vladzakharo.androidapplication.activity.MainActivity;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
+import com.example.vladzakharo.androidapplication.database.DBManager;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.database.UserProvider;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
@@ -23,6 +25,7 @@ import com.example.vladzakharo.androidapplication.utils.VKUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -44,10 +47,18 @@ public class ApiServices {
     private String mAddLikeUrl;
     private String mDeleteLikeUrl;
     private Context mContext;
-    private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
     private static final String PREF_KEY = "amount_of_cars";
 
-    public ApiServices(Context context) {
+    private static ApiServices mApiServices;
+
+    public static ApiServices getInstance(Context context) {
+        if (mApiServices == null) {
+            mApiServices = new ApiServices(context);
+        }
+        return mApiServices;
+    }
+
+    private ApiServices(Context context) {
         mContext = context;
         mPrefManager = new PrefManager(context);
         mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -64,6 +75,10 @@ public class ApiServices {
                 + mPrefManager.getToken();
     }
 
+    private ApiServices() {
+
+    }
+
     public User getUser() {
         String stringJsonObject = HttpGetJson.GET(mUserInfoUrl);
         JSONObject jsonObject = null;
@@ -74,39 +89,15 @@ public class ApiServices {
         }
 
         User user = new JsonParser(mPrefManager).convert(User.class, jsonObject);
-
-        ArrayList<ContentProviderOperation> delete = new ArrayList<>();
-        delete.add(ContentProviderOperation.newDelete(UserProvider.USER_CONTENT_URI)
-                .withSelection(DataBaseConstants.USER_ID + " = ?", new String[]{String.valueOf(1)})
-                .build());
-
-        try {
-            mContext.getContentResolver().applyBatch(UserProvider.AUTHORITY, delete);
-        } catch (RemoteException | OperationApplicationException re) {
-            Log.e(TAG, "UpdateDataService", re);
-        }
-
-        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        operations.add(ContentProviderOperation.newInsert(UserProvider.USER_CONTENT_URI)
-                .withValue(DataBaseConstants.USER_ID, user.getId())
-                .withValue(DataBaseConstants.USER_FIRST_NAME, user.getFirstName())
-                .withValue(DataBaseConstants.USER_LAST_NAME, user.getLastName())
-                .withValue(DataBaseConstants.USER_PICTURE, user.getPicture())
-                .withValue(DataBaseConstants.USER_FULL_PHOTO, user.getFullPhoto())
-                .withValue(DataBaseConstants.USER_DATE_OF_BIRTH, user.getDateOfBirth())
-                .withValue(DataBaseConstants.USER_HOMETOWN, user.getHomeTown())
-                .build());
-        try {
-            mContext.getContentResolver().applyBatch(UserProvider.AUTHORITY, operations);
-        } catch (RemoteException | OperationApplicationException re) {
-            Log.e(TAG, "UpdateDataService", re);
-        }
+        DBManager.saveUser(user, mContext);
         Log.d(TAG, "user loaded");
         return user;
     }
 
-    public String getCars() {
-        return HttpGetJson.GET(mSearchCarsUrl);
+    public void getCars(Callback callback) {
+        new ExecuteTask(callback).execute(mSearchCarsUrl);
+        Log.d(TAG, "cars loaded");
+
     }
 
     public void searchNews(String what, Callback callback) {
@@ -118,7 +109,8 @@ public class ApiServices {
                 + "&access_token="
                 + mPrefManager.getToken();
 
-        new SearchNewsTask(callback).execute(mSearchUrl);
+        new ExecuteTask(callback).execute(mSearchUrl);
+        Log.d(TAG, "news founded");
     }
     public void addLike(int ownerId, int postId) {
         mAddLikeUrl = "https://api.vk.com/method/likes.add?type=post&owner_id="
@@ -146,37 +138,12 @@ public class ApiServices {
         Log.d(TAG, "like deleted");
     }
 
-    public void parseResponse(String url) {
-        try {
-            if( url == null ) {
-                return;
-            }
-            if( url.startsWith(REDIRECT_URI) ) {
-                if(!url.contains("error")) {
-                    String[] auth = VKUtil.parseRedirectUrl(url);
+    private static class ExecuteTask extends AsyncTask<String, Void, ArrayList<Post>> {
 
-                    mPrefManager.putToken(auth[0]);
-                    mPrefManager.putUid(auth[1]);
+        private WeakReference<Callback> mCallback;
 
-                    Intent service = new Intent(mContext, FirstDeleteService.class);
-                    mContext.startService(service);
-
-                    Intent intent = new Intent(mContext, MainActivity.class);
-                    mContext.startActivity(intent);
-                }
-            }
-        } catch(Exception e) {
-            Log.d(TAG, "parse url problem");
-        }
-        Log.d(TAG, "token and user id saved");
-    }
-
-    private static class SearchNewsTask extends AsyncTask<String, Void, ArrayList<Post>> {
-
-        private Callback mCallback;
-
-        public SearchNewsTask(Callback callback) {
-            mCallback = callback;
+        public ExecuteTask(Callback callback) {
+            this.mCallback = new WeakReference<>(callback);
         }
 
         @Override
@@ -187,15 +154,15 @@ public class ApiServices {
             try {
                 jsonObject = new JSONObject(response);
             } catch (JSONException je) {
+                mCallback.get().onError(je);
                 Log.d(TAG, "json problems", je);
             }
-
             return new JsonParser(mPrefManager).convertToList(jsonObject);
         }
 
         @Override
         protected void onPostExecute(ArrayList<Post> list) {
-            mCallback.onSuccess(list);
+            mCallback.get().onSuccess(list);
         }
     }
 

@@ -22,6 +22,6 @@ public class UserLoader extends AsyncTaskLoader {
 
     @Override
     public User loadInBackground() {
-        return new ApiServices(getContext()).getUser();
+        return ApiServices.getInstance(getContext()).getUser();
     }
 }

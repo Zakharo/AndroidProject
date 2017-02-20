@@ -1,7 +1,9 @@
 package com.example.vladzakharo.androidapplication.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
@@ -66,11 +69,16 @@ public class LikesFragment extends Fragment implements LoaderManager.LoaderCallb
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Intent intentService = new Intent(getActivity(), UpdateDataService.class);
-                getActivity().startService(intentService);
+                if (isNetworkConnected()) {
+                    Intent intentService = new Intent(getActivity(), UpdateDataService.class);
+                    getActivity().startService(intentService);
+                } else {
+                    Toast.makeText(getActivity(), "Check Internet connection", Toast.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+
             }
         });
-        //updateUi();
         return v;
     }
 
@@ -108,5 +116,11 @@ public class LikesFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }

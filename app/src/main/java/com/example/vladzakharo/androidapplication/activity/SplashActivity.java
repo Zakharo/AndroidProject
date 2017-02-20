@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 
@@ -23,10 +24,11 @@ public class SplashActivity extends AppCompatActivity {
         Intent intent;
         if (mPrefManager.isFirstTimeLaunch()) {
             intent = new Intent(this, WelcomeActivity.class);
-        } else if (mPrefManager.getToken() == null) {
+        } else if (TextUtils.isEmpty(mPrefManager.getToken())) {
             intent = new Intent(this, LoginActivity.class);
         } else{
             intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
         startActivity(intent);
         finish();

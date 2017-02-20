@@ -13,9 +13,13 @@ import android.widget.TextView;
 
 import com.example.vladzakharo.androidapplication.activity.DetailActivity;
 import com.example.vladzakharo.androidapplication.activity.FavoriteActivity;
+import com.example.vladzakharo.androidapplication.cache.DiskCache;
+import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.items.Post;
+
+import java.io.File;
 
 /**
  * Created by Vlad Zakharo on 15.12.2016.
@@ -27,13 +31,14 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
     public static final String CAR_DESCRIPTION = "car_description";
     public static final String FAVOITE_FLAG = "flag";
     private static final int VIEW_TYPE_NORMAL = 1;
+    private File cacheDir;
 
     private Context mContext;
-    private static ImageManager sImageManager = ImageManager.getInstance();
 
     public CarAdapter(Context context, Cursor cursor){
         super(context, cursor);
         mContext = context;
+        cacheDir = DiskCache.getDiskCacheDir(mContext, Constants.DISK_CACHE_SUBDIR);
     }
 
     public class CarHolder extends RecyclerView.ViewHolder {
@@ -62,7 +67,8 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
             mImageView.setImageDrawable(placeholder);
             mLikeCounter.setText(String.valueOf(mPost.getLikes()));
 
-            sImageManager.getImageLoader(mContext)
+            ImageManager.getInstance(cacheDir)
+                    .getImageLoader(mContext)
                     .from(mPost.getNamePicture())
                     .to(mImageView)
                     .load();

@@ -50,7 +50,7 @@ public class WebActivity extends AppCompatActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             mProgressBar.setVisibility(View.VISIBLE);
-            new ApiServices(mContext).parseResponse(url);
+            new VKUtil(mContext).parseResponse(url);
         }
 
         @Override

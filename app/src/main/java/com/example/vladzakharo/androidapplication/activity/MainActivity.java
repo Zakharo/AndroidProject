@@ -1,7 +1,9 @@
 package com.example.vladzakharo.androidapplication.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.vladzakharo.androidapplication.cache.DiskCache;
+import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.fragments.DateFragment;
 import com.example.vladzakharo.androidapplication.fragments.LikesFragment;
 import com.example.vladzakharo.androidapplication.images.RoundTransformer;
@@ -36,6 +40,7 @@ import com.example.vladzakharo.androidapplication.items.User;
 import com.example.vladzakharo.androidapplication.services.UpdateDataService;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView mLastName;
     private Toolbar toolbar;
     private PrefManager mPrefManager;
+    private File cacheDir;
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -69,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Intent intentService = new Intent(this, UpdateDataService.class);
         startService(intentService);
+
+        cacheDir = DiskCache.getDiskCacheDir(getApplicationContext(), Constants.DISK_CACHE_SUBDIR);
 
         mPrefManager = new PrefManager(this);
 
@@ -91,32 +99,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
+        getSupportLoaderManager().initLoader(LOADER_POSTS_ID, null, this);
+        if (isNetworkConnected()) {
+            getSupportLoaderManager().initLoader(LOADER_USER_ID, null, new LoaderManager.LoaderCallbacks<User>() {
+                @Override
+                public Loader<User> onCreateLoader(int id, Bundle args) {
+                    if (id != LOADER_USER_ID) {
+                        return null;
+                    }
+                    return new UserLoader(getApplicationContext());
+                }
+
+                @Override
+                public void onLoadFinished(Loader<User> loader, User data) {
+                    updateHeader(data);
+                }
+
+                @Override
+                public void onLoaderReset(Loader<User> loader) {
+
+                }
+            });
+        }
+
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(mViewPager);
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
-
-        getSupportLoaderManager().initLoader(LOADER_POSTS_ID, null, this);
-        getSupportLoaderManager().initLoader(LOADER_USER_ID, null, new LoaderManager.LoaderCallbacks<User>() {
-            @Override
-            public Loader<User> onCreateLoader(int id, Bundle args) {
-                if (id != LOADER_USER_ID) {
-                    return null;
-                }
-                return new UserLoader(getApplicationContext());
-            }
-
-            @Override
-            public void onLoadFinished(Loader<User> loader, User data) {
-                updateHeader(data);
-            }
-
-            @Override
-            public void onLoaderReset(Loader<User> loader) {
-
-            }
-        });
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -136,10 +146,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (loader.getId() == LOADER_POSTS_ID) {
+            mCursor = cursor;
+            setupViewPager(mViewPager);
+            mTabLayout.setupWithViewPager(mViewPager);
+        }
 
-        mCursor = cursor;
-        setupViewPager(mViewPager);
-        mTabLayout.setupWithViewPager(mViewPager);
 
     }
 
@@ -154,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-        return;
+        super.onBackPressed();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -187,15 +199,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        if (isNetworkConnected()) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            Toast.makeText(v.getContext(), "Check Internet connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void updateHeader(User user) {
         mFirstName.setText(user.getFirstName());
         mLastName.setText(user.getLastName());
-        ImageManager.getInstance()
+        ImageManager.getInstance(cacheDir)
                 .getImageLoader(getApplicationContext())
                 .from(user.getPicture())
                 .to(mImgProfile)
@@ -231,12 +247,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.menu_item_search:
-                startActivity(new Intent(this, SearchActivity.class));
+                if (isNetworkConnected()) {
+                    startActivity(new Intent(this, SearchActivity.class));
+                } else {
+                    Toast.makeText(getApplicationContext(), "Check Internet connection", Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;
         }
         return true;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

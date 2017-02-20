@@ -1,5 +1,14 @@
 package com.example.vladzakharo.androidapplication.utils;
 
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+import com.example.vladzakharo.androidapplication.activity.MainActivity;
+import com.example.vladzakharo.androidapplication.services.FirstDeleteService;
+import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
+
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,6 +17,17 @@ import java.util.regex.Pattern;
  */
 
 public class VKUtil  {
+
+    private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
+    private static final String TAG = "VKUtil";
+    private PrefManager mPrefManager;
+    private Context mContext;
+
+    public VKUtil(Context context) {
+        mContext = context;
+        mPrefManager = new PrefManager(context);
+    }
+
     public static String[] parseRedirectUrl(String url) throws Exception {
         String access_token = extractPattern(url, "access_token=(.*?)&");
         String user_id = extractPattern(url, "user_id=(\\d*)");
@@ -23,5 +43,31 @@ public class VKUtil  {
         if (!m.find())
             return null;
         return m.toMatchResult().group(1);
+    }
+
+    public void parseResponse(String url) {
+        try {
+            if( url == null ) {
+                return;
+            }
+            if(url.startsWith(REDIRECT_URI) ) {
+                if(!url.contains("error")) {
+                    String[] auth = VKUtil.parseRedirectUrl(url);
+
+                    mPrefManager.putToken(auth[0]);
+                    mPrefManager.putUid(auth[1]);
+
+                    Intent service = new Intent(mContext, FirstDeleteService.class);
+                    mContext.startService(service);
+
+                    Intent intent = new Intent(mContext, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    mContext.startActivity(intent);
+                }
+            }
+        } catch(Exception e) {
+            Log.d(TAG, "parse url problem");
+        }
+        Log.d(TAG, "token and user id saved");
     }
 }

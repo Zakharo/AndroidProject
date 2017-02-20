@@ -3,6 +3,7 @@ package com.example.vladzakharo.androidapplication.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.SearchRecentSuggestions;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.adapters.SearchAdapter;
@@ -33,6 +35,8 @@ import com.example.vladzakharo.androidapplication.services.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener,
         SearchView.OnSuggestionListener,
@@ -96,10 +100,14 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         mTextListener = new Runnable() {
             @Override
             public void run() {
-                String myText = newText.replace("#", "%23");
-                String text = myText.replace(" ", "%20");
-                textToColor = text;
-                new ApiServices(getApplicationContext()).searchNews(text, mCallback);
+                if (isNetworkConnected()) {
+                    String myText = newText.replace("#", "%23");
+                    String text = myText.replace(" ", "%20");
+                    textToColor = text;
+                    ApiServices.getInstance(getApplicationContext()).searchNews(textToColor, mCallback);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Check Internet connection!", Toast.LENGTH_SHORT).show();
+                }
             }
         };
         mHandler.postDelayed(mTextListener, SEARCH_DELAY);
@@ -136,14 +144,20 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         return cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
     }
 
+
     @Override
-    public void onSuccess(ArrayList<Post> posts) {
-        mPosts = posts;
+    public void onSuccess(ArrayList T) {
+        mPosts = T;
         updateUi();
     }
 
     @Override
     public void onError(Throwable tr) {
         Log.e(TAG, "error searching", tr);
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 }

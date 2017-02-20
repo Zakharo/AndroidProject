@@ -18,9 +18,12 @@ import android.widget.TextView;
 
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.activity.DetailActivity;
+import com.example.vladzakharo.androidapplication.cache.DiskCache;
+import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.items.Post;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -36,13 +39,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchHold
     private RecyclerView mRecyclerView;
     private Context mContext;
     private List<Post> mPosts;
-    private static ImageManager sImageManager = ImageManager.getInstance();
+    private File cacheDir;
 
     public SearchAdapter(Context context, List<Post> posts, RecyclerView recyclerView, String text){
         mContext = context;
         mPosts = posts;
         mRecyclerView = recyclerView;
         mTextToColor = text;
+        cacheDir = DiskCache.getDiskCacheDir(mContext, Constants.DISK_CACHE_SUBDIR);
     }
 
     public class SearchHolder extends RecyclerView.ViewHolder {
@@ -85,7 +89,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchHold
 
         holder.mLikeCounter.setText(String.valueOf(post.getLikes()));
 
-        sImageManager.getImageLoader(mContext)
+        ImageManager.getInstance(cacheDir)
+                .getImageLoader(mContext)
                 .from(post.getNamePicture())
                 .to(holder.mImageView)
                 .load();

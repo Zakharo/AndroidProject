@@ -8,8 +8,8 @@ import java.util.ArrayList;
  * Created by Vlad Zakharo on 16.02.2017.
  */
 
-public interface Callback {
-    void onSuccess(ArrayList<Post> posts);
+public interface Callback<T> {
+    void onSuccess(ArrayList<T> T);
 
     void onError(Throwable tr);
 }
