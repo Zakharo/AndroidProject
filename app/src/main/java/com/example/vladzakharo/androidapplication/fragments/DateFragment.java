@@ -27,6 +27,8 @@ import com.example.vladzakharo.androidapplication.services.UpdateDataService;
 public class DateFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 0;
+    private static final int DATE_LOADER_ID = 5;
+    private static final String SORT = "sort_by_likes";
 
     private RecyclerView mCarRecyclerView;
     private ProgressBar mProgressBar;
@@ -34,6 +36,7 @@ public class DateFragment extends Fragment implements LoaderManager.LoaderCallba
     private CarAdapter mCarAdapter;
 
     private Cursor mCursor = null;
+    private boolean sort = false;
 
     public DateFragment() {
 

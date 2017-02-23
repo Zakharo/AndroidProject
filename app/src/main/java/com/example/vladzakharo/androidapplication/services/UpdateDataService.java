@@ -13,7 +13,7 @@ import android.util.Log;
 
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
-import com.example.vladzakharo.androidapplication.database.DBManager;
+import com.example.vladzakharo.androidapplication.database.DBUtils;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
@@ -28,7 +28,7 @@ import java.util.List;
  * Created by Vlad Zakharo on 08.01.2017.
  */
 
-public class UpdateDataService extends IntentService implements Callback {
+public class UpdateDataService extends IntentService implements Callback<Post> {
     private static final String TAG = "UpdateDataService";
     private static final int timeToWait = 1000 * 60 * 10;
     private Callback mCallback;
@@ -62,8 +62,8 @@ public class UpdateDataService extends IntentService implements Callback {
     @Override
     public void onSuccess(ArrayList T) {
 
-        DBManager.clearTableCars(getApplicationContext());
-        DBManager.loadTableCars(T, getApplicationContext());
+        DBUtils.clearTableCars(getApplicationContext());
+        DBUtils.loadTableCars(T, getApplicationContext());
     }
 
     @Override

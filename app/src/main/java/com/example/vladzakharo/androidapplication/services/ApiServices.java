@@ -12,8 +12,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.vladzakharo.androidapplication.activity.MainActivity;
+import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
-import com.example.vladzakharo.androidapplication.database.DBManager;
+import com.example.vladzakharo.androidapplication.database.DBUtils;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 import com.example.vladzakharo.androidapplication.database.UserProvider;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
@@ -39,15 +40,11 @@ public class ApiServices {
     private static final String TAG = "ApiService";
 
     private static PrefManager mPrefManager;
-    private SharedPreferences mySharedPreferences;
-    private String mCountOfCars;
     private String mUserInfoUrl;
-    private String mSearchCarsUrl;
     private String mSearchUrl;
     private String mAddLikeUrl;
     private String mDeleteLikeUrl;
     private Context mContext;
-    private static final String PREF_KEY = "amount_of_cars";
 
     private static ApiServices mApiServices;
 
@@ -61,16 +58,12 @@ public class ApiServices {
     private ApiServices(Context context) {
         mContext = context;
         mPrefManager = new PrefManager(context);
-        mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        mCountOfCars = mySharedPreferences.getString(PREF_KEY, "10");
         mUserInfoUrl = "https://api.vk.com/method/users.get?user_ids="
                 + mPrefManager.getUid()
-                + "&fields=photo,photo_200_orig,bdate,home_town&v=5.62"
-                + "&access_token="
-                + mPrefManager.getToken();
-        mSearchCarsUrl = "https://api.vk.com/method/newsfeed.search?q=%23car&extended=0&count="
-                + mCountOfCars
-                + "&v=5.62"
+                + "&fields="
+                + Constants.USER_INFO_FIELDS
+                + "&v="
+                + Constants.API_VERSION
                 + "&access_token="
                 + mPrefManager.getToken();
     }
@@ -89,22 +82,30 @@ public class ApiServices {
         }
 
         User user = new JsonParser(mPrefManager).convert(User.class, jsonObject);
-        DBManager.saveUser(user, mContext);
+        //DBUtils.saveUser(user, mContext);
         Log.d(TAG, "user loaded");
         return user;
     }
 
     public void getCars(Callback callback) {
+        String countOfCars = mPrefManager.getCountOfCars();
+        String mSearchCarsUrl = "https://api.vk.com/method/newsfeed.search?q=%23car&extended=0&count="
+                + countOfCars
+                + "&v="
+                + Constants.API_VERSION
+                + "&access_token="
+                + mPrefManager.getToken();
         new ExecuteTask(callback).execute(mSearchCarsUrl);
         Log.d(TAG, "cars loaded");
 
     }
 
     public void searchNews(String what, Callback callback) {
+        String countOfCars = mPrefManager.getCountOfCars();
         mSearchUrl = "https://api.vk.com/method/newsfeed.search?q=%23car%20"
                 + what
                 +"&extended=0&count="
-                + mCountOfCars
+                + countOfCars
                 + "&v=5.62"
                 + "&access_token="
                 + mPrefManager.getToken();

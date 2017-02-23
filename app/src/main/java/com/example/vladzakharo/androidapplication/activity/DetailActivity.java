@@ -29,7 +29,7 @@ import android.widget.TextView;
 import com.example.vladzakharo.androidapplication.adapters.SearchAdapter;
 import com.example.vladzakharo.androidapplication.cache.DiskCache;
 import com.example.vladzakharo.androidapplication.constants.Constants;
-import com.example.vladzakharo.androidapplication.database.DBManager;
+import com.example.vladzakharo.androidapplication.database.DBUtils;
 import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
 import com.example.vladzakharo.androidapplication.database.CarsProvider;
@@ -96,13 +96,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             public void onClick(View v) {
                 if (mButtonLikeState == 0) {
                     ApiServices.getInstance(getApplicationContext()).addLike(mPost.getOwnerId(), mPost.getPostId());
-                    DBManager.addToFavorite(mPost, getApplicationContext());
+                    DBUtils.addToFavorite(mPost, getApplicationContext());
                     mFab.setImageResource(R.drawable.ic_like_add);
                     Snackbar.make(v, R.string.like, Snackbar.LENGTH_SHORT).show();
                     mButtonLikeState++;
                 } else {
                     ApiServices.getInstance(getApplicationContext()).deleteLike(mPost.getOwnerId(), mPost.getPostId());
-                    DBManager.deleteFromFavorite(mPost, getApplicationContext());
+                    DBUtils.deleteFromFavorite(mPost, getApplicationContext());
                     mFab.setImageResource(R.drawable.ic_like_not_add);
                     Snackbar.make(v, R.string.dislike, Snackbar.LENGTH_SHORT).show();
                     mButtonLikeState--;

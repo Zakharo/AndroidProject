@@ -3,6 +3,7 @@ package com.example.vladzakharo.androidapplication.loaders;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 
+import com.example.vladzakharo.androidapplication.database.DBUtils;
 import com.example.vladzakharo.androidapplication.services.ApiServices;
 import com.example.vladzakharo.androidapplication.items.User;
 
@@ -22,6 +23,8 @@ public class UserLoader extends AsyncTaskLoader {
 
     @Override
     public User loadInBackground() {
-        return ApiServices.getInstance(getContext()).getUser();
+        User user = ApiServices.getInstance(getContext()).getUser();
+        DBUtils.saveUser(user, getContext());
+        return user;
     }
 }

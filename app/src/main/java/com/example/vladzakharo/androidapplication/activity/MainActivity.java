@@ -199,13 +199,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onClick(View v) {
-        if (isNetworkConnected()) {
-            Intent intent = new Intent(this, ProfileActivity.class);
-            startActivity(intent);
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            Toast.makeText(v.getContext(), "Check Internet connection", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     private void updateHeader(User user) {

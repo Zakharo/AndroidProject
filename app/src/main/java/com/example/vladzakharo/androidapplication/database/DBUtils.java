@@ -16,9 +16,9 @@ import java.util.ArrayList;
  * Created by Vlad Zakharo on 20.02.2017.
  */
 
-public class DBManager {
+public class DBUtils {
 
-    private static final String TAG = "DBManager";
+    private static final String TAG = "DBUtils";
 
     public static void addToFavorite(Post post, Context context) {
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
@@ -98,7 +98,7 @@ public class DBManager {
     }
 
     public static void saveUser(User user, Context context) {
-        ArrayList<ContentProviderOperation> delete = new ArrayList<>();
+        /*ArrayList<ContentProviderOperation> delete = new ArrayList<>();
         delete.add(ContentProviderOperation.newDelete(UserProvider.USER_CONTENT_URI)
                 .withSelection(DataBaseConstants.USER_ID + " = ?", new String[]{String.valueOf(1)})
                 .build());
@@ -107,7 +107,7 @@ public class DBManager {
             context.getContentResolver().applyBatch(UserProvider.AUTHORITY, delete);
         } catch (RemoteException | OperationApplicationException re) {
             Log.e(TAG, "UpdateDataService", re);
-        }
+        }*/
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newInsert(UserProvider.USER_CONTENT_URI)

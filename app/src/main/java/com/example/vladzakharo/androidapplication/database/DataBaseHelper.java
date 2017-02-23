@@ -38,7 +38,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + DataBaseConstants.USER_TABLE_USER + "("
                 + DataBaseConstants.USER_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
-                + DataBaseConstants.USER_FIRST_NAME +  "TEXT, "
+                + DataBaseConstants.USER_FIRST_NAME +  " TEXT, "
                 + DataBaseConstants.USER_LAST_NAME + " TEXT, "
                 + DataBaseConstants.USER_PICTURE + " TEXT, "
                 + DataBaseConstants.USER_FULL_PHOTO + " TEXT, "
