@@ -20,15 +20,8 @@ public class VKUtil  {
 
     private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
     private static final String TAG = "VKUtil";
-    private PrefManager mPrefManager;
-    private Context mContext;
 
-    public VKUtil(Context context) {
-        mContext = context;
-        mPrefManager = new PrefManager(context);
-    }
-
-    public static String[] parseRedirectUrl(String url) throws Exception {
+    private static String[] parseRedirectUrl(String url) throws Exception {
         String access_token = extractPattern(url, "access_token=(.*?)&");
         String user_id = extractPattern(url, "user_id=(\\d*)");
         if( user_id == null || user_id.length() == 0 || access_token == null || access_token.length() == 0 ) {
@@ -37,7 +30,7 @@ public class VKUtil  {
         return new String[]{access_token, user_id};
     }
 
-    public static String extractPattern(String string, String pattern){
+    private static String extractPattern(String string, String pattern){
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(string);
         if (!m.find())
@@ -45,7 +38,7 @@ public class VKUtil  {
         return m.toMatchResult().group(1);
     }
 
-    public void parseResponse(String url) {
+    public static void parseResponse(String url, PrefManager prefManager, Context context) {
         try {
             if( url == null ) {
                 return;
@@ -54,15 +47,15 @@ public class VKUtil  {
                 if(!url.contains("error")) {
                     String[] auth = VKUtil.parseRedirectUrl(url);
 
-                    mPrefManager.putToken(auth[0]);
-                    mPrefManager.putUid(auth[1]);
+                    prefManager.putToken(auth[0]);
+                    prefManager.putUid(auth[1]);
 
-                    Intent service = new Intent(mContext, FirstDeleteService.class);
-                    mContext.startService(service);
+                    Intent service = new Intent(context, FirstDeleteService.class);
+                    context.startService(service);
 
-                    Intent intent = new Intent(mContext, MainActivity.class);
+                    Intent intent = new Intent(context, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    mContext.startActivity(intent);
+                    context.startActivity(intent);
                 }
             }
         } catch(Exception e) {

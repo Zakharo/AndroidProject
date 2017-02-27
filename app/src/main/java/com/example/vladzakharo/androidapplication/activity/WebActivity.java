@@ -23,6 +23,7 @@ public class WebActivity extends AppCompatActivity {
     private WebView mWebView;
     private ProgressBar mProgressBar;
     private Context mContext;
+    private PrefManager mPrefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,8 @@ public class WebActivity extends AppCompatActivity {
         mWebView = (WebView) findViewById(R.id.web);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mContext = this;
+
+        mPrefManager = new PrefManager(this);
 
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setVerticalScrollBarEnabled(false);
@@ -50,7 +53,7 @@ public class WebActivity extends AppCompatActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             mProgressBar.setVisibility(View.VISIBLE);
-            new VKUtil(mContext).parseResponse(url);
+            VKUtil.parseResponse(url, mPrefManager, mContext);
         }
 
         @Override

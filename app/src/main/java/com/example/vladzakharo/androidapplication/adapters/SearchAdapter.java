@@ -76,14 +76,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchHold
         Post post = mPosts.get(position);
         holder.mDescriptionTextView.setText(post.getDescription());
 
-        /*SpannableStringBuilder builder = new SpannableStringBuilder();
-        SpannableString textToSpan = new SpannableString(post.getDescription());
-        int i = post.getDescription().indexOf(mTextToColor);
-        textToSpan.setSpan(new ForegroundColorSpan(Color.BLUE), i, i + mTextToColor.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        builder.append(textToSpan);
-        holder.mDescriptionTextView.setText(textToSpan);*/
-
-
         Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
         holder.mImageView.setImageDrawable(placeholder);
 
@@ -111,11 +103,4 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchHold
     public int getItemCount() {
         return mPosts.size();
     }
-
-    /*private void setColor(TextView view, String fulltext, String subtext, int color) {
-        view.setText(fulltext, TextView.BufferType.SPANNABLE);
-        Spannable str = (Spannable) view.getText();
-        int i = fulltext.indexOf(subtext);
-        str.setSpan(new ForegroundColorSpan(color), i, i + subtext.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    }*/
 }

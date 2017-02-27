@@ -116,6 +116,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
+    protected void onPause() {
+        mHandler.removeCallbacks(mTextListener);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){
             SearchRecentSuggestions suggestions =
