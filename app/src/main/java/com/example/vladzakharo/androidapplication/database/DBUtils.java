@@ -98,16 +98,6 @@ public class DBUtils {
     }
 
     public static void saveUser(User user, Context context) {
-        /*ArrayList<ContentProviderOperation> delete = new ArrayList<>();
-        delete.add(ContentProviderOperation.newDelete(UserProvider.USER_CONTENT_URI)
-                .withSelection(DataBaseConstants.USER_ID + " = ?", new String[]{String.valueOf(1)})
-                .build());
-
-        try {
-            context.getContentResolver().applyBatch(UserProvider.AUTHORITY, delete);
-        } catch (RemoteException | OperationApplicationException re) {
-            Log.e(TAG, "UpdateDataService", re);
-        }*/
 
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         operations.add(ContentProviderOperation.newInsert(UserProvider.USER_CONTENT_URI)

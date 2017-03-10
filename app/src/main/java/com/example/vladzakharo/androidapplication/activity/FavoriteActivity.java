@@ -1,5 +1,6 @@
 package com.example.vladzakharo.androidapplication.activity;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;

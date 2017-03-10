@@ -84,6 +84,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             if (search_flag) {
                 mPost = getIntent().getParcelableExtra(SearchAdapter.PARCELABLE_POST);
             }
+            Intent i = new Intent();
+
         }
 
         bundle = new Bundle();
