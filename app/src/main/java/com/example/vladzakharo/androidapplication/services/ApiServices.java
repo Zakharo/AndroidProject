@@ -8,19 +8,17 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.webkit.WebView;
-import android.widget.ProgressBar;
 
 import com.example.vladzakharo.androidapplication.activity.MainActivity;
+import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.converters.JsonParser;
-import com.example.vladzakharo.androidapplication.database.CarsProvider;
+import com.example.vladzakharo.androidapplication.database.DBUtils;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
-import com.example.vladzakharo.androidapplication.database.FavoritesProvider;
 import com.example.vladzakharo.androidapplication.database.UserProvider;
 import com.example.vladzakharo.androidapplication.http.HttpGetJson;
-import com.example.vladzakharo.androidapplication.items.Car;
+import com.example.vladzakharo.androidapplication.items.Post;
 import com.example.vladzakharo.androidapplication.items.User;
 import com.example.vladzakharo.androidapplication.sharedpreferences.PrefManager;
 import com.example.vladzakharo.androidapplication.utils.VKUtil;
@@ -28,7 +26,10 @@ import com.example.vladzakharo.androidapplication.utils.VKUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Vlad Zakharo on 24.01.2017.
@@ -38,32 +39,36 @@ public class ApiServices {
 
     private static final String TAG = "ApiService";
 
-    private PrefManager mPrefManager;
-    private SharedPreferences mySharedPreferences;
-    private String mCountOfCars;
+    private static PrefManager mPrefManager;
     private String mUserInfoUrl;
-    private String mSearchCarsUrl;
+    private String mSearchUrl;
     private String mAddLikeUrl;
     private String mDeleteLikeUrl;
     private Context mContext;
-    private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
-    private static final String PREF_KEY = "amount_of_cars";
 
-    public ApiServices(Context context) {
+    private static ApiServices mApiServices;
+
+    public static ApiServices getInstance(Context context) {
+        if (mApiServices == null) {
+            mApiServices = new ApiServices(context);
+        }
+        return mApiServices;
+    }
+
+    private ApiServices(Context context) {
         mContext = context;
         mPrefManager = new PrefManager(context);
-        mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        mCountOfCars = mySharedPreferences.getString(PREF_KEY, "10");
         mUserInfoUrl = "https://api.vk.com/method/users.get?user_ids="
                 + mPrefManager.getUid()
-                + "&fields=photo,photo_200_orig,bdate,home_town&v=5.62"
+                + "&fields="
+                + Constants.USER_INFO_FIELDS
+                + "&v="
+                + Constants.API_VERSION
                 + "&access_token="
                 + mPrefManager.getToken();
-        mSearchCarsUrl = "https://api.vk.com/method/newsfeed.search?q=%23car&extended=0&count="
-                + mCountOfCars
-                + "&v=5.62"
-                + "&access_token="
-                + mPrefManager.getToken();
+    }
+
+    private ApiServices() {
 
     }
 
@@ -77,46 +82,42 @@ public class ApiServices {
         }
 
         User user = new JsonParser(mPrefManager).convert(User.class, jsonObject);
-
-        ArrayList<ContentProviderOperation> delete = new ArrayList<>();
-        delete.add(ContentProviderOperation.newDelete(UserProvider.USER_CONTENT_URI)
-                .withSelection(DataBaseConstants.USER_ID + " = ?", new String[]{String.valueOf(1)})
-                .build());
-
-        try {
-            mContext.getContentResolver().applyBatch(UserProvider.AUTHORITY, delete);
-        } catch (RemoteException | OperationApplicationException re) {
-            Log.e(TAG, "UpdateDataService", re);
-        }
-
-        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        operations.add(ContentProviderOperation.newInsert(UserProvider.USER_CONTENT_URI)
-                .withValue(DataBaseConstants.USER_ID, user.getId())
-                .withValue(DataBaseConstants.USER_FIRST_NAME, user.getFirstName())
-                .withValue(DataBaseConstants.USER_LAST_NAME, user.getLastName())
-                .withValue(DataBaseConstants.USER_PICTURE, user.getPicture())
-                .withValue(DataBaseConstants.USER_FULL_PHOTO, user.getFullPhoto())
-                .withValue(DataBaseConstants.USER_DATE_OF_BIRTH, user.getDateOfBirth())
-                .withValue(DataBaseConstants.USER_HOMETOWN, user.getHomeTown())
-                .build());
-        try {
-            mContext.getContentResolver().applyBatch(UserProvider.AUTHORITY, operations);
-        } catch (RemoteException | OperationApplicationException re) {
-            Log.e(TAG, "UpdateDataService", re);
-        }
+        //DBUtils.saveUser(user, mContext);
         Log.d(TAG, "user loaded");
         return user;
     }
 
-    public String getCars() {
-        return HttpGetJson.GET(mSearchCarsUrl);
+    public void getCars(Callback callback) {
+        String countOfCars = mPrefManager.getCountOfCars();
+        String mSearchCarsUrl = "https://api.vk.com/method/newsfeed.search?q=%23car&extended=0&count="
+                + countOfCars
+                + "&v="
+                + Constants.API_VERSION
+                + "&access_token="
+                + mPrefManager.getToken();
+        new ExecuteTask(callback).execute(mSearchCarsUrl);
+        Log.d(TAG, "cars loaded");
+
     }
 
-    public void addLike(Car car) {
+    public void searchNews(String what, Callback callback) {
+        String countOfCars = mPrefManager.getCountOfCars();
+        mSearchUrl = "https://api.vk.com/method/newsfeed.search?q=%23car%20"
+                + what
+                +"&extended=0&count="
+                + countOfCars
+                + "&v=5.62"
+                + "&access_token="
+                + mPrefManager.getToken();
+
+        new ExecuteTask(callback).execute(mSearchUrl);
+        Log.d(TAG, "news founded");
+    }
+    public void addLike(int ownerId, int postId) {
         mAddLikeUrl = "https://api.vk.com/method/likes.add?type=post&owner_id="
-                + car.getOwnerId()
+                + ownerId
                 + "&item_id="
-                + car.getPostId()
+                + postId
                 + "&v=5.62"
                 + "&access_token="
                 + mPrefManager.getToken();
@@ -125,11 +126,11 @@ public class ApiServices {
         Log.d(TAG, "like added");
     }
 
-    public void deleteLike(Car car) {
+    public void deleteLike(int ownerId, int postId) {
         mDeleteLikeUrl = "https://api.vk.com/method/likes.delete?type=post&owner_id="
-                + car.getOwnerId()
+                + ownerId
                 + "&item_id="
-                + car.getPostId()
+                + postId
                 + "&v=5.62"
                 + "&access_token="
                 + mPrefManager.getToken();
@@ -138,29 +139,32 @@ public class ApiServices {
         Log.d(TAG, "like deleted");
     }
 
-    public void parseResponse(String url) {
-        try {
-            if( url == null ) {
-                return;
-            }
-            if( url.startsWith(REDIRECT_URI) ) {
-                if(!url.contains("error")) {
-                    String[] auth = VKUtil.parseRedirectUrl(url);
+    private static class ExecuteTask extends AsyncTask<String, Void, ArrayList<Post>> {
 
-                    mPrefManager.putToken(auth[0]);
-                    mPrefManager.putUid(auth[1]);
+        private WeakReference<Callback> mCallback;
 
-                    Intent service = new Intent(mContext, FirstDeleteService.class);
-                    mContext.startService(service);
-
-                    Intent intent = new Intent(mContext, MainActivity.class);
-                    mContext.startActivity(intent);
-                }
-            }
-        } catch(Exception e) {
-            Log.d(TAG, "parse url problem");
+        public ExecuteTask(Callback callback) {
+            this.mCallback = new WeakReference<>(callback);
         }
-        Log.d(TAG, "token and user id saved");
+
+        @Override
+        protected ArrayList<Post> doInBackground(String... params) {
+            String url = params[0];
+            String response = HttpGetJson.GET(url);
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(response);
+            } catch (JSONException je) {
+                mCallback.get().onError(je);
+                Log.d(TAG, "json problems", je);
+            }
+            return new JsonParser(mPrefManager).convertToList(jsonObject);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Post> list) {
+            mCallback.get().onSuccess(list);
+        }
     }
 
     private static class Like extends AsyncTask<String, Void, Void> {

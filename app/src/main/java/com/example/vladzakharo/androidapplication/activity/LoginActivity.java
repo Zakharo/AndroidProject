@@ -3,6 +3,7 @@ package com.example.vladzakharo.androidapplication.activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
@@ -29,11 +30,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         String token = mPrefManager.getToken();
         Intent intent;
-        if (token.isEmpty()) {
+        if (TextUtils.isEmpty(token)) {
             intent = new Intent(this, WebActivity.class);
 
         }else {
             intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
         startActivity(intent);
         finish();

@@ -1,20 +1,17 @@
 package com.example.vladzakharo.androidapplication.images;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.example.vladzakharo.androidapplication.activity.MainActivity;
-import com.example.vladzakharo.androidapplication.activity.ProfileActivity;
 import com.example.vladzakharo.androidapplication.cache.DiskCache;
 import com.example.vladzakharo.androidapplication.cache.ImageCache;
+import com.example.vladzakharo.androidapplication.cache.MemoryCache;
 import com.example.vladzakharo.androidapplication.constants.Constants;
 
 import java.io.File;
@@ -30,19 +27,23 @@ import java.util.concurrent.ExecutorService;
 
 public class ImageManager {
 
-    private static final String TAG = "ImageManager";
-    private static ImageCache mImageCache = ImageCache.getInstance();
-    private static DiskCache mDiskCache;
     private static final ExecutorService EXECUTOR_SERVICE = ImageExecutor.threadPoolExecutor;
+    private static final String TAG = "ImageManager";
+    private DiskCache mDiskCache;
+    private MemoryCache mMemoryCache = MemoryCache.getInstance();
 
     private static ImageManager sImageManager;
 
-    public static ImageManager getInstance() {
+    public static ImageManager getInstance(File cacheDir) {
         if (sImageManager == null) {
-            sImageManager = new ImageManager();
-            mImageCache.initializeCache();
+            sImageManager = new ImageManager(cacheDir);
         }
         return sImageManager;
+    }
+
+    private ImageManager(File cacheDir) {
+        mMemoryCache.initializeCache();
+        mDiskCache = DiskCache.getInstance(cacheDir);
     }
 
     private ImageManager() {
@@ -56,12 +57,10 @@ public class ImageManager {
     public static class ImageLoader {
         private String mUrl;
         private WeakReference<ImageView> mImageView;
-        private File cacheDir;
         private Context mContext;
-        private boolean mTransformation = false;
+        private Transformer mTransformation = null;
 
         public ImageLoader(Context context) {
-            cacheDir = DiskCache.getDiskCacheDir(context, Constants.DISK_CACHE_SUBDIR);
             mContext = context;
         }
 
@@ -75,8 +74,8 @@ public class ImageManager {
             return this;
         }
 
-        public ImageLoader transform(boolean value) {
-            this.mTransformation = value;
+        public ImageLoader transform(Transformer transform) {
+            this.mTransformation = transform;
             return this;
         }
 
@@ -97,20 +96,21 @@ public class ImageManager {
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-            mDiskCache = DiskCache.getInstance(mImageLoader.cacheDir);
             Bitmap downloadBitmap;
-            downloadBitmap = mImageCache.getBitmapFromMemoryCache(mImageLoader.mUrl);
+            downloadBitmap = sImageManager.mMemoryCache.getFromCache(mImageLoader.mUrl);
             if (downloadBitmap == null) {
-                downloadBitmap = mDiskCache.getBitmapFromDiskCache(mImageLoader.mUrl);
+                downloadBitmap = sImageManager.mDiskCache.getFromCache(mImageLoader.mUrl);
                 if (downloadBitmap == null) {
-                    try {
-                        InputStream in = new URL(mImageLoader.mUrl).openStream();
-                        downloadBitmap = BitmapFactory.decodeStream(in);
-                    } catch (IOException ioe) {
-                        Log.e(TAG, "Something wrong with url", ioe);
+                    if (isNetworkConnected()) {
+                        try {
+                            InputStream in = new URL(mImageLoader.mUrl).openStream();
+                            downloadBitmap = BitmapFactory.decodeStream(in);
+                        } catch (IOException ioe) {
+                            Log.e(TAG, "Something wrong with url", ioe);
+                        }
+                        sImageManager.mMemoryCache.addToCache(mImageLoader.mUrl, downloadBitmap);
+                        sImageManager.mDiskCache.addToCache(mImageLoader.mUrl, downloadBitmap);
                     }
-                    mImageCache.addBitmapToMemoryCache(mImageLoader.mUrl, downloadBitmap);
-                    mDiskCache.addBitmapToDiskCache(mImageLoader.mUrl, downloadBitmap);
                 }
             }
             return downloadBitmap;
@@ -118,17 +118,24 @@ public class ImageManager {
 
         @Override
         protected void onPostExecute(Bitmap result) {
+            Transformer transformer = mImageLoader.mTransformation;
             ImageView imageView = mImageLoader.mImageView.get();
             if (imageView == null || result == null) {
                 return;
             }
-            if (mImageLoader.mTransformation) {
-                Drawable drawable = new RoundTransformer(mImageLoader.mContext.getApplicationContext()).transform(result);
+            if (transformer != null) {
+                Drawable drawable = transformer.transform(result);
                 imageView.setImageDrawable(drawable);
             } else {
                 imageView.setImageBitmap(result);
             }
             Log.d(TAG, "image loaded");
+        }
+
+        private boolean isNetworkConnected() {
+            ConnectivityManager cm = (ConnectivityManager) mImageLoader.mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            return cm.getActiveNetworkInfo() != null;
         }
     }
 }

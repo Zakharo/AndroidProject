@@ -1,7 +1,9 @@
 package com.example.vladzakharo.androidapplication.activity;
 
+import android.database.Cursor;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,11 +15,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vladzakharo.androidapplication.R;
+import com.example.vladzakharo.androidapplication.cache.DiskCache;
+import com.example.vladzakharo.androidapplication.constants.Constants;
+import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
+import com.example.vladzakharo.androidapplication.database.UserProvider;
 import com.example.vladzakharo.androidapplication.loaders.UserLoader;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.items.User;
 
-public class ProfileActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<User> {
+import java.io.File;
+
+public class ProfileActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private TextView mCity;
     private TextView mBirthday;
@@ -25,6 +33,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
     private CollapsingToolbarLayout mCollapsingToolbar;
     private ImageView mImageView;
     private Toolbar mToolbar;
+    private File cacheDir;
 
     private static final int PROFILE_LOADER_ID = 3;
 
@@ -33,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        cacheDir = DiskCache.getDiskCacheDir(getApplicationContext(), Constants.DISK_CACHE_SUBDIR);
         mCity = (TextView) findViewById(R.id.profile_city_textview);
         mBirthday = (TextView) findViewById(R.id.profile_birthday_textview);
         mProgressBar = (ProgressBar) findViewById(R.id.profile_progress_bar);
@@ -49,20 +59,25 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
     }
 
     @Override
-    public Loader<User> onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id != PROFILE_LOADER_ID) {
             return null;
         }
-        return new UserLoader(getApplicationContext());
+        return new CursorLoader(this, UserProvider.USER_CONTENT_URI, null, DataBaseConstants.USER_ID + " = ?", new String[]{String.valueOf(1)}, null);
     }
 
     @Override
-    public void onLoadFinished(Loader<User> loader, User data) {
-        updateInfo(data);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data == null || !data.moveToFirst()) {
+            return;
+        }
+        User user = User.getUserFromCursor(data);
+        data.close();
+        updateInfo(user);
     }
 
     @Override
-    public void onLoaderReset(Loader<User> loader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
 
     }
 
@@ -81,7 +96,7 @@ public class ProfileActivity extends AppCompatActivity implements LoaderManager.
         mCity.setText(user.getHomeTown());
         mBirthday.setText(user.getDateOfBirth());
         mCollapsingToolbar.setTitle(user.toString());
-        ImageManager.getInstance()
+        ImageManager.getInstance(cacheDir)
                 .getImageLoader(this)
                 .from(user.getFullPhoto())
                 .to(mImageView)

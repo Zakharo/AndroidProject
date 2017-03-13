@@ -20,7 +20,7 @@ import static android.os.Environment.isExternalStorageRemovable;
  * Created by Vlad Zakharo on 29.12.2016.
  */
 
-public class DiskCache {
+public class DiskCache implements ImageCache{
 
     private DiskLruCache mDiskLruCache;
     private static final int APP_VERSION = 1;
@@ -45,7 +45,7 @@ public class DiskCache {
         }
     }
 
-    public void addBitmapToDiskCache(String key, Bitmap bitmap) {
+    public void addToCache(String key, Bitmap bitmap) {
 
         if (mDiskLruCache != null) {
             OutputStream out = null;
@@ -79,7 +79,7 @@ public class DiskCache {
 
     }
 
-    public Bitmap getBitmapFromDiskCache(String key) {
+    public Bitmap getFromCache(String key) {
 
         Bitmap bitmap = null;
         String encryptedKey = CryptoUtils.encryptToMD5(key);

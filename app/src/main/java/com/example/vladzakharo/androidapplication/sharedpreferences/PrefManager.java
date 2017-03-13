@@ -2,12 +2,16 @@ package com.example.vladzakharo.androidapplication.sharedpreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v7.preference.PreferenceManager;
+
+import com.example.vladzakharo.androidapplication.constants.Constants;
 
 /**
  * Created by Vlad Zakharo on 17.01.2017.
  */
 
 public class PrefManager {
+    private SharedPreferences defPref;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private Context mContext;
@@ -19,11 +23,13 @@ public class PrefManager {
     private static final String TOKEN = "token";
     private static final String UID = "uid";
     private static final String POST_ID = "post_id";
+    private static final String PREF_KEY = "amount_of_cars";
 
     public PrefManager(Context context) {
         this.mContext = context;
         pref = mContext.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
+        defPref = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void setFirstTimeLaunch(boolean isFirstTime) {
@@ -70,5 +76,9 @@ public class PrefManager {
 
     public int getPostId() {
         return pref.getInt(POST_ID, 0);
+    }
+
+    public String getCountOfCars() {
+        return defPref.getString(PREF_KEY, Constants.DEFAULT_VALUE);
     }
 }

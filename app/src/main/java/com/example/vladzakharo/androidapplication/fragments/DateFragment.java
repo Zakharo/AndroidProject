@@ -1,7 +1,9 @@
 package com.example.vladzakharo.androidapplication.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.vladzakharo.androidapplication.R;
 import com.example.vladzakharo.androidapplication.adapters.CarAdapter;
@@ -21,9 +24,10 @@ import com.example.vladzakharo.androidapplication.database.CarsProvider;
 import com.example.vladzakharo.androidapplication.decoration.Decorator;
 import com.example.vladzakharo.androidapplication.services.UpdateDataService;
 
-public class FragmentLikes extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class DateFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int LOADER_ID = 5;
+    private static final int LOADER_ID = 0;
+    private static final int DATE_LOADER_ID = 5;
     private static final String SORT = "sort_by_likes";
 
     private RecyclerView mCarRecyclerView;
@@ -31,9 +35,10 @@ public class FragmentLikes extends Fragment implements LoaderManager.LoaderCallb
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private CarAdapter mCarAdapter;
 
-    private Cursor mCursor;
+    private Cursor mCursor = null;
+    private boolean sort = false;
 
-    public FragmentLikes() {
+    public DateFragment() {
 
     }
 
@@ -41,10 +46,10 @@ public class FragmentLikes extends Fragment implements LoaderManager.LoaderCallb
         mCursor = cursor;
     }
 
-    public static FragmentLikes newInstance(Cursor cursor) {
-        FragmentLikes fragmentLikes = new FragmentLikes();
-        fragmentLikes.setCursor(cursor);
-        return fragmentLikes;
+    public static DateFragment newInstance(Cursor cursor) {
+        DateFragment fragment = new DateFragment();
+        fragment.setCursor(cursor);
+        return fragment;
     }
 
     @Override
@@ -57,26 +62,31 @@ public class FragmentLikes extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_two, container, false);
+        View v = inflater.inflate(R.layout.fragment_one, container, false);
 
-        mCarRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_two_recycler_view);
+        mCarRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mCarRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mProgressBar = (ProgressBar) v.findViewById(R.id.fragment_two_progress_bar);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.fragment_two_swipeContainer);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Intent intentService = new Intent(getActivity(), UpdateDataService.class);
-                getActivity().startService(intentService);
+                if (isNetworkConnected()) {
+                    Intent intentService = new Intent(getActivity(), UpdateDataService.class);
+                    getActivity().startService(intentService);
+                } else {
+                    Toast.makeText(getActivity(), "Check Internet connection", Toast.LENGTH_SHORT).show();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
-        updateUi();
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -93,13 +103,14 @@ public class FragmentLikes extends Fragment implements LoaderManager.LoaderCallb
         if (id != LOADER_ID) {
             return null;
         }
-        return new CursorLoader(getActivity(), CarsProvider.CAR_CONTENT_URI, null, null, null, SORT);
+        return new CursorLoader(getActivity(), CarsProvider.CAR_CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mCursor = data;
         updateUi();
+
         mProgressBar.setVisibility(View.GONE);
         mCarRecyclerView.setVisibility(View.VISIBLE);
         mSwipeRefreshLayout.setRefreshing(false);
@@ -108,5 +119,11 @@ public class FragmentLikes extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }

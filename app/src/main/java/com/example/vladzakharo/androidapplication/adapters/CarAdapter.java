@@ -13,9 +13,13 @@ import android.widget.TextView;
 
 import com.example.vladzakharo.androidapplication.activity.DetailActivity;
 import com.example.vladzakharo.androidapplication.activity.FavoriteActivity;
-import com.example.vladzakharo.androidapplication.items.Car;
+import com.example.vladzakharo.androidapplication.cache.DiskCache;
+import com.example.vladzakharo.androidapplication.constants.Constants;
 import com.example.vladzakharo.androidapplication.images.ImageManager;
 import com.example.vladzakharo.androidapplication.R;
+import com.example.vladzakharo.androidapplication.items.Post;
+
+import java.io.File;
 
 /**
  * Created by Vlad Zakharo on 15.12.2016.
@@ -24,18 +28,18 @@ import com.example.vladzakharo.androidapplication.R;
 public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
     public static final String CAR_NAME_PICTURE = "car_picture";
-    public static final String FLAG = "flag";
+    public static final String CAR_DESCRIPTION = "car_description";
+    public static final String FAVOITE_FLAG = "flag";
     private static final int VIEW_TYPE_NORMAL = 1;
+    private File cacheDir;
 
     private Context mContext;
-    private static ImageManager sImageManager = ImageManager.getInstance();
 
     public CarAdapter(Context context, Cursor cursor){
         super(context, cursor);
         mContext = context;
+        cacheDir = DiskCache.getDiskCacheDir(mContext, Constants.DISK_CACHE_SUBDIR);
     }
-
-
 
     public class CarHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
@@ -50,15 +54,22 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
         }
 
         private void onBindViewHolder(final Cursor cursor) {
-            final Car car = Car.getCarFromCursor(cursor);
 
-            mDescriptionTextView.setText(car.getDescription());
+            Post post;
+            if (mContext.getClass().equals(FavoriteActivity.class)) {
+                 post = Post.getPostFromFavoritesDb(cursor);
+            } else {
+                 post = Post.getPostFromCarsDb(cursor);
+            }
+            final Post mPost = post;
+            mDescriptionTextView.setText(mPost.getDescription());
             Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
             mImageView.setImageDrawable(placeholder);
-            mLikeCounter.setText(String.valueOf(car.getLikes()));
+            mLikeCounter.setText(String.valueOf(mPost.getLikes()));
 
-            sImageManager.getImageLoader(mContext)
-                    .from(car.getNamePicture())
+            ImageManager.getInstance(cacheDir)
+                    .getImageLoader(mContext)
+                    .from(mPost.getNamePicture())
                     .to(mImageView)
                     .load();
 
@@ -67,9 +78,10 @@ public class CarAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                    intent.putExtra(CAR_NAME_PICTURE, car.getNamePicture());
+                    intent.putExtra(CAR_NAME_PICTURE, mPost.getNamePicture());
+                    intent.putExtra(CAR_DESCRIPTION, mPost.getDescription());
                     if (mContext.getClass().equals(FavoriteActivity.class)) {
-                        intent.putExtra(FLAG, true);
+                        intent.putExtra(FAVOITE_FLAG, true);
                     }
                     v.getContext().startActivity(intent);
                 }

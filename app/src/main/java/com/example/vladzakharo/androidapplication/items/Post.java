@@ -7,10 +7,10 @@ import android.os.Parcelable;
 import com.example.vladzakharo.androidapplication.database.DataBaseConstants;
 
 /**
- * Created by Vlad Zakharo on 15.12.2016.
+ * Created by Vlad Zakharo on 13.02.2017.
  */
 
-public class Car implements Parcelable{
+public class Post implements Parcelable {
     private String mDescription;
     private String mNamePicture;
     private int mLikes;
@@ -19,7 +19,7 @@ public class Car implements Parcelable{
     private int mId;
     private int mIsLiked;
 
-    private Car(int id, int likes, int isLiked, int postId, int ownerId, String description, String namePicture) {
+    private Post(int id, int likes, int isLiked, int postId, int ownerId, String description, String namePicture) {
         this.mId = id;
         this.mLikes = likes;
         this.mPostId = postId;
@@ -29,11 +29,11 @@ public class Car implements Parcelable{
         this.mIsLiked = isLiked;
     }
 
-    public Car(){
+    public Post(){
 
     }
 
-    public Car (Parcel parcel){
+    public Post (Parcel parcel) {
         mPostId = parcel.readInt();
         mDescription = parcel.readString();
         mNamePicture = parcel.readString();
@@ -43,11 +43,11 @@ public class Car implements Parcelable{
         mIsLiked= parcel.readInt();
     }
 
-    public int getIsCarLiked() {
+    public int getIsPostLiked() {
         return mIsLiked;
     }
 
-    public void setCarLiked(int value) {
+    public void setPostLiked(int value) {
         mIsLiked = value;
     }
 
@@ -99,7 +99,6 @@ public class Car implements Parcelable{
         return mOwnerId;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -116,25 +115,35 @@ public class Car implements Parcelable{
         dest.writeInt(mIsLiked);
     }
 
-    public static final Parcelable.Creator<Car> CREATOR = new Creator<Car>() {
+    public static final Parcelable.Creator<Post> CREATOR = new Creator<Post>() {
         @Override
-        public Car createFromParcel(Parcel source) {
-            return new Car(source);
+        public Post createFromParcel(Parcel source) {
+            return new Post(source);
         }
 
         @Override
-        public Car[] newArray(int size) {
-            return new Car[size];
+        public Post[] newArray(int size) {
+            return new Post[size];
         }
     };
 
-    public static Car getCarFromCursor(Cursor cursor) {
-        return new Car(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_ID)),
-                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_LIKES)),
-                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_IS_LIKED)),
-                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_POST_ID)),
-                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_POST_OWNER_ID)),
-                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_DESCRIPTION)),
-                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_CAR_IMAGE_URL)));
+    public static Post getPostFromCarsDb(Cursor cursor) {
+        return new Post(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_LIKES)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_IS_LIKED)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.CARS_POST_OWNER_ID)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_POST_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.CARS_POST_IMAGE_URL)));
+    }
+
+    public static Post getPostFromFavoritesDb(Cursor cursor) {
+        return new Post(cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_LIKES)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_IS_LIKED)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_POST_ID)),
+                cursor.getInt(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_OWNER_ID)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_DESCRIPTION)),
+                cursor.getString(cursor.getColumnIndex(DataBaseConstants.FAVORITES_POST_IMAGE_URL)));
     }
 }
