@@ -117,6 +117,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     protected void onPause() {
+        super.onPause();
         mHandler.removeCallbacks(mTextListener);
     }
 
