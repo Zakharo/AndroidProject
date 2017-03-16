@@ -3,6 +3,7 @@ package com.example.vladzakharo.androidapplication.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.SpinnerAdapter;
 
 /**
  * Created by Vlad Zakharo on 08.01.2017.
@@ -14,6 +15,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         super(context, DataBaseConstants.DB_NAME, null, DataBaseConstants.DB_VERSION);
 
     }
+    
 
     @Override
     public void onCreate(SQLiteDatabase db) {

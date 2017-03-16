@@ -82,7 +82,6 @@ public class ApiServices {
         }
 
         User user = new JsonParser(mPrefManager).convert(User.class, jsonObject);
-        //DBUtils.saveUser(user, mContext);
         Log.d(TAG, "user loaded");
         return user;
     }

@@ -50,12 +50,15 @@ public class VKUtil  {
                     prefManager.putToken(auth[0]);
                     prefManager.putUid(auth[1]);
 
+                    Log.d(TAG, "Token and Uid saved");
+
                     Intent service = new Intent(context, FirstDeleteService.class);
                     context.startService(service);
 
                     Intent intent = new Intent(context, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(intent);
+                    Log.d(TAG, "Main activity started");
                 }
             }
         } catch(Exception e) {

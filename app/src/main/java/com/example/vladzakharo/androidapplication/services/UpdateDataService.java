@@ -60,10 +60,10 @@ public class UpdateDataService extends IntentService implements Callback<Post> {
     }
 
     @Override
-    public void onSuccess(ArrayList T) {
+    public void onSuccess(ArrayList<Post> list) {
 
         DBUtils.clearTableCars(getApplicationContext());
-        DBUtils.loadTableCars(T, getApplicationContext());
+        DBUtils.loadTableCars(list, getApplicationContext());
     }
 
     @Override

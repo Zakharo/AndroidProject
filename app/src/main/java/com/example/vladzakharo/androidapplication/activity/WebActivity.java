@@ -25,6 +25,8 @@ public class WebActivity extends AppCompatActivity {
     private Context mContext;
     private PrefManager mPrefManager;
 
+    private static final String TAG = "WebActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +56,7 @@ public class WebActivity extends AppCompatActivity {
             super.onPageStarted(view, url, favicon);
             mProgressBar.setVisibility(View.VISIBLE);
             VKUtil.parseResponse(url, mPrefManager, mContext);
+            Log.d(TAG, "PageLoadStarted");
         }
 
         @Override
@@ -61,6 +64,7 @@ public class WebActivity extends AppCompatActivity {
             super.onPageFinished(view, url);
             if(url.startsWith(Constants.OAUTH_ONE) || url.startsWith(Constants.OAUTH_TWO) ) {
                 mProgressBar.setVisibility(View.GONE);
+                Log.d(TAG, "PageLoadFinished");
             }
         }
     }
