@@ -46,8 +46,6 @@ public class WebActivity extends AppCompatActivity {
 
         mWebView.loadUrl(Constants.AUTHORIZE_URL);
         mWebView.setVisibility(View.VISIBLE);
-
-
     }
 
     class VkWebViewClient extends WebViewClient {
@@ -55,17 +53,19 @@ public class WebActivity extends AppCompatActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             mProgressBar.setVisibility(View.VISIBLE);
-            VKUtil.parseResponse(url, mPrefManager, mContext);
+
             Log.d(TAG, "PageLoadStarted");
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            if(url.startsWith(Constants.OAUTH_ONE) || url.startsWith(Constants.OAUTH_TWO) ) {
+            if(url.startsWith(Constants.REDIRECT_URI) ) {
                 mProgressBar.setVisibility(View.GONE);
+                VKUtil.parseResponse(url, mPrefManager, mContext);
                 Log.d(TAG, "PageLoadFinished");
             }
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 }

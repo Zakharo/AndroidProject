@@ -11,9 +11,8 @@ public class Constants {
             "&scope=wall"+
             "&redirect_uri=http://oauth.vk.com/blank.html" +
             "&response_type=token";
-    public static final String OAUTH_ONE = "http://oauth.vk.com/authorize";
-    public static final String OAUTH_TWO = "http://oauth.vk.com/oauth/authorize";
     public static final String DEFAULT_VALUE = "10";
     public static final String USER_INFO_FIELDS = "photo,photo_200_orig,bdate,home_town";
     public static final String API_VERSION = "5.62";
+    public static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
 }
