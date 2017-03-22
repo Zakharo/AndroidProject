@@ -141,6 +141,7 @@ public class ApiServices {
     private static class ExecuteTask extends AsyncTask<String, Void, ArrayList<Post>> {
 
         private WeakReference<Callback> mCallback;
+        private ArrayList<Post> postList = new ArrayList<>();
 
         public ExecuteTask(Callback callback) {
             this.mCallback = new WeakReference<>(callback);
@@ -157,7 +158,8 @@ public class ApiServices {
                 mCallback.get().onError(je);
                 Log.d(TAG, "json problems", je);
             }
-            return new JsonParser(mPrefManager).convertToList(jsonObject);
+            postList = new JsonParser(mPrefManager).convertToList(jsonObject);
+            return postList;
         }
 
         @Override
