@@ -62,8 +62,8 @@ public class WebActivity extends AppCompatActivity {
             super.onPageFinished(view, url);
             if(url.startsWith(Constants.REDIRECT_URI) ) {
                 mProgressBar.setVisibility(View.GONE);
-                VKUtil.parseResponse(url, mPrefManager, mContext);
                 Log.d(TAG, "PageLoadFinished");
+                VKUtil.parseResponse(url, mPrefManager, mContext);
             }
             mProgressBar.setVisibility(View.GONE);
         }

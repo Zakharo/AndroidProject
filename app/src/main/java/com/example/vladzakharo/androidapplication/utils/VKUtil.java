@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class VKUtil  {
 
-    private static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
+    private static final String REDIRECT_URI = "https://oauth.vk.com/blank.html";
     private static final String TAG = "VKUtil";
 
     private static String[] parseRedirectUrl(String url) throws Exception {
@@ -59,6 +59,8 @@ public class VKUtil  {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(intent);
                     Log.d(TAG, "Main activity started");
+                } else {
+                    Log.d(TAG, "uri contains error");
                 }
             }
         } catch(Exception e) {

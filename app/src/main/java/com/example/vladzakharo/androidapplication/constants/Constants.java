@@ -6,7 +6,7 @@ package com.example.vladzakharo.androidapplication.constants;
 
 public class Constants {
     public static final String DISK_CACHE_SUBDIR = "thumbnails";
-    public static final String AUTHORIZE_URL = "http://oauth.vk.com/authorize?" +
+    public static final String AUTHORIZE_URL = "https://oauth.vk.com/authorize?" +
             "client_id=5829154" +
             "&scope=wall"+
             "&redirect_uri=http://oauth.vk.com/blank.html" +
@@ -14,5 +14,5 @@ public class Constants {
     public static final String DEFAULT_VALUE = "10";
     public static final String USER_INFO_FIELDS = "photo,photo_200_orig,bdate,home_town";
     public static final String API_VERSION = "5.62";
-    public static final String REDIRECT_URI = "http://oauth.vk.com/blank.html";
+    public static final String REDIRECT_URI = "https://oauth.vk.com/blank.html";
 }
